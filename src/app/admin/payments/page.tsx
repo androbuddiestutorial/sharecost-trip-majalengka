@@ -13,18 +13,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/lib/supabase";
 
 export const metadata = {
   title: "Kelola Pembayaran - Sharecosttrip Majalengka",
 };
 
-const DUMMY_PAYMENTS = [
-  { id: "PAY-1001", bookingId: "BK-1024", name: "Budi Santoso", date: "24 Sep 2026", type: "DP", amount: 500000, method: "BCA", status: "Terverifikasi" },
-  { id: "PAY-1002", bookingId: "BK-1023", name: "Siti Aminah", date: "23 Sep 2026", type: "Pelunasan", amount: 650000, method: "Mandiri", status: "Terverifikasi" },
-  { id: "PAY-1003", bookingId: "BK-1022", name: "Andi Wijaya", date: "22 Sep 2026", type: "DP", amount: 1200000, method: "BCA", status: "Menunggu Verifikasi" },
-];
+export const revalidate = 0;
 
-export default function AdminPaymentsPage() {
+export default async function AdminPaymentsPage() {
+  const { data: payments, error } = await supabase
+    .from('payments')
+    .select('*, bookings(booking_code, full_name)')
+    .order('created_at', { ascending: false });
+
+  if (error) console.error("Error fetching payments:", error);
+  const safePayments = payments || [];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -78,19 +83,19 @@ export default function AdminPaymentsPage() {
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
           <p className="text-sm font-medium text-muted-foreground">Total Penerimaan Bulan Ini</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold">Rp 12.450.000</h3>
+            <h3 className="text-2xl font-bold">Rp 0</h3>
           </div>
         </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
           <p className="text-sm font-medium text-muted-foreground">Menunggu Verifikasi</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold text-amber-600">3 Transaksi</h3>
+            <h3 className="text-2xl font-bold text-amber-600">0 Transaksi</h3>
           </div>
         </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
           <p className="text-sm font-medium text-muted-foreground">Total Piutang (Belum Lunas)</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold text-red-600">Rp 4.200.000</h3>
+            <h3 className="text-2xl font-bold text-red-600">Rp 0</h3>
           </div>
         </div>
       </div>
@@ -114,9 +119,8 @@ export default function AdminPaymentsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>ID Pembayaran</TableHead>
-              <TableHead>Booking ID</TableHead>
+              <TableHead>Booking</TableHead>
               <TableHead>Tanggal</TableHead>
-              <TableHead>Jenis</TableHead>
               <TableHead>Metode</TableHead>
               <TableHead className="text-right">Jumlah</TableHead>
               <TableHead>Status</TableHead>
@@ -124,29 +128,35 @@ export default function AdminPaymentsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {DUMMY_PAYMENTS.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell className="font-medium">{payment.id}</TableCell>
-                <TableCell>
-                  <div className="font-medium">{payment.bookingId}</div>
-                  <div className="text-xs text-muted-foreground">{payment.name}</div>
-                </TableCell>
-                <TableCell>{payment.date}</TableCell>
-                <TableCell>{payment.type}</TableCell>
-                <TableCell>{payment.method}</TableCell>
-                <TableCell className="text-right font-medium">
-                  Rp {payment.amount.toLocaleString('id-ID')}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={payment.status === "Terverifikasi" ? "default" : "secondary"}>
-                    {payment.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="sm">Verifikasi</Button>
-                </TableCell>
+            {safePayments.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Belum ada data pembayaran.</TableCell>
               </TableRow>
-            ))}
+            ) : safePayments.map((payment) => {
+              const payDate = new Date(payment.payment_date || payment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+              return (
+                <TableRow key={payment.id}>
+                  <TableCell className="font-medium">{payment.id.substring(0, 8)}</TableCell>
+                  <TableCell>
+                    <div className="font-medium">{payment.bookings?.booking_code || '-'}</div>
+                    <div className="text-xs text-muted-foreground">{payment.bookings?.full_name || '-'}</div>
+                  </TableCell>
+                  <TableCell>{payDate}</TableCell>
+                  <TableCell>{payment.payment_method}</TableCell>
+                  <TableCell className="text-right font-medium">
+                    Rp {(payment.amount || 0).toLocaleString('id-ID')}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={payment.status === "Terverifikasi" ? "default" : "secondary"}>
+                      {payment.status || 'Menunggu'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="sm">Verifikasi</Button>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>

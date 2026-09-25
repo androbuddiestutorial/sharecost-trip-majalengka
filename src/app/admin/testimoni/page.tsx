@@ -2,18 +2,23 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/lib/supabase";
 
 export const metadata = {
   title: "Kelola Testimoni - Sharecosttrip Majalengka",
 };
 
-const DUMMY_TESTIMONI = [
-  { id: 1, name: "Budi Santoso", trip: "Gunung Ciremai", review: "Seru banget, guide-nya ramah!", status: "Published" },
-  { id: 2, name: "Siti Aminah", trip: "Gunung Merbabu", review: "Makanannya enak-enak, rekomen!", status: "Published" },
-  { id: 3, name: "Andi Wijaya", trip: "Gunung Prau", review: "View sunrise terbaik.", status: "Draft" },
-];
+export const revalidate = 0;
 
-export default function AdminTestimoniPage() {
+export default async function AdminTestimoniPage() {
+  const { data: testimonials, error } = await supabase
+    .from('testimonials')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) console.error("Error fetching testimonials:", error);
+  const safeTestimonials = testimonials || [];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -33,10 +38,14 @@ export default function AdminTestimoniPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {DUMMY_TESTIMONI.map((item) => (
+            {safeTestimonials.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Belum ada testimoni.</TableCell>
+              </TableRow>
+            ) : safeTestimonials.map((item) => (
               <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.name}</TableCell>
-                <TableCell>{item.trip}</TableCell>
+                <TableCell className="font-medium">{item.participant_name}</TableCell>
+                <TableCell>{item.trip_name}</TableCell>
                 <TableCell className="text-muted-foreground text-sm truncate max-w-[300px]">{item.review}</TableCell>
                 <TableCell>
                   <Badge variant={item.status === "Published" ? "default" : "secondary"}>

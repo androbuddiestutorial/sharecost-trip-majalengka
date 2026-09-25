@@ -3,17 +3,23 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Edit } from "lucide-react";
 import Image from "next/image";
+import { supabase } from "@/lib/supabase";
 
 export const metadata = {
   title: "Kelola Galeri - Sharecosttrip Majalengka",
 };
 
-const DUMMY_GALLERY = [
-  { id: 1, title: "Puncak Ciremai", category: "Gunung Ciremai", img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop" },
-  { id: 2, title: "Sabana Merbabu", category: "Gunung Merbabu", img: "https://images.unsplash.com/photo-1522362375878-a734685794dc?q=80&w=800&auto=format&fit=crop" },
-];
+export const revalidate = 0;
 
-export default function AdminGalleryPage() {
+export default async function AdminGalleryPage() {
+  const { data: gallery, error } = await supabase
+    .from('gallery')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) console.error("Error fetching gallery:", error);
+  const safeGallery = gallery || [];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -32,11 +38,15 @@ export default function AdminGalleryPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {DUMMY_GALLERY.map((item) => (
+            {safeGallery.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Belum ada foto galeri.</TableCell>
+              </TableRow>
+            ) : safeGallery.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
                   <div className="relative h-12 w-16 rounded overflow-hidden">
-                    <Image src={item.img} alt={item.title} fill className="object-cover" />
+                    <Image src={item.image_url} alt={item.title} fill className="object-cover" />
                   </div>
                 </TableCell>
                 <TableCell className="font-medium">{item.title}</TableCell>

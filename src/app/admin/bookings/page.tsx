@@ -13,21 +13,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 
 export const metadata = {
   title: "Kelola Bookings - Sharecosttrip Majalengka",
 };
 
-const DUMMY_BOOKINGS = [
-  { id: "BK-1024", name: "Budi Santoso", whatsapp: "081234567890", destination: "Gunung Ciremai", date: "24 Okt 2026", pax: 2, status: "Menunggu Verifikasi", payment: "Belum Bayar", total: 1100000 },
-  { id: "BK-1023", name: "Siti Aminah", whatsapp: "081298765432", destination: "Gunung Slamet", date: "15 Nov 2026", pax: 1, status: "Lunas", payment: "Lunas", total: 650000 },
-  { id: "BK-1022", name: "Andi Wijaya", whatsapp: "085612345678", destination: "Gunung Sindoro", date: "05 Des 2026", pax: 4, status: "Terdaftar", payment: "DP 50%", total: 2400000 },
-  { id: "BK-1021", name: "Rina Marlina", whatsapp: "081912345678", destination: "Gunung Ciremai", date: "24 Okt 2026", pax: 1, status: "Menunggu Verifikasi", payment: "Belum Bayar", total: 550000 },
-  { id: "BK-1020", name: "Doni Pratama", whatsapp: "082112345678", destination: "Gunung Rinjani", date: "10 Des 2026", pax: 2, status: "Lunas", payment: "Lunas", total: 4500000 },
-  { id: "BK-1019", name: "Eka Saputra", whatsapp: "081312345678", destination: "Gunung Prau", date: "20 Nov 2026", pax: 5, status: "Dibatalkan", payment: "Refund", total: 2500000 },
-];
+export const revalidate = 0; // Disable cache for admin pages
 
-export default function AdminBookingsPage() {
+export default async function AdminBookingsPage() {
+  const { data: bookings, error } = await supabase
+    .from('bookings')
+    .select('*, trips(date_start, destinations(title))')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching bookings:", error);
+  }
+
+  const safeBookings = bookings || [];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -67,55 +72,64 @@ export default function AdminBookingsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {DUMMY_BOOKINGS.map((booking) => (
-              <TableRow key={booking.id}>
-                <TableCell className="font-medium">{booking.id}</TableCell>
-                <TableCell>
-                  <div className="font-medium">{booking.name}</div>
-                  <div className="text-xs text-muted-foreground">{booking.whatsapp}</div>
-                </TableCell>
-                <TableCell>
-                  <div>{booking.destination}</div>
-                  <div className="text-xs text-muted-foreground">{booking.date}</div>
-                </TableCell>
-                <TableCell className="text-center">{booking.pax}</TableCell>
-                <TableCell>
-                  <Badge 
-                    variant={
-                      booking.status === "Lunas" || booking.status === "Terdaftar" ? "default" :
-                      booking.status === "Dibatalkan" ? "destructive" : "secondary"
-                    }
-                  >
-                    {booking.status}
-                  </Badge>
-                  <div className="text-[10px] text-muted-foreground mt-1">Pay: {booking.payment}</div>
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  Rp {booking.total.toLocaleString('id-ID')}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0")}>
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                      <DropdownMenuItem render={<Link href={`/admin/bookings/${booking.id}`} className="flex items-center cursor-pointer" />}>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Lihat Detail
-                      </DropdownMenuItem>
-                      <DropdownMenuItem render={<Link href={`https://wa.me/62${booking.whatsapp.substring(1)}?text=Halo%20${booking.name},%20kami%20dari%20SHARECOSTTRIP%20MAJALENGKA.%20Terkait%20booking%20ID%20${booking.id}...`} target="_blank" className="flex items-center cursor-pointer text-green-600 focus:text-green-600" />}>
-                        <MessageCircle className="mr-2 h-4 w-4" />
-                        Chat WhatsApp
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>Ubah Status</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+            {safeBookings.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Belum ada data pendaftaran.</TableCell>
               </TableRow>
-            ))}
+            ) : safeBookings.map((booking) => {
+              const tripName = booking.trips?.destinations?.title || 'Destinasi Tidak Diketahui';
+              const tripDate = booking.trips?.date_start ? new Date(booking.trips.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+              
+              return (
+                <TableRow key={booking.id}>
+                  <TableCell className="font-medium">{booking.booking_code || booking.id.substring(0, 8)}</TableCell>
+                  <TableCell>
+                    <div className="font-medium">{booking.full_name}</div>
+                    <div className="text-xs text-muted-foreground">{booking.whatsapp}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div>{tripName}</div>
+                    <div className="text-xs text-muted-foreground">{tripDate}</div>
+                  </TableCell>
+                  <TableCell className="text-center">{booking.pax}</TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={
+                        booking.status === "Lunas" || booking.status === "Terverifikasi" ? "default" :
+                        booking.status === "Dibatalkan" ? "destructive" : "secondary"
+                      }
+                    >
+                      {booking.status}
+                    </Badge>
+                    <div className="text-[10px] text-muted-foreground mt-1">Pay: {booking.payment_status}</div>
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    Rp {(booking.total_amount || 0).toLocaleString('id-ID')}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0")}>
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Aksi</DropdownMenuLabel>
+                        <DropdownMenuItem render={<Link href={`/admin/bookings/${booking.id}`} className="flex items-center cursor-pointer" />}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          Lihat Detail
+                        </DropdownMenuItem>
+                        <DropdownMenuItem render={<Link href={`https://wa.me/${booking.whatsapp.startsWith('0') ? '62' + booking.whatsapp.substring(1) : booking.whatsapp}?text=Halo%20${booking.full_name},%20kami%20dari%20SHARECOSTTRIP%20MAJALENGKA.%20Terkait%20booking%20ID%20${booking.booking_code}...`} target="_blank" className="flex items-center cursor-pointer text-green-600 focus:text-green-600" />}>
+                          <MessageCircle className="mr-2 h-4 w-4" />
+                          Chat WhatsApp
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Ubah Status</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>
