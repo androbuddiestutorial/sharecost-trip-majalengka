@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, AtSign, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, AtSign, MessageCircle, Video } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
@@ -21,7 +21,7 @@ export default function KontakPage() {
               <MapPin className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-lg">Basecamp / Kantor</h3>
-                <p className="text-muted-foreground">Jl. Raya Majalengka - Rajagaluh No. 123<br/>Kabupaten Majalengka, Jawa Barat 45411</p>
+                <p className="text-muted-foreground">Desa Ciborelang Kec. Jatiwangi<br/>Kab. Majalengka, Jawa Barat 45454</p>
               </div>
             </div>
             
@@ -29,7 +29,7 @@ export default function KontakPage() {
               <Phone className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-lg">Telepon / WhatsApp</h3>
-                <p className="text-muted-foreground">+62 812-3456-7890</p>
+                <p className="text-muted-foreground">085862284166</p>
               </div>
             </div>
             
@@ -37,7 +37,7 @@ export default function KontakPage() {
               <Mail className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-lg">Email</h3>
-                <p className="text-muted-foreground">info@sharecosttrip-majalengka.com</p>
+                <p className="text-muted-foreground">sharecosttripmajalengka@gmail.com</p>
               </div>
             </div>
             
@@ -45,7 +45,19 @@ export default function KontakPage() {
               <AtSign className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-lg">Instagram</h3>
-                <p className="text-muted-foreground">@sharecosttrip_majalengka</p>
+                <Link href="https://instagram.com/sharecosttripmajalengka" target="_blank" className="text-primary hover:underline">
+                  @sharecosttripmajalengka
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex items-start">
+              <Video className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-lg">TikTok</h3>
+                <Link href="https://tiktok.com/@sharecosttripmajalengka" target="_blank" className="text-primary hover:underline">
+                  @sharecosttripmajalengka
+                </Link>
               </div>
             </div>
           </CardContent>
@@ -57,7 +69,7 @@ export default function KontakPage() {
             <h3 className="text-2xl font-bold">Fast Response via WhatsApp</h3>
             <p className="text-muted-foreground">Untuk respon yang lebih cepat, silakan klik tombol di bawah ini untuk langsung terhubung dengan Admin kami via WhatsApp.</p>
             <Link 
-              href="https://wa.me/6281234567890?text=Halo%20Admin%20ShareCostTrip,%20saya%20ingin%20bertanya..." 
+              href="https://wa.me/6285862284166?text=Halo%20Admin%20Sharecosttrip%20Majalengka,%20saya%20ingin%20bertanya..." 
               target="_blank"
               className={cn(buttonVariants({ size: "lg" }), "w-full text-lg")}
             >

@@ -35,9 +35,9 @@ export function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Kontak Kami</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Majalengka, Jawa Barat</li>
-              <li>WhatsApp: +62 812-3456-7890</li>
-              <li>Email: info@sharecosttrip.com</li>
+              <li>Desa Ciborelang Kec. Jatiwangi<br/>Kab. Majalengka, 45454</li>
+              <li>WhatsApp: 085862284166</li>
+              <li>Email: sharecosttripmajalengka@gmail.com</li>
             </ul>
           </div>
         </div>
