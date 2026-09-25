@@ -121,10 +121,27 @@ export async function POST(request: Request) {
           `
         });
       }
-    } catch (e) {
-      console.error("Email error:", e);
-    }
     // --- NOTIFICATIONS END ---
+
+    // --- FIREBASE FCM NOTIFICATION ---
+    try {
+      const adminSdk = (await import('@/lib/firebaseAdmin')).default;
+      await adminSdk.messaging().send({
+        topic: 'admin_alerts',
+        notification: {
+          title: notifTitle,
+          body: `Kode: ${booking_code} | Oleh: ${body.namaLengkap} (${body.jumlahPeserta || '1'} org)`
+        },
+        android: {
+          priority: 'high',
+          notification: { sound: 'default' }
+        }
+      });
+      console.log("FCM Notification sent!");
+    } catch (e) {
+      console.error("FCM Error:", e);
+    }
+    // --- FIREBASE FCM END ---
 
     return NextResponse.json({
       success: true,
