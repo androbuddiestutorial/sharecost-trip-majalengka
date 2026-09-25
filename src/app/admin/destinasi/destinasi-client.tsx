@@ -15,8 +15,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, UploadCloud, Link as LinkIcon } from "lucide-react";
 import { createDestinasi, updateDestinasi, deleteDestinasi } from "./actions";
+import imageCompression from "browser-image-compression";
+import { createClient } from "@/utils/supabase/client";
 
 export type DestinasiData = {
   id: string;
@@ -25,17 +27,68 @@ export type DestinasiData = {
   image_url: string;
 };
 
+// Helper function to compress and upload image
+async function uploadAndCompressImage(file: File) {
+  try {
+    const options = {
+      maxSizeMB: 0.3,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+      fileType: "image/jpeg"
+    };
+    
+    const compressedFile = await imageCompression(file, options);
+    const supabase = createClient();
+    const fileExt = "jpg";
+    const fileName = `destinasi-${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+    
+    const { data, error } = await supabase.storage
+      .from('gallery')
+      .upload(fileName, compressedFile, {
+        cacheControl: '3600',
+        upsert: false
+      });
+      
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('gallery')
+      .getPublicUrl(fileName);
+      
+    return publicUrl;
+  } catch (error) {
+    console.error("Upload error:", error);
+    throw error;
+  }
+}
+
 export function CreateDestinasiButton() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadMode, setUploadMode] = useState<"url" | "upload">("url");
+  const [file, setFile] = useState<File | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    await createDestinasi(formData);
-    setLoading(false);
-    setOpen(false);
+    
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      // Jika mode upload dan ada file yang dipilih
+      if (uploadMode === "upload" && file) {
+        const uploadedUrl = await uploadAndCompressImage(file);
+        formData.set("image_url", uploadedUrl);
+      }
+      
+      await createDestinasi(formData);
+      setOpen(false);
+      setFile(null);
+    } catch (err) {
+      alert("Gagal menyimpan destinasi. Pastikan bucket Supabase Anda bisa diakses.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -53,10 +106,50 @@ export function CreateDestinasiButton() {
             <Label htmlFor="name">Nama Gunung / Destinasi</Label>
             <Input id="name" name="name" required placeholder="Contoh: Gunung Ciremai" />
           </div>
+          
           <div className="space-y-2">
-            <Label htmlFor="image_url">URL Gambar (Sampul)</Label>
-            <Input id="image_url" name="image_url" required placeholder="https://..." />
+            <div className="flex items-center justify-between">
+              <Label>Gambar Sampul</Label>
+              <div className="flex gap-2">
+                <Button 
+                  type="button" 
+                  variant={uploadMode === "url" ? "secondary" : "ghost"} 
+                  size="sm" 
+                  onClick={() => setUploadMode("url")}
+                  className="h-7 text-xs"
+                >
+                  <LinkIcon className="h-3 w-3 mr-1" /> URL
+                </Button>
+                <Button 
+                  type="button" 
+                  variant={uploadMode === "upload" ? "secondary" : "ghost"} 
+                  size="sm" 
+                  onClick={() => setUploadMode("upload")}
+                  className="h-7 text-xs"
+                >
+                  <UploadCloud className="h-3 w-3 mr-1" /> Upload File
+                </Button>
+              </div>
+            </div>
+            
+            {uploadMode === "url" ? (
+              <Input id="image_url" name="image_url" required placeholder="https://..." />
+            ) : (
+              <Input 
+                id="image_file" 
+                type="file" 
+                accept="image/*" 
+                required 
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+            )}
+            <p className="text-xs text-muted-foreground mt-1">
+              {uploadMode === "upload" 
+                ? "Gambar akan dikompres otomatis (<300KB) dan diunggah ke Supabase (Bucket 'gallery')." 
+                : "Masukkan link URL gambar publik (Unsplash, dll)."}
+            </p>
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="description">Deskripsi</Label>
             <Textarea id="description" name="description" required placeholder="Ceritakan tentang destinasi ini..." rows={4} />
@@ -77,14 +170,31 @@ export function CreateDestinasiButton() {
 export function EditDestinasiButton({ item }: { item: DestinasiData }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploadMode, setUploadMode] = useState<"url" | "upload">("url");
+  const [file, setFile] = useState<File | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    await updateDestinasi(item.id, formData);
-    setLoading(false);
-    setOpen(false);
+    
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      if (uploadMode === "upload" && file) {
+        const uploadedUrl = await uploadAndCompressImage(file);
+        formData.set("image_url", uploadedUrl);
+      } else if (uploadMode === "url") {
+        // Fallback in case the user clears the URL input, but they shouldn't since it's required
+      }
+      
+      await updateDestinasi(item.id, formData);
+      setOpen(false);
+      setFile(null);
+    } catch (err) {
+      alert("Gagal mengubah destinasi.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -101,10 +211,45 @@ export function EditDestinasiButton({ item }: { item: DestinasiData }) {
             <Label htmlFor="name">Nama Gunung / Destinasi</Label>
             <Input id="name" name="name" defaultValue={item.name} required />
           </div>
+          
           <div className="space-y-2">
-            <Label htmlFor="image_url">URL Gambar (Sampul)</Label>
-            <Input id="image_url" name="image_url" defaultValue={item.image_url} required />
+            <div className="flex items-center justify-between">
+              <Label>Gambar Sampul</Label>
+              <div className="flex gap-2">
+                <Button 
+                  type="button" 
+                  variant={uploadMode === "url" ? "secondary" : "ghost"} 
+                  size="sm" 
+                  onClick={() => setUploadMode("url")}
+                  className="h-7 text-xs"
+                >
+                  <LinkIcon className="h-3 w-3 mr-1" /> URL
+                </Button>
+                <Button 
+                  type="button" 
+                  variant={uploadMode === "upload" ? "secondary" : "ghost"} 
+                  size="sm" 
+                  onClick={() => setUploadMode("upload")}
+                  className="h-7 text-xs"
+                >
+                  <UploadCloud className="h-3 w-3 mr-1" /> Upload File
+                </Button>
+              </div>
+            </div>
+            
+            {uploadMode === "url" ? (
+              <Input id="image_url" name="image_url" defaultValue={item.image_url} required />
+            ) : (
+              <Input 
+                id="image_file" 
+                type="file" 
+                accept="image/*" 
+                required 
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+            )}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="description">Deskripsi</Label>
             <Textarea id="description" name="description" defaultValue={item.description} required rows={4} />
