@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { CreatePackageButton, EditPackageButton, DeletePackageButton } from "./paket-client";
 
 export const metadata = {
   title: "Kelola Paket - Sharecosttrip Majalengka",
@@ -23,7 +22,7 @@ export default async function AdminPaketPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Paket Trip</h2>
-        <Button className="gap-2"><Plus className="h-4 w-4" /> Tambah Paket</Button>
+        <CreatePackageButton />
       </div>
 
       <div className="rounded-md border bg-white overflow-hidden">
@@ -67,8 +66,8 @@ export default async function AdminPaketPage() {
                     {pkg.is_popular && <Badge className="bg-amber-500 hover:bg-amber-600">Terpopuler</Badge>}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button variant="ghost" size="icon"><Edit className="h-4 w-4 text-muted-foreground" /></Button>
-                    <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <EditPackageButton pkg={pkg} />
+                    <DeletePackageButton id={pkg.id} />
                   </TableCell>
                 </TableRow>
               )
