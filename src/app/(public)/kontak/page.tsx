@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Instagram, MessageCircle } from "lucide-react";
+import { MapPin, Phone, Mail, AtSign, MessageCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
@@ -42,7 +42,7 @@ export default function KontakPage() {
             </div>
             
             <div className="flex items-start">
-              <Instagram className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
+              <AtSign className="h-6 w-6 text-primary mr-4 shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-lg">Instagram</h3>
                 <p className="text-muted-foreground">@sharecosttrip_majalengka</p>
