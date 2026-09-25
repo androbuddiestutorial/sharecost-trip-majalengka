@@ -128,8 +128,8 @@ export async function POST(request: Request) {
 
     // --- FIREBASE FCM NOTIFICATION ---
     try {
-      const adminSdk = (await import('@/lib/firebaseAdmin')).default;
-      await adminSdk.messaging().send({
+      const { messaging } = await import('@/lib/firebaseAdmin');
+      await messaging.send({
         topic: 'admin_alerts',
         notification: {
           title: notifTitle,
