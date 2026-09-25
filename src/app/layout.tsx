@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://sharecosttripmajalengka.biz.id"),
   title: "Sharecosttrip Majalengka - Open Trip Gunung",
   description: "Teman perjalanan untuk menjelajahi berbagai destinasi gunung dengan perjalanan yang terorganisir, aman, dan menyenangkan.",
 };
