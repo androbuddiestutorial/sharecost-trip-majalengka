@@ -20,13 +20,13 @@ const formSchema = z.object({
   // Step 1: Data Pemesan
   namaLengkap: z.string().min(2, "Nama lengkap harus diisi"),
   alamatLengkap: z.string().min(5, "Alamat lengkap harus diisi"),
-  jenisKelamin: z.enum(["Laki-laki", "Perempuan"], { required_error: "Pilih jenis kelamin" }),
+  jenisKelamin: z.enum(["Laki-laki", "Perempuan"], { message: "Pilih jenis kelamin" }),
   tanggalLahir: z.string().min(1, "Tanggal lahir harus diisi"),
   whatsapp: z.string().min(9, "Nomor WhatsApp tidak valid"),
   email: z.string().email("Email tidak valid"),
 
   // Step 2: Data Keberangkatan
-  jenisTrip: z.enum(["Open Trip", "Regular Trip", "Private Trip"], { required_error: "Pilih jenis trip" }),
+  jenisTrip: z.enum(["Open Trip", "Regular Trip", "Private Trip"], { message: "Pilih jenis trip" }),
   destinasi: z.string().min(1, "Pilih destinasi"),
   jadwalTrip: z.string().min(1, "Pilih jadwal trip"),
   meetingPoint: z.string().min(1, "Pilih meeting point"),
@@ -44,18 +44,18 @@ const formSchema = z.object({
   kontakDaruratWhatsapp: z.string().min(9, "Nomor WhatsApp tidak valid"),
 
   // Step 4: Kondisi & Kebutuhan
-  adaKondisiKesehatan: z.enum(["Iya", "Tidak"], { required_error: "Pilih salah satu" }),
+  adaKondisiKesehatan: z.enum(["Iya", "Tidak"], { message: "Pilih salah satu" }),
   penjelasanKondisiKesehatan: z.string().optional(),
 
   // Step 5: Informasi Tambahan
-  sumberInformasi: z.enum(["TikTok", "Instagram", "Kerabat/Teman", "Lainnya"], { required_error: "Pilih sumber informasi" }),
+  sumberInformasi: z.enum(["TikTok", "Instagram", "Kerabat/Teman", "Lainnya"], { message: "Pilih sumber informasi" }),
   usernameMedsos: z.string().optional(),
 
   // Step 6: Persetujuan
-  setujuDataBenar: z.literal(true, { errorMap: () => ({ message: "Anda harus menyetujui pernyataan ini" }) }),
-  setujuKetentuan: z.literal(true, { errorMap: () => ({ message: "Anda harus menyetujui pernyataan ini" }) }),
-  setujuKeselamatan: z.literal(true, { errorMap: () => ({ message: "Anda harus menyetujui pernyataan ini" }) }),
-  setujuPenggunaanData: z.literal(true, { errorMap: () => ({ message: "Anda harus menyetujui pernyataan ini" }) }),
+  setujuDataBenar: z.boolean().refine((val) => val === true, "Anda harus menyetujui pernyataan ini"),
+  setujuKetentuan: z.boolean().refine((val) => val === true, "Anda harus menyetujui pernyataan ini"),
+  setujuKeselamatan: z.boolean().refine((val) => val === true, "Anda harus menyetujui pernyataan ini"),
+  setujuPenggunaanData: z.boolean().refine((val) => val === true, "Anda harus menyetujui pernyataan ini"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -351,7 +351,7 @@ export default function BookingPage() {
                       <Select 
                         onValueChange={(val) => {
                           field.onChange(val);
-                          handlePesertaChange(val);
+                          handlePesertaChange(val as string);
                         }} 
                         value={field.value || ""}
                       >
@@ -506,7 +506,7 @@ export default function BookingPage() {
                       name="setujuDataBenar"
                       control={control}
                       render={({ field }) => (
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} id="setujuDataBenar" />
+                        <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id="setujuDataBenar" />
                       )}
                     />
                     <div className="space-y-1 leading-none">
@@ -520,7 +520,7 @@ export default function BookingPage() {
                       name="setujuKetentuan"
                       control={control}
                       render={({ field }) => (
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} id="setujuKetentuan" />
+                        <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id="setujuKetentuan" />
                       )}
                     />
                     <div className="space-y-1 leading-none">
@@ -534,7 +534,7 @@ export default function BookingPage() {
                       name="setujuKeselamatan"
                       control={control}
                       render={({ field }) => (
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} id="setujuKeselamatan" />
+                        <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id="setujuKeselamatan" />
                       )}
                     />
                     <div className="space-y-1 leading-none">
@@ -548,7 +548,7 @@ export default function BookingPage() {
                       name="setujuPenggunaanData"
                       control={control}
                       render={({ field }) => (
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} id="setujuPenggunaanData" />
+                        <Checkbox checked={!!field.value} onCheckedChange={field.onChange} id="setujuPenggunaanData" />
                       )}
                     />
                     <div className="space-y-1 leading-none">
