@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'screens/login_screen.dart';
+import 'screens/dashboard_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://wlpwrgcnhacsxgyjcvqr.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
+  );
+
   runApp(const AdminApp());
 }
 
@@ -12,100 +23,54 @@ class AdminApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sharecosttrip Admin',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      home: const AuthWrapper(),
     );
   }
 }
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<AuthWrapper> createState() => _AuthWrapperState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController(text: 'admin@example.com');
-  final TextEditingController _passwordController = TextEditingController(text: 'password');
-
-  void _login() {
-    // Simulasi Login -> Nanti akan memanggil http.post('/api/auth/login')
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const DashboardScreen()),
-    );
-  }
+class _AuthWrapperState extends State<AuthWrapper> {
+  bool _isLoading = true;
+  bool _isAuthenticated = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.terrain, size: 80, color: Colors.blueGrey),
-              const SizedBox(height: 16),
-              const Text('Admin Login', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 32),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: FilledButton(
-                  onPressed: _login,
-                  child: const Text('Masuk'),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _checkAuth();
   }
-}
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  Future<void> _checkAuth() async {
+    final session = Supabase.instance.client.auth.currentSession;
+    setState(() {
+      _isAuthenticated = session != null;
+      _isLoading = false;
+    });
+
+    // Listen to auth state changes
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      if (event == AuthChangeEvent.signedIn) {
+        setState(() => _isAuthenticated = true);
+      } else if (event == AuthChangeEvent.signedOut) {
+        setState(() => _isAuthenticated = false);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Dashboard'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Selamat Datang di APK Admin!'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Simulasi Fetch ke /api/bookings
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Mengambil data dari Next.js API...')),
-                );
-              },
-              child: const Text('Muat Data Pendaftaran Terbaru'),
-            )
-          ],
-        ),
-      ),
-    );
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    return _isAuthenticated ? const DashboardScreen() : const LoginScreen();
   }
 }
