@@ -3,33 +3,7 @@ import { supabase } from "@/lib/supabase";
 import webpush from "web-push";
 import nodemailer from "nodemailer";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status');
-  
-  let query = supabase.from('bookings').select('*').order('created_at', { ascending: false });
-  
-  if (status) {
-    query = query.eq('status', status);
-  }
-
-  const { data, error, count } = await query;
-
-  if (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({
-    success: true,
-    data: data,
-    meta: {
-      total: count || (data ? data.length : 0),
-      page: 1,
-      limit: 50
-    },
-    message: "Bookings retrieved successfully"
-  });
-}
+// Removed insecure GET route.
 
 export async function POST(request: Request) {
   try {
@@ -162,3 +136,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: error.message }, { status: 400 });
   }
 }
+

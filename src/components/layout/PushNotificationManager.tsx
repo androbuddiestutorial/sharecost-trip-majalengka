@@ -18,13 +18,6 @@ const urlBase64ToUint8Array = (base64String: string) => {
 }
 
 export function PushNotificationManager() {
-  useEffect(() => {
-    // Check if the browser supports service workers and push notifications
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      registerServiceWorkerAndSubscribe();
-    }
-  }, []);
-
   async function registerServiceWorkerAndSubscribe() {
     try {
       // 1. Register Service Worker
@@ -70,5 +63,13 @@ export function PushNotificationManager() {
     }
   }
 
+  useEffect(() => {
+    // Check if the browser supports service workers and push notifications
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      registerServiceWorkerAndSubscribe();
+    }
+  }, []);
+
   return null; // This component doesn't render anything visible
 }
+

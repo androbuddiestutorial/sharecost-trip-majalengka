@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(request: Request) {
   try {
     const subscription = await request.json();
+
+    const supabaseServer = await createClient();
+    const { data: { user } } = await supabaseServer.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
 
     if (!subscription || !subscription.endpoint) {
       return NextResponse.json({ success: false, message: "Invalid subscription" }, { status: 400 });
