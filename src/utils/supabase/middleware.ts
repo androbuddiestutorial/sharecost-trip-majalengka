@@ -44,8 +44,12 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Only allow the official admin email
-    if (user.email !== 'sharecosttripmajalengka@gmail.com') {
+    // Only allow the official admin email(s) from Environment Variables
+    // Default fallback to the main email if ENV is not set yet
+    const adminEmailsString = process.env.ADMIN_EMAILS || 'sharecosttripmajalengka@gmail.com';
+    const allowedAdmins = adminEmailsString.split(',').map(email => email.trim().toLowerCase());
+
+    if (!user.email || !allowedAdmins.includes(user.email.toLowerCase())) {
       // If someone else logs in, sign them out or redirect them to home
       // Since we can't easily sign out from middleware, we redirect to home with an error param
       const url = request.nextUrl.clone()
