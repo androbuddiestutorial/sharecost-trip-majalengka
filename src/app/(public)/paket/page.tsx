@@ -14,6 +14,7 @@ export const revalidate = 60;
 export default async function PaketPage() {
   const { data: packages, error } = await supabase
     .from('packages')
+    .select('*')
     .order('created_at', { ascending: true });
 
   const safePackages = packages || [];
