@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -6,7 +7,10 @@ export function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1 space-y-4">
-            <h3 className="font-bold text-xl tracking-tight text-primary">SHARECOSTTRIP</h3>
+            <div className="flex items-center gap-2">
+              <Image src="/logo.png" alt="Sharecosttrip Logo" width={40} height={40} className="object-contain" />
+              <h3 className="font-bold text-xl tracking-tight text-primary">SHARECOSTTRIP</h3>
+            </div>
             <p className="text-sm text-muted-foreground">
               Teman perjalanan untuk menjelajahi berbagai destinasi gunung dengan perjalanan yang terorganisir, aman, dan menyenangkan.
             </p>

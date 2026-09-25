@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Mountain, LayoutDashboard, Users, CalendarDays, Wallet, Menu, Search, Bell, LogOut, FileText, Image as ImageIcon, MessageSquare, Package, MapPin } from "lucide-react";
+import { LayoutDashboard, Users, CalendarDays, Wallet, Menu, Search, Bell, LogOut, FileText, Image as ImageIcon, MessageSquare, Package, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -40,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="hidden w-64 flex-col border-r bg-background md:flex">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px]">
           <Link href="/admin" className="flex items-center gap-2 font-semibold text-primary">
-            <Mountain className="h-6 w-6" />
+            <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
             <span>SHARECOSTTRIP</span>
           </Link>
         </div>
@@ -75,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <SheetContent side="left" className="flex flex-col w-64 p-0">
               <div className="flex h-14 items-center border-b px-4">
                 <Link href="/admin" className="flex items-center gap-2 font-semibold text-primary" onClick={() => setIsSidebarOpen(false)}>
-                  <Mountain className="h-6 w-6" />
+                  <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
                   <span>SHARECOSTTRIP</span>
                 </Link>
               </div>
