@@ -39,9 +39,14 @@ export function Navbar() {
               {route.name}
             </Link>
           ))}
-          <Link href="/booking" className={buttonVariants()}>
-            Daftar Trip
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/cek-pesanan" className={buttonVariants({ variant: "outline" })}>
+              Cek Pesanan
+            </Link>
+            <Link href="/booking" className={buttonVariants()}>
+              Daftar Trip
+            </Link>
+          </div>
         </nav>
 
         {/* Mobile Navigation */}
@@ -65,7 +70,10 @@ export function Navbar() {
                   {route.name}
                 </Link>
               ))}
-              <div className="mt-8">
+              <div className="mt-8 flex flex-col gap-3">
+                <Link href="/cek-pesanan" onClick={() => setIsOpen(false)} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full text-lg")}>
+                  Cek Pesanan
+                </Link>
                 <Link href="/booking" onClick={() => setIsOpen(false)} className={cn(buttonVariants({ size: "lg" }), "w-full text-lg")}>
                   Daftar Trip
                 </Link>
