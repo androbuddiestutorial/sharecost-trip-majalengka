@@ -17,6 +17,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { PushNotificationManager } from "@/components/layout/PushNotificationManager";
 
 const sidebarLinks = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -126,6 +127,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <PushNotificationManager />
           {children}
         </main>
       </div>

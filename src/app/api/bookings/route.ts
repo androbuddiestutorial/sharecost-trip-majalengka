@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import webpush from "web-push";
+import nodemailer from "nodemailer";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -84,6 +86,71 @@ export async function POST(request: Request) {
       has_condition: body.adaKondisiKesehatan === "Iya",
       description: body.penjelasanKondisiKesehatan || ""
     }]);
+
+    // --- NOTIFICATIONS START ---
+    const notifTitle = "🎉 Booking Baru Masuk!";
+    const notifBody = `Nama: ${body.namaLengkap}\nTrip: ${body.destinasi || 'Open Trip'}\nPax: ${body.jumlahPeserta || '1'} Orang`;
+
+    // 1. Send Web Push
+    try {
+      if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+        webpush.setVapidDetails(
+          'mailto:sharecosttripmajalengka@gmail.com',
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+          process.env.VAPID_PRIVATE_KEY
+        );
+
+        const { data: subs } = await supabase.from('push_subscriptions').select('*');
+        if (subs && subs.length > 0) {
+          const payload = JSON.stringify({ title: notifTitle, body: notifBody, url: '/admin/bookings' });
+          await Promise.all(subs.map(async (sub) => {
+            try {
+              await webpush.sendNotification({ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, payload);
+            } catch (err: any) {
+              if (err.statusCode === 410 || err.statusCode === 404) {
+                // Subscription has expired or is no longer valid
+                await supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+              }
+            }
+          }));
+        }
+      }
+    } catch (e) {
+      console.error("Web Push error:", e);
+    }
+
+    // 2. Send Email
+    try {
+      if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+          }
+        });
+
+        await transporter.sendMail({
+          from: `"Sistem Sharecosttrip" <${process.env.EMAIL_USER}>`,
+          to: 'sharecosttripmajalengka@gmail.com',
+          subject: notifTitle,
+          html: `
+            <h2>Ada Pendaftaran Trip Baru!</h2>
+            <p><strong>Kode Booking:</strong> ${booking_code}</p>
+            <p><strong>Nama:</strong> ${body.namaLengkap}</p>
+            <p><strong>WA:</strong> ${body.whatsapp}</p>
+            <p><strong>Jenis Trip:</strong> ${body.jenisTrip}</p>
+            <p><strong>Destinasi / Jadwal:</strong> ${body.destinasi || '-'} / ${body.jadwalTrip || '-'}</p>
+            <p><strong>Jumlah Peserta:</strong> ${body.jumlahPeserta || '1'} Orang</p>
+            <br/>
+            <a href="https://sharecosttripmajalengka.biz.id/admin/bookings" style="padding: 10px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">Buka Dashboard Admin</a>
+          `
+        });
+      }
+    } catch (e) {
+      console.error("Email error:", e);
+    }
+    // --- NOTIFICATIONS END ---
 
     return NextResponse.json({
       success: true,
