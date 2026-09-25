@@ -128,7 +128,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link href="/login" className="cursor-pointer w-full flex items-center" />}>
+              <DropdownMenuItem render={<Link href="/auth/logout" className="cursor-pointer w-full flex items-center" />}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Logout</span>
               </DropdownMenuItem>
