@@ -183,7 +183,7 @@ export default function BookingPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div className="container mx-auto px-4 pt-32 pb-12 max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-center">Pendaftaran Trip</h1>
         

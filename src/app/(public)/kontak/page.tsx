@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export default function KontakPage() {
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 pt-32 pb-12">
       <div className="text-center max-w-2xl mx-auto mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Hubungi Kami</h1>
         <p className="text-muted-foreground text-lg">Punya pertanyaan seputar trip, request Private Trip, atau butuh bantuan lainnya? Jangan ragu untuk menghubungi kami.</p>

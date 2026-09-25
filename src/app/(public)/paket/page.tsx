@@ -51,7 +51,7 @@ export default function PaketPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 pt-32 pb-12">
       <div className="text-center max-w-2xl mx-auto mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Pilihan Paket Trip</h1>
         <p className="text-muted-foreground text-lg">Pilih paket yang paling sesuai dengan kebutuhan pendakian Anda. Kami menyediakan layanan dari Open Trip hingga Private Trip.</p>
