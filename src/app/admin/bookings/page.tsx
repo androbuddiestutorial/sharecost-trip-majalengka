@@ -2,18 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, MoreHorizontal, Eye, MessageCircle } from "lucide-react";
-import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+import { Search, Filter } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { BookingActions } from "./booking-client";
 
 export const metadata = {
   title: "Kelola Bookings - Sharecosttrip Majalengka",
@@ -107,25 +98,7 @@ export default async function AdminBookingsPage() {
                     Rp {(booking.total_amount || 0).toLocaleString('id-ID')}
                   </TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 p-0")}>
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                        <DropdownMenuItem render={<Link href={`/admin/bookings/${booking.id}`} className="flex items-center cursor-pointer" />}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Lihat Detail
-                        </DropdownMenuItem>
-                        <DropdownMenuItem render={<Link href={`https://wa.me/${booking.whatsapp.startsWith('0') ? '62' + booking.whatsapp.substring(1) : booking.whatsapp}?text=Halo%20${booking.full_name},%20kami%20dari%20SHARECOSTTRIP%20MAJALENGKA.%20Terkait%20booking%20ID%20${booking.booking_code}...`} target="_blank" className="flex items-center cursor-pointer text-green-600 focus:text-green-600" />}>
-                          <MessageCircle className="mr-2 h-4 w-4" />
-                          Chat WhatsApp
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Ubah Status</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <BookingActions booking={booking} />
                   </TableCell>
                 </TableRow>
               )

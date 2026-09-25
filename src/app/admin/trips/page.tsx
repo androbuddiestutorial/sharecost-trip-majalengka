@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { CreateTripButton, EditTripButton, DeleteTripButton } from "./trips-client";
 
 export const metadata = {
   title: "Kelola Jadwal Trip - Sharecosttrip Majalengka",
@@ -11,19 +10,23 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminTripsPage() {
-  const { data: trips, error } = await supabase
-    .from('trips')
-    .select('*, destinations(title, price)')
-    .order('date_start', { ascending: true });
+  const [
+    { data: trips, error },
+    { data: destinations }
+  ] = await Promise.all([
+    supabase.from('trips').select('*, destinations(title, price)').order('date_start', { ascending: true }),
+    supabase.from('destinations').select('id, title').order('title', { ascending: true })
+  ]);
 
   if (error) console.error("Error fetching trips:", error);
   const safeTrips = trips || [];
+  const safeDestinations = destinations || [];
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Jadwal Trip</h2>
-        <Button className="gap-2"><Plus className="h-4 w-4" /> Buat Trip Baru</Button>
+        <CreateTripButton destinations={safeDestinations} />
       </div>
 
       <div className="rounded-md border bg-white overflow-hidden">
@@ -61,8 +64,8 @@ export default async function AdminTripsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button variant="ghost" size="icon"><Edit className="h-4 w-4 text-muted-foreground" /></Button>
-                    <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <EditTripButton trip={trip} destinations={safeDestinations} />
+                    <DeleteTripButton id={trip.id} />
                   </TableCell>
                 </TableRow>
               )

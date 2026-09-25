@@ -2,18 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Filter } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import { Search, Filter } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { CreatePaymentButton, VerifyPaymentButton, DeletePaymentButton } from "./payments-client";
 
 export const metadata = {
   title: "Kelola Pembayaran - Sharecosttrip Majalengka",
@@ -35,47 +26,7 @@ export default async function AdminPaymentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Data Pembayaran</h2>
         <div className="flex items-center space-x-2">
-          <Dialog>
-            <DialogTrigger render={<Button className="gap-2"><Plus className="h-4 w-4" /> Tambah Pembayaran</Button>} />
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Catat Pembayaran Baru</DialogTitle>
-                <DialogDescription>
-                  Masukkan detail pembayaran yang diterima secara manual.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="bookingId">Booking ID</Label>
-                  <Input id="bookingId" placeholder="BK-XXXX" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="amount">Jumlah (Rp)</Label>
-                  <Input id="amount" type="number" placeholder="500000" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="type">Jenis Pembayaran</Label>
-                  <select id="type" className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option>DP (Down Payment)</option>
-                    <option>Pelunasan</option>
-                    <option>Pembayaran Sebagian</option>
-                  </select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="method">Metode Transfer</Label>
-                  <select id="method" className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option>BCA</option>
-                    <option>Mandiri</option>
-                    <option>BRI</option>
-                    <option>E-Wallet (Dana/OVO/GoPay)</option>
-                  </select>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Simpan Pembayaran</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <CreatePaymentButton />
         </div>
       </div>
 
@@ -151,8 +102,9 @@ export default async function AdminPaymentsPage() {
                       {payment.status || 'Menunggu'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">Verifikasi</Button>
+                  <TableCell className="text-right space-x-2">
+                    <VerifyPaymentButton id={payment.id} currentStatus={payment.status || 'Menunggu'} />
+                    <DeletePaymentButton id={payment.id} />
                   </TableCell>
                 </TableRow>
               )
