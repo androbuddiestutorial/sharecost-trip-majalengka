@@ -9,7 +9,7 @@ import { submitPublicTestimonial } from "./actions";
 import { Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
-export function ReviewForm() {
+export function ReviewForm({ defaultName = "", defaultTrip = "" }: { defaultName?: string, defaultTrip?: string }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -55,11 +55,11 @@ export function ReviewForm() {
       )}
       <div className="space-y-2">
         <Label htmlFor="participant_name">Nama Anda</Label>
-        <Input id="participant_name" name="participant_name" required placeholder="Contoh: Budi Santoso" />
+        <Input id="participant_name" name="participant_name" defaultValue={defaultName} required placeholder="Contoh: Budi Santoso" />
       </div>
       <div className="space-y-2">
         <Label htmlFor="trip_name">Trip yang Anda Ikuti</Label>
-        <Input id="trip_name" name="trip_name" required placeholder="Contoh: Trip Gn. Ciremai via Apuy" />
+        <Input id="trip_name" name="trip_name" defaultValue={defaultTrip} required placeholder="Contoh: Trip Gn. Ciremai via Apuy" />
       </div>
       <div className="space-y-2">
         <Label htmlFor="rating">Rating (1-5)</Label>

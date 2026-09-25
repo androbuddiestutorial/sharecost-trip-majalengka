@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { MoreHorizontal, Eye, MessageCircle, Edit, Trash2, Loader2 } from "lucide-react";
+import { MoreHorizontal, Eye, MessageCircle, Edit, Trash2, Loader2, Copy } from "lucide-react";
 import Link from "next/link";
 import { updateBookingStatus, deleteBooking } from "./actions";
 
@@ -70,6 +70,14 @@ export function BookingActions({ booking }: { booking: BookingData }) {
           <DropdownMenuItem render={<Link href={waLink} target="_blank" className="flex items-center cursor-pointer text-green-600 focus:text-green-600" />}>
             <MessageCircle className="mr-2 h-4 w-4" />
             Chat WhatsApp
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => {
+            const url = `${window.location.origin}/beri-ulasan?booking_id=${booking.id}`;
+            navigator.clipboard.writeText(url);
+            alert("Link ulasan berhasil disalin!");
+          }} className="flex items-center cursor-pointer text-blue-600 focus:text-blue-600">
+            <Copy className="mr-2 h-4 w-4" />
+            Salin Link Ulasan
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setStatusOpen(true)} className="flex items-center cursor-pointer">
