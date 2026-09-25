@@ -51,8 +51,8 @@ export function Navbar() {
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle Menu</span>
             </SheetTrigger>
-            <SheetContent side="right" className="flex flex-col gap-4">
-              <Link href="/" onClick={() => setIsOpen(false)} className="font-bold text-xl tracking-tight text-primary mb-4">
+            <SheetContent side="right" className="flex flex-col gap-2 p-6 pt-16">
+              <Link href="/" onClick={() => setIsOpen(false)} className="font-bold text-2xl tracking-tight text-primary mb-6 border-b pb-4">
                 SHARECOSTTRIP
               </Link>
               {routes.map((route) => (
@@ -60,14 +60,16 @@ export function Navbar() {
                   key={route.href}
                   href={route.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium transition-colors hover:text-primary"
+                  className="flex items-center py-3 text-lg font-medium transition-colors hover:text-primary border-b border-muted/50"
                 >
                   {route.name}
                 </Link>
               ))}
-              <Link href="/booking" onClick={() => setIsOpen(false)} className={cn(buttonVariants(), "w-full mt-4")}>
-                Daftar Trip
-              </Link>
+              <div className="mt-8">
+                <Link href="/booking" onClick={() => setIsOpen(false)} className={cn(buttonVariants({ size: "lg" }), "w-full text-lg")}>
+                  Daftar Trip
+                </Link>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
