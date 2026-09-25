@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { DUMMY_DESTINATIONS, DUMMY_TRIPS } from "@/lib/dummy-data";
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -72,6 +71,18 @@ const STEPS = [
 export default function BookingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
+  
+  const [destinations, setDestinations] = useState<any[]>([]);
+  const [trips, setTrips] = useState<any[]>([]);
+  
+  useEffect(() => {
+    fetch('/api/destinations').then(res => res.json()).then(data => {
+      if(data.success) setDestinations(data.data);
+    });
+    fetch('/api/trips').then(res => res.json()).then(data => {
+      if(data.success) setTrips(data.data);
+    });
+  }, []);
 
   const { register, control, handleSubmit, watch, trigger, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -149,10 +160,26 @@ export default function BookingPage() {
     window.scrollTo(0, 0);
   };
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Form Submitted:", data);
-    // In Phase 4/5 this will send data to Supabase
-    router.push("/booking/success");
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      
+      if (result.success) {
+        router.push("/booking/success");
+      } else {
+        alert("Terjadi kesalahan: " + result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Gagal mengirim pendaftaran. Silakan coba lagi.");
+    }
   };
 
   return (
@@ -280,8 +307,8 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Destinasi" />
                         </SelectTrigger>
                         <SelectContent>
-                          {DUMMY_DESTINATIONS.map(d => (
-                            <SelectItem key={d.id} value={d.name}>{d.name}</SelectItem>
+                          {destinations.map(d => (
+                            <SelectItem key={d.id} value={d.title}>{d.title}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -301,8 +328,8 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Jadwal" />
                         </SelectTrigger>
                         <SelectContent>
-                          {DUMMY_TRIPS.map(t => (
-                            <SelectItem key={t.id} value={`${t.date} - ${t.destination}`}>{t.date} - {t.destination}</SelectItem>
+                          {trips.map(t => (
+                            <SelectItem key={t.id} value={t.id}>{t.date} - {t.destination}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
