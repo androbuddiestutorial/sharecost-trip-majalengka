@@ -121,6 +121,9 @@ export async function POST(request: Request) {
           `
         });
       }
+    } catch (e) {
+      console.error("Email error:", e);
+    }
     // --- NOTIFICATIONS END ---
 
     // --- FIREBASE FCM NOTIFICATION ---
