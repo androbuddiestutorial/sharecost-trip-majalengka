@@ -44,8 +44,15 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Optional: You can check if the user is an admin by their email or a role in the database.
-    // E.g., if (user.email !== 'your-email@gmail.com') return redirect to '/'
+    // Only allow the official admin email
+    if (user.email !== 'sharecosttripmajalengka@gmail.com') {
+      // If someone else logs in, sign them out or redirect them to home
+      // Since we can't easily sign out from middleware, we redirect to home with an error param
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      url.searchParams.set('error', 'unauthorized_admin')
+      return NextResponse.redirect(url)
+    }
   }
 
   // If user is logged in and tries to access /login, redirect to /admin
