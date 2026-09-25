@@ -100,14 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Sheet>
 
           <div className="w-full flex-1 md:w-auto md:flex-none max-w-sm ml-auto mr-4 hidden sm:block">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search bookings..."
-                className="w-full bg-background shadow-none appearance-none pl-8 md:w-[300px]"
-              />
-            </div>
+            {/* Fitur pencarian global disembunyikan sementara */}
           </div>
           
           <Button variant="ghost" size="icon" className="mr-2">
@@ -116,21 +109,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Button>
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground rounded-full h-8 w-8">
+            <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-8 w-8 rounded-full" />}>
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://github.com/shadcn.png" alt="@admin" />
-                <AvatarFallback>AD</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xs">AD</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Akun Admin</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link href="/auth/logout" className="cursor-pointer w-full flex items-center" />}>
+              <DropdownMenuItem render={<Link href="/auth/logout" className="cursor-pointer w-full flex items-center text-red-600 focus:text-red-600" />}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Logout</span>
+                <span>Keluar (Logout)</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

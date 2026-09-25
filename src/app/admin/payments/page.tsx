@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { CreatePaymentButton, VerifyPaymentButton, DeletePaymentButton } from "./payments-client";
+import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
   title: "Kelola Pembayaran - Sharecosttrip Majalengka",
@@ -26,6 +27,7 @@ export default async function AdminPaymentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Data Pembayaran</h2>
         <div className="flex items-center space-x-2">
+          <PrintButton />
           <CreatePaymentButton />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/lib/supabase";
-import { Download } from "lucide-react";
+import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
   title: "Daftar Peserta - Sharecosttrip Majalengka",
@@ -23,7 +23,7 @@ export default async function AdminPesertaPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Daftar Peserta (Manifest)</h2>
-        <Button className="gap-2" variant="outline"><Download className="h-4 w-4" /> Download Excel</Button>
+        <PrintButton />
       </div>
 
       <div className="rounded-md border bg-white overflow-hidden">
