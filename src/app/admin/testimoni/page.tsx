@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
+import { CreateTestimonialButton, EditTestimonialButton, DeleteTestimonialButton } from "./testimoni-client";
 
 export const metadata = {
   title: "Kelola Testimoni - Sharecosttrip Majalengka",
@@ -23,7 +22,7 @@ export default async function AdminTestimoniPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Testimoni</h2>
-        <Button className="gap-2"><Plus className="h-4 w-4" /> Tambah Testimoni</Button>
+        <CreateTestimonialButton />
       </div>
 
       <div className="rounded-md border bg-white overflow-hidden">
@@ -53,8 +52,8 @@ export default async function AdminTestimoniPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
-                  <Button variant="ghost" size="icon"><Edit className="h-4 w-4 text-muted-foreground" /></Button>
-                  <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <EditTestimonialButton item={item} />
+                  <DeleteTestimonialButton id={item.id} />
                 </TableCell>
               </TableRow>
             ))}
