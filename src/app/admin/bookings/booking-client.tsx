@@ -28,8 +28,21 @@ export type BookingData = {
   id: string;
   booking_code: string;
   full_name: string;
+  gender?: string;
   whatsapp: string;
+  email?: string;
+  address?: string;
+  trip_type?: string;
+  meeting_point?: string;
   status: string;
+  trips?: {
+    date_start?: string;
+    start_date?: string;
+    destinations?: {
+      title?: string;
+      name?: string;
+    }
+  };
 };
 
 export function BookingActions({ booking }: { booking: BookingData }) {
@@ -37,7 +50,45 @@ export function BookingActions({ booking }: { booking: BookingData }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const waLink = `https://wa.me/${booking.whatsapp.startsWith('0') ? '62' + booking.whatsapp.substring(1) : booking.whatsapp}?text=Halo%20${booking.full_name},%20kami%20dari%20SHARECOSTTRIP%20MAJALENGKA.%20Terkait%20booking%20ID%20${booking.booking_code}...`;
+  const destinasi = booking.trips?.destinations?.name || booking.trips?.destinations?.title || '-';
+  
+  // Format date if exists
+  let tglKeberangkatan = booking.trips?.start_date || booking.trips?.date_start || '-';
+  if (tglKeberangkatan !== '-') {
+    tglKeberangkatan = new Date(tglKeberangkatan).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  const reviewUrl = typeof window !== 'undefined' ? `${window.location.origin}/beri-ulasan?booking_id=${booking.id}` : '';
+  const cekUrl = typeof window !== 'undefined' ? `${window.location.origin}/cek-pesanan` : '';
+  
+  const waText = `Halo kak 😊
+Kami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pendaftaran Trip dengan Data berikut:
+- Nama : ${booking.full_name}
+- Jenis Kelamin : ${booking.gender || '-'}
+- No HP (WA) : ${booking.whatsapp}
+- Email : ${booking.email || '-'}
+- Alamat : ${booking.address || '-'}
+- Tujuan/Destinasi : ${destinasi}
+- Tanggal Keberangkatan : ${tglKeberangkatan}
+- Jenis Trip : ${booking.trip_type || 'Open Trip'}
+- Meeting Point : ${booking.meeting_point || '-'}
+
+Kode Booking Anda: *${booking.booking_code}*
+
+Mohon konfirmasi Dengan membalas pesan ini.
+
+---
+Untuk kemudahan, cek rincian tagihan & jadwal trip Anda di sini:
+${cekUrl}
+
+Nanti setelah selesai trip, bagikan pengalaman seru Anda di sini ya:
+${reviewUrl}
+---
+Terimakasih 🙏
+
+-Sharecost Trip Majalengka-`;
+
+  const waLink = `https://wa.me/${booking.whatsapp.startsWith('0') ? '62' + booking.whatsapp.substring(1) : booking.whatsapp}?text=${encodeURIComponent(waText)}`;
 
   async function onUpdateStatus(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
