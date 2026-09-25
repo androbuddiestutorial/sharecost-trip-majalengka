@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Mountain, LayoutDashboard, Users, CalendarDays, Wallet, Menu, Search, Bell, LogOut, FileText, Image, MessageSquare } from "lucide-react";
+import { Mountain, LayoutDashboard, Users, CalendarDays, Wallet, Menu, Search, Bell, LogOut, FileText, Image, MessageSquare, Package } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -23,6 +23,7 @@ const sidebarLinks = [
   { name: "Bookings", href: "/admin/bookings", icon: FileText },
   { name: "Peserta", href: "/admin/peserta", icon: Users },
   { name: "Jadwal Trip", href: "/admin/trips", icon: CalendarDays },
+  { name: "Paket Trip", href: "/admin/paket", icon: Package },
   { name: "Pembayaran", href: "/admin/payments", icon: Wallet },
   { name: "Galeri", href: "/admin/gallery", icon: Image },
   { name: "Testimoni", href: "/admin/testimoni", icon: MessageSquare },
