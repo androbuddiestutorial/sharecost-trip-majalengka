@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sharecosttripmajalengka.biz.id"),
-  title: "Sharecosttrip Majalengka - Open Trip Gunung",
-  description: "Teman perjalanan untuk menjelajahi berbagai destinasi gunung dengan perjalanan yang terorganisir, aman, dan menyenangkan.",
+  title: "Sharecosttrip Majalengka - Open Trip Alam & Petualangan",
+  description: "Teman perjalanan untuk menjelajahi berbagai destinasi alam dan petualangan dengan perjalanan yang terorganisir, aman, dan menyenangkan.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

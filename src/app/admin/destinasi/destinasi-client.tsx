@@ -99,11 +99,11 @@ export function CreateDestinasiButton() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Tambah Destinasi Baru</DialogTitle>
-          <DialogDescription>Tambahkan destinasi gunung baru ke dalam sistem.</DialogDescription>
+          <DialogDescription>Tambahkan destinasi wisata baru ke dalam sistem.</DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nama Gunung / Destinasi</Label>
+            <Label htmlFor="name">Nama Destinasi</Label>
             <Input id="name" name="name" required placeholder="Contoh: Gunung Ciremai" />
           </div>
           
@@ -208,7 +208,7 @@ export function EditDestinasiButton({ item }: { item: DestinasiData }) {
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nama Gunung / Destinasi</Label>
+            <Label htmlFor="name">Nama Destinasi</Label>
             <Input id="name" name="name" defaultValue={item.name} required />
           </div>
           

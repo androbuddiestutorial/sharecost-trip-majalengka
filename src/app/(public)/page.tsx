@@ -42,10 +42,10 @@ export default async function Home() {
         </div>
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto space-y-6">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Jelajahi Gunung, Nikmati Perjalanan, Bagikan Pengalaman.
+            Jelajahi Alam, Nikmati Perjalanan, Bagikan Pengalaman.
           </h1>
           <p className="text-lg md:text-xl text-gray-200">
-            SHARECOSTTRIP MAJALENGKA — Teman perjalanan untuk menjelajahi berbagai destinasi gunung dengan perjalanan yang terorganisir, aman, dan menyenangkan.
+            SHARECOSTTRIP MAJALENGKA — Teman perjalanan untuk menjelajahi berbagai destinasi alam dengan perjalanan yang terorganisir, aman, dan menyenangkan.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link href="/trip" className={cn(buttonVariants({ size: "lg" }), "text-lg")}>
@@ -63,7 +63,7 @@ export default async function Home() {
         <div className="flex justify-between items-end mb-8">
           <div>
             <h2 className="text-3xl font-bold tracking-tight mb-2">Destinasi Populer</h2>
-            <p className="text-muted-foreground">Jelajahi gunung-gunung favorit pilihan para pendaki.</p>
+            <p className="text-muted-foreground">Jelajahi destinasi alam favorit pilihan para traveler.</p>
           </div>
           <Link href="/destinasi" className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:flex")}>
             Lihat Semua

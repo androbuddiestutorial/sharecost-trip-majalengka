@@ -12,7 +12,7 @@ export function Footer() {
               <h3 className="font-bold text-xl tracking-tight text-primary">SHARECOSTTRIP</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Teman perjalanan untuk menjelajahi berbagai destinasi gunung dengan perjalanan yang terorganisir, aman, dan menyenangkan.
+              Teman perjalanan untuk menjelajahi berbagai destinasi wisata alam (pegunungan, pantai, budaya) dengan perjalanan yang terorganisir, aman, dan menyenangkan.
             </p>
           </div>
           
