@@ -24,6 +24,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Membatasi build hanya untuk armv8 (arm64-v8a) agar ukuran APK ringan
+        ndk {
+            abiFilters.add("arm64-v8a")
+        }
     }
 
     buildTypes {
