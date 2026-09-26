@@ -16,7 +16,7 @@ export const revalidate = 0; // Disable cache for admin pages
 export default async function AdminBookingsPage() {
   const { data: bookings, error } = await supabase
     .from('bookings')
-    .select('*, trips(date_start, start_date, destinations(name, title))')
+    .select('*, trips(date_start, date_end, destinations(title))')
     .order('created_at', { ascending: false });
 
   if (error) {
