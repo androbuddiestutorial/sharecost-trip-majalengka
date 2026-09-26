@@ -371,7 +371,7 @@ export default function BookingPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {filteredTrips.map(t => (
-                            <SelectItem key={t.id} value={t.id}>{t.date} - {t.destination}</SelectItem>
+                            <SelectItem key={t.id} value={t.id}>{t.date}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
