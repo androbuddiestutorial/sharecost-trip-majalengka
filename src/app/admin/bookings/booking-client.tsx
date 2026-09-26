@@ -109,16 +109,16 @@ Terimakasih 🙏
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+        <DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-transparent hover:bg-muted text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-          <DropdownMenuItem render={<Link href={`/admin/bookings/${booking.id}`} className="flex items-center cursor-pointer" />}>
+          <DropdownMenuItem onClick={() => window.location.href = `/admin/bookings/${booking.id}`} className="flex items-center cursor-pointer">
             <Eye className="mr-2 h-4 w-4" />
             Lihat Detail
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href={waLink} target="_blank" className="flex items-center cursor-pointer text-green-600 focus:text-green-600" />}>
+          <DropdownMenuItem onClick={() => window.open(waLink, '_blank')} className="flex items-center cursor-pointer text-green-600 focus:text-green-600">
             <MessageCircle className="mr-2 h-4 w-4" />
             Chat WhatsApp
           </DropdownMenuItem>
