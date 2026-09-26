@@ -16,7 +16,6 @@ export function Navbar() {
     { name: "Home", href: "/" },
     { name: "Destinasi", href: "/destinasi" },
     { name: "Jadwal Trip", href: "/trip" },
-    { name: "Paket", href: "/paket" },
     { name: "Gallery", href: "/gallery" },
     { name: "Kontak", href: "/kontak" },
   ];

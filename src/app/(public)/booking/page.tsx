@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -77,22 +77,7 @@ export default function BookingPage() {
   const [meetingPoints, setMeetingPoints] = useState<any[]>([]);
   const [packages, setPackages] = useState<any[]>([]);
   
-  useEffect(() => {
-    fetch('/api/destinations').then(res => res.json()).then(data => {
-      if(data.success) setDestinations(data.data);
-    });
-    fetch('/api/trips').then(res => res.json()).then(data => {
-      if(data.success) setTrips(data.data);
-    });
-    fetch('/api/meeting-points').then(res => res.json()).then(data => {
-      if(data.success) setMeetingPoints(data.data);
-    });
-    fetch('/api/packages').then(res => res.json()).then(data => {
-      if(data.success) setPackages(data.data);
-    });
-  }, []);
-
-  const { register, control, handleSubmit, watch, trigger, formState: { errors } } = useForm<FormValues>({
+  const { register, control, handleSubmit, watch, trigger, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       jenisKelamin: undefined,
@@ -103,6 +88,52 @@ export default function BookingPage() {
     },
     mode: "onChange",
   });
+
+  useEffect(() => {
+    fetch('/api/destinations').then(res => res.json()).then(data => {
+      if(data.success) setDestinations(data.data);
+    });
+    fetch('/api/trips').then(res => res.json()).then(data => {
+      if(data.success) {
+        setTrips(data.data);
+        if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          const tripId = params.get('trip');
+          if (tripId) {
+            const foundTrip = data.data.find((t: any) => t.id === tripId);
+            if (foundTrip) {
+              setValue('jadwalTrip', tripId);
+              setValue('destinasi', foundTrip.destination || foundTrip.destinations?.title);
+              // We need packages to set jenisTrip
+            }
+          }
+        }
+      }
+    });
+    fetch('/api/meeting-points').then(res => res.json()).then(data => {
+      if(data.success) setMeetingPoints(data.data);
+    });
+    fetch('/api/packages').then(res => res.json()).then(data => {
+      if(data.success) setPackages(data.data);
+    });
+  }, [setValue]);
+
+  // Sync jenisTrip when both trips and packages are loaded
+  useEffect(() => {
+    if (typeof window !== 'undefined' && trips.length > 0 && packages.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const tripId = params.get('trip');
+      if (tripId) {
+        const foundTrip = trips.find(t => t.id === tripId);
+        if (foundTrip && foundTrip.package_id) {
+          const foundPkg = packages.find(p => p.id === foundTrip.package_id);
+          if (foundPkg) {
+            setValue('jenisTrip', foundPkg.title);
+          }
+        }
+      }
+    }
+  }, [trips, packages, setValue]);
 
   const { fields: anggotaFields, append: appendAnggota, remove: removeAnggota } = useFieldArray({
     control,

@@ -176,41 +176,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Paket Trip */}
-      <section className="bg-primary text-primary-foreground py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">Pilihan Paket Trip</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="bg-white/10 border-none text-white shadow-none">
-              <CardHeader>
-                <CardTitle>Open Trip</CardTitle>
-                <CardDescription className="text-gray-300">Bergabung dengan peserta lain</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">Cocok untuk Anda yang ingin mendaki sendiri namun tetap ingin mencari teman baru dan berbagi biaya perjalanan.</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white text-primary border-none">
-              <CardHeader>
-                <CardTitle>Regular Trip</CardTitle>
-                <CardDescription>Fasilitas standar lengkap</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">Paket perjalanan dengan fasilitas standar seperti transportasi, tiket, makan, dan tenda yang sudah disiapkan.</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/10 border-none text-white shadow-none">
-              <CardHeader>
-                <CardTitle>Private Trip</CardTitle>
-                <CardDescription className="text-gray-300">Khusus kelompok/komunitas</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm">Atur jadwal, destinasi, dan layanan secara fleksibel hanya untuk grup Anda sendiri tanpa dicampur peserta lain.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* Gallery Section */}
       <section className="container mx-auto px-4 text-center">

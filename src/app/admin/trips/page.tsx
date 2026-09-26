@@ -12,21 +12,24 @@ export const revalidate = 0;
 export default async function AdminTripsPage() {
   const [
     { data: trips, error },
-    { data: destinations }
+    { data: destinations },
+    { data: packages }
   ] = await Promise.all([
-    supabase.from('trips').select('*, destinations(title, price)').order('date_start', { ascending: true }),
-    supabase.from('destinations').select('id, title').order('title', { ascending: true })
+    supabase.from('trips').select('*, destinations(title, price), packages(title)').order('date_start', { ascending: true }),
+    supabase.from('destinations').select('id, title').order('title', { ascending: true }),
+    supabase.from('packages').select('id, title').order('title', { ascending: true })
   ]);
 
   if (error) console.error("Error fetching trips:", error);
   const safeTrips = trips || [];
   const safeDestinations = destinations || [];
+  const safePackages = packages || [];
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Jadwal Trip</h2>
-        <CreateTripButton destinations={safeDestinations} />
+        <CreateTripButton destinations={safeDestinations} packages={safePackages} />
       </div>
 
       <div className="rounded-md border bg-white overflow-hidden">
@@ -34,6 +37,7 @@ export default async function AdminTripsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Destinasi</TableHead>
+              <TableHead>Paket</TableHead>
               <TableHead>Tanggal Pelaksanaan</TableHead>
               <TableHead>Kuota</TableHead>
               <TableHead>Status</TableHead>
@@ -43,7 +47,7 @@ export default async function AdminTripsPage() {
           <TableBody>
             {safeTrips.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Belum ada jadwal trip.</TableCell>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Belum ada jadwal trip.</TableCell>
               </TableRow>
             ) : safeTrips.map((trip) => {
               const startDate = new Date(trip.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -55,6 +59,9 @@ export default async function AdminTripsPage() {
                     {trip.destinations?.title || '-'}
                   </TableCell>
                   <TableCell>
+                    {trip.packages?.title || '-'}
+                  </TableCell>
+                  <TableCell>
                     {startDate} - {endDate}
                   </TableCell>
                   <TableCell>{trip.quota} Orang</TableCell>
@@ -64,7 +71,7 @@ export default async function AdminTripsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <EditTripButton trip={trip} destinations={safeDestinations} />
+                    <EditTripButton trip={trip} destinations={safeDestinations} packages={safePackages} />
                     <DeleteTripButton id={trip.id} />
                   </TableCell>
                 </TableRow>

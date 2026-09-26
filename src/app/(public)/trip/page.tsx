@@ -15,7 +15,7 @@ export const revalidate = 60;
 export default async function TripPage() {
   const { data: trips } = await supabase
     .from('trips')
-    .select('*, destinations(*)')
+    .select('*, destinations(*), packages(*)')
     .order('date_start', { ascending: true });
 
   const safeTrips = trips || [];
@@ -62,6 +62,27 @@ export default async function TripPage() {
                       <span>Kuota: <span className="font-medium">{trip.quota}</span> Orang</span>
                     </div>
                   </div>
+                  
+                  {trip.packages && (
+                    <div className="mt-4 border-t pt-4">
+                      <p className="font-semibold text-primary mb-2">Paket: {trip.packages.title}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{trip.packages.description}</p>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                        {(() => {
+                          let features = [];
+                          try {
+                            features = typeof trip.packages.features === 'string' ? JSON.parse(trip.packages.features) : trip.packages.features;
+                          } catch (e) {}
+                          return (features || []).map((f: string, i: number) => (
+                            <li key={i} className="text-xs flex items-center gap-1.5">
+                              <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                              {f}
+                            </li>
+                          ));
+                        })()}
+                      </ul>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex flex-col items-center md:items-end w-full md:w-auto md:min-w-[150px] gap-4">

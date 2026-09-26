@@ -20,6 +20,7 @@ import { createTrip, updateTrip, deleteTrip } from "./actions";
 export type TripData = {
   id: string;
   destination_id: string;
+  package_id?: string;
   date_start: string;
   date_end: string;
   quota: number;
@@ -31,7 +32,12 @@ export type DestinationOption = {
   title: string;
 };
 
-export function CreateTripButton({ destinations }: { destinations: DestinationOption[] }) {
+export type PackageOption = {
+  id: string;
+  title: string;
+};
+
+export function CreateTripButton({ destinations, packages }: { destinations: DestinationOption[], packages: PackageOption[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -61,6 +67,15 @@ export function CreateTripButton({ destinations }: { destinations: DestinationOp
               <option value="">-- Pilih Destinasi --</option>
               {destinations.map(dest => (
                 <option key={dest.id} value={dest.id}>{dest.title}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="package_id">Paket Trip (Rincian Fitur)</Label>
+            <select id="package_id" name="package_id" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <option value="">-- Pilih Paket Trip --</option>
+              {packages.map(pkg => (
+                <option key={pkg.id} value={pkg.id}>{pkg.title}</option>
               ))}
             </select>
           </div>
@@ -100,7 +115,7 @@ export function CreateTripButton({ destinations }: { destinations: DestinationOp
   );
 }
 
-export function EditTripButton({ trip, destinations }: { trip: TripData, destinations: DestinationOption[] }) {
+export function EditTripButton({ trip, destinations, packages }: { trip: TripData, destinations: DestinationOption[], packages: PackageOption[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -128,6 +143,15 @@ export function EditTripButton({ trip, destinations }: { trip: TripData, destina
             <select id="destination_id" name="destination_id" defaultValue={trip.destination_id} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
               {destinations.map(dest => (
                 <option key={dest.id} value={dest.id}>{dest.title}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="package_id">Paket Trip (Rincian Fitur)</Label>
+            <select id="package_id" name="package_id" defaultValue={trip.package_id || ""} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <option value="">-- Pilih Paket Trip --</option>
+              {packages.map(pkg => (
+                <option key={pkg.id} value={pkg.id}>{pkg.title}</option>
               ))}
             </select>
           </div>

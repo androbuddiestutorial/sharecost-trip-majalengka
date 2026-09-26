@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 export async function createTrip(formData: FormData) {
   const supabase = await createClient();
   const destination_id = formData.get("destination_id") as string;
+  const package_id = formData.get("package_id") as string;
   const date_start = formData.get("date_start") as string;
   const date_end = formData.get("date_end") as string;
   const quota = parseInt(formData.get("quota") as string);
@@ -13,6 +14,7 @@ export async function createTrip(formData: FormData) {
 
   const { error } = await supabase.from("trips").insert({
     destination_id,
+    package_id: package_id || null,
     date_start,
     date_end,
     quota,
@@ -33,6 +35,7 @@ export async function createTrip(formData: FormData) {
 export async function updateTrip(id: string, formData: FormData) {
   const supabase = await createClient();
   const destination_id = formData.get("destination_id") as string;
+  const package_id = formData.get("package_id") as string;
   const date_start = formData.get("date_start") as string;
   const date_end = formData.get("date_end") as string;
   const quota = parseInt(formData.get("quota") as string);
@@ -40,6 +43,7 @@ export async function updateTrip(id: string, formData: FormData) {
 
   const { error } = await supabase.from("trips").update({
     destination_id,
+    package_id: package_id || null,
     date_start,
     date_end,
     quota,

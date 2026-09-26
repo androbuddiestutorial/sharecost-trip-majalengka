@@ -12,6 +12,7 @@ export async function GET() {
   const formattedData = data?.map(t => ({
     id: t.id,
     destination_id: t.destination_id,
+    package_id: t.package_id,
     destination: t.destinations?.title,
     date: new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
     date_start: t.date_start,
