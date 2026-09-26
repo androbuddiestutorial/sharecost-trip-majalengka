@@ -1,9 +1,10 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createPayment(formData: FormData) {
+  const supabase = await createClient();
   const booking_id = formData.get("booking_id") as string;
   const amount = parseFloat(formData.get("amount") as string);
   const payment_method = formData.get("payment_method") as string;
@@ -44,6 +45,7 @@ export async function createPayment(formData: FormData) {
 }
 
 export async function verifyPayment(id: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("payments").update({
     status: "Terverifikasi"
   }).eq("id", id);
@@ -59,6 +61,7 @@ export async function verifyPayment(id: string) {
 }
 
 export async function deletePayment(id: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("payments").delete().eq("id", id);
 
   if (error) {
@@ -70,3 +73,4 @@ export async function deletePayment(id: string) {
   revalidatePath("/admin/bookings");
   return { success: true };
 }
+

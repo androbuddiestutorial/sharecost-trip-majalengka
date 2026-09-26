@@ -1,9 +1,10 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createTrip(formData: FormData) {
+  const supabase = await createClient();
   const destination_id = formData.get("destination_id") as string;
   const date_start = formData.get("date_start") as string;
   const date_end = formData.get("date_end") as string;
@@ -30,6 +31,7 @@ export async function createTrip(formData: FormData) {
 }
 
 export async function updateTrip(id: string, formData: FormData) {
+  const supabase = await createClient();
   const destination_id = formData.get("destination_id") as string;
   const date_start = formData.get("date_start") as string;
   const date_end = formData.get("date_end") as string;
@@ -56,6 +58,7 @@ export async function updateTrip(id: string, formData: FormData) {
 }
 
 export async function deleteTrip(id: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("trips").delete().eq("id", id);
 
   if (error) {
@@ -68,3 +71,4 @@ export async function deleteTrip(id: string) {
   revalidatePath("/");
   return { success: true };
 }
+

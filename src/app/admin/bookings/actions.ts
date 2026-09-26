@@ -1,9 +1,10 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateBookingStatus(id: string, newStatus: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("bookings").update({
     status: newStatus
   }).eq("id", id);
@@ -18,6 +19,7 @@ export async function updateBookingStatus(id: string, newStatus: string) {
 }
 
 export async function deleteBooking(id: string) {
+  const supabase = await createClient();
   // Booking members, emergency contacts, health information might need cascade delete
   // Or we just delete booking if cascade is on
   const { error } = await supabase.from("bookings").delete().eq("id", id);
@@ -30,3 +32,4 @@ export async function deleteBooking(id: string) {
   revalidatePath("/admin/bookings");
   return { success: true };
 }
+

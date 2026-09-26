@@ -1,9 +1,10 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createPackage(formData: FormData) {
+  const supabase = await createClient();
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const price_text = formData.get("price_text") as string;
@@ -34,6 +35,7 @@ export async function createPackage(formData: FormData) {
 }
 
 export async function updatePackage(id: string, formData: FormData) {
+  const supabase = await createClient();
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const price_text = formData.get("price_text") as string;
@@ -63,6 +65,7 @@ export async function updatePackage(id: string, formData: FormData) {
 }
 
 export async function deletePackage(id: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("packages").delete().eq("id", id);
 
   if (error) {
@@ -74,3 +77,4 @@ export async function deletePackage(id: string) {
   revalidatePath("/paket");
   return { success: true };
 }
+

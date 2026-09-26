@@ -62,6 +62,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Future<void> _setupPushNotifications() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     await messaging.requestPermission();
+    await messaging.subscribeToTopic('admin_alerts');
     
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null && mounted) {

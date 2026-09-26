@@ -81,7 +81,13 @@ export function CreateDestinasiButton() {
         formData.set("image_url", uploadedUrl);
       }
       
-      await createDestinasi(formData);
+      const result = await createDestinasi(formData);
+      if (result && !result.success) {
+        alert("Gagal menyimpan ke database: " + result.error);
+        setLoading(false);
+        return;
+      }
+      
       setOpen(false);
       setFile(null);
     } catch (err) {
@@ -187,7 +193,13 @@ export function EditDestinasiButton({ item }: { item: DestinasiData }) {
         // Fallback in case the user clears the URL input, but they shouldn't since it's required
       }
       
-      await updateDestinasi(item.id, formData);
+      const result = await updateDestinasi(item.id, formData);
+      if (result && !result.success) {
+        alert("Gagal mengubah database: " + result.error);
+        setLoading(false);
+        return;
+      }
+      
       setOpen(false);
       setFile(null);
     } catch (err) {

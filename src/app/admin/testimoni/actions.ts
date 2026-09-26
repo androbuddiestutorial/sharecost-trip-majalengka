@@ -1,9 +1,10 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createTestimonial(formData: FormData) {
+  const supabase = await createClient();
   const participant_name = formData.get("participant_name") as string;
   const trip_name = formData.get("trip_name") as string;
   const review = formData.get("review") as string;
@@ -29,6 +30,7 @@ export async function createTestimonial(formData: FormData) {
 }
 
 export async function updateTestimonial(id: string, formData: FormData) {
+  const supabase = await createClient();
   const participant_name = formData.get("participant_name") as string;
   const trip_name = formData.get("trip_name") as string;
   const review = formData.get("review") as string;
@@ -54,6 +56,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
 }
 
 export async function deleteTestimonial(id: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("testimonials").delete().eq("id", id);
 
   if (error) {
@@ -65,3 +68,4 @@ export async function deleteTestimonial(id: string) {
   revalidatePath("/");
   return { success: true };
 }
+

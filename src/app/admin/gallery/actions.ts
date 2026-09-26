@@ -1,9 +1,10 @@
 "use server";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createGalleryItem(formData: FormData) {
+  const supabase = await createClient();
   const title = formData.get("title") as string;
   const category = formData.get("category") as string;
   const image_url = formData.get("image_url") as string;
@@ -26,6 +27,7 @@ export async function createGalleryItem(formData: FormData) {
 }
 
 export async function updateGalleryItem(id: string, formData: FormData) {
+  const supabase = await createClient();
   const title = formData.get("title") as string;
   const category = formData.get("category") as string;
   const image_url = formData.get("image_url") as string;
@@ -48,6 +50,7 @@ export async function updateGalleryItem(id: string, formData: FormData) {
 }
 
 export async function deleteGalleryItem(id: string) {
+  const supabase = await createClient();
   const { error } = await supabase.from("gallery").delete().eq("id", id);
 
   if (error) {
@@ -60,3 +63,4 @@ export async function deleteGalleryItem(id: string) {
   revalidatePath("/");
   return { success: true };
 }
+
