@@ -25,7 +25,7 @@ const formSchema = z.object({
   email: z.string().email("Email tidak valid"),
 
   // Step 2: Data Keberangkatan
-  jenisTrip: z.enum(["Open Trip", "Regular Trip", "Private Trip"], { message: "Pilih jenis trip" }),
+  jenisTrip: z.string().min(1, "Pilih jenis trip"),
   destinasi: z.string().min(1, "Pilih destinasi"),
   jadwalTrip: z.string().min(1, "Pilih jadwal trip"),
   meetingPoint: z.string().min(1, "Pilih meeting point"),
@@ -75,6 +75,7 @@ export default function BookingPage() {
   const [destinations, setDestinations] = useState<any[]>([]);
   const [trips, setTrips] = useState<any[]>([]);
   const [meetingPoints, setMeetingPoints] = useState<any[]>([]);
+  const [packages, setPackages] = useState<any[]>([]);
   
   useEffect(() => {
     fetch('/api/destinations').then(res => res.json()).then(data => {
@@ -85,6 +86,9 @@ export default function BookingPage() {
     });
     fetch('/api/meeting-points').then(res => res.json()).then(data => {
       if(data.success) setMeetingPoints(data.data);
+    });
+    fetch('/api/packages').then(res => res.json()).then(data => {
+      if(data.success) setPackages(data.data);
     });
   }, []);
 
@@ -290,9 +294,9 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Jenis Trip" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Open Trip">Open Trip</SelectItem>
-                          <SelectItem value="Regular Trip">Regular Trip</SelectItem>
-                          <SelectItem value="Private Trip">Private Trip</SelectItem>
+                          {packages.map(pkg => (
+                            <SelectItem key={pkg.id} value={pkg.title}>{pkg.title}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     )}
