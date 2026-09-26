@@ -74,6 +74,7 @@ export default function BookingPage() {
   
   const [destinations, setDestinations] = useState<any[]>([]);
   const [trips, setTrips] = useState<any[]>([]);
+  const [meetingPoints, setMeetingPoints] = useState<any[]>([]);
   
   useEffect(() => {
     fetch('/api/destinations').then(res => res.json()).then(data => {
@@ -81,6 +82,9 @@ export default function BookingPage() {
     });
     fetch('/api/trips').then(res => res.json()).then(data => {
       if(data.success) setTrips(data.data);
+    });
+    fetch('/api/meeting-points').then(res => res.json()).then(data => {
+      if(data.success) setMeetingPoints(data.data);
     });
   }, []);
 
@@ -349,9 +353,9 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Meeting Point" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Cirebon">Cirebon</SelectItem>
-                          <SelectItem value="Kuningan">Kuningan</SelectItem>
-                          <SelectItem value="Majalengka">Majalengka</SelectItem>
+                          {meetingPoints.map(mp => (
+                            <SelectItem key={mp.id} value={mp.name}>{mp.name}</SelectItem>
+                          ))}
                           <SelectItem value="Lainnya">Lainnya</SelectItem>
                         </SelectContent>
                       </Select>
