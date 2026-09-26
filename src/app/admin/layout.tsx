@@ -71,7 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] justify-between md:justify-end">
           {/* Mobile Sidebar Trigger */}
           <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-            <SheetTrigger render={<Button variant="outline" size="icon" className="shrink-0 md:hidden" />}>
+            <SheetTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground h-10 w-10 shrink-0 md:hidden border border-input bg-background">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle navigation menu</span>
             </SheetTrigger>
@@ -113,7 +113,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Button>
 
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button variant="ghost" className="relative h-8 w-8 rounded-full" />}>
+            <DropdownMenuTrigger className="relative h-8 w-8 rounded-full inline-flex items-center justify-center hover:bg-muted">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xs">AD</AvatarFallback>
               </Avatar>
@@ -121,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Akun Admin</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link href="/auth/logout" className="cursor-pointer w-full flex items-center text-red-600 focus:text-red-600" />}>
+              <DropdownMenuItem onClick={() => window.location.href = '/auth/logout'} className="cursor-pointer w-full flex items-center text-red-600 focus:text-red-600">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Keluar (Logout)</span>
               </DropdownMenuItem>

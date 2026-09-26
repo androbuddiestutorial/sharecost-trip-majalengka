@@ -30,6 +30,7 @@ export async function createPayment(formData: FormData) {
       booking_id: real_booking_id,
       amount,
       payment_method,
+      payment_type: payment_type || "Manual",
       payment_date: new Date().toISOString(),
       status,
       proof_url: formData.get("proof_url") as string || ""

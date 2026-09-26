@@ -21,7 +21,7 @@ const formSchema = z.object({
   alamatLengkap: z.string().min(5, "Alamat lengkap harus diisi"),
   jenisKelamin: z.enum(["Laki-laki", "Perempuan"], { message: "Pilih jenis kelamin" }),
   tanggalLahir: z.string().min(1, "Tanggal lahir harus diisi"),
-  whatsapp: z.string().min(9, "Nomor WhatsApp tidak valid"),
+  whatsapp: z.string().min(9, "Nomor WhatsApp tidak valid").regex(/^(\+62|62|0)8[1-9][0-9]{6,10}$/, "Format nomor WhatsApp tidak valid"),
   email: z.string().email("Email tidak valid"),
 
   // Step 2: Data Keberangkatan
@@ -33,14 +33,14 @@ const formSchema = z.object({
   jumlahPeserta: z.string().min(1, "Pilih jumlah peserta"),
   anggota: z.array(z.object({
     namaLengkap: z.string().min(2, "Nama anggota harus diisi"),
-    whatsapp: z.string().min(9, "Nomor WhatsApp anggota tidak valid"),
+    whatsapp: z.string().min(9, "Nomor WhatsApp anggota tidak valid").regex(/^(\+62|62|0)8[1-9][0-9]{6,10}$/, "Format nomor WhatsApp anggota tidak valid"),
     alamat: z.string().min(5, "Alamat anggota harus diisi"),
   })).optional(),
 
   // Step 3: Kontak Darurat
   kontakDaruratNama: z.string().min(2, "Nama kontak darurat harus diisi"),
   kontakDaruratHubungan: z.string().min(2, "Hubungan dengan peserta harus diisi"),
-  kontakDaruratWhatsapp: z.string().min(9, "Nomor WhatsApp tidak valid"),
+  kontakDaruratWhatsapp: z.string().min(9, "Nomor WhatsApp tidak valid").regex(/^(\+62|62|0)8[1-9][0-9]{6,10}$/, "Format nomor WhatsApp tidak valid"),
 
   // Step 4: Kondisi & Kebutuhan
   adaKondisiKesehatan: z.enum(["Iya", "Tidak"], { message: "Pilih salah satu" }),
@@ -71,13 +71,14 @@ const STEPS = [
 export default function BookingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [destinations, setDestinations] = useState<any[]>([]);
   const [trips, setTrips] = useState<any[]>([]);
   const [meetingPoints, setMeetingPoints] = useState<any[]>([]);
   const [packages, setPackages] = useState<any[]>([]);
   
-  const { register, control, handleSubmit, watch, trigger, setValue, formState: { errors } } = useForm<FormValues>({
+  const { register, control, handleSubmit, watch, trigger, setValue, getValues, setError, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       jenisKelamin: undefined,
@@ -174,7 +175,13 @@ export default function BookingPage() {
         break;
       case 1:
         fieldsToValidate = ['jenisTrip', 'destinasi', 'jadwalTrip', 'meetingPoint', 'jumlahPeserta'];
-        if (watchMeetingPoint === "Lainnya") fieldsToValidate.push('meetingPointLainnya');
+        if (watchMeetingPoint === "Lainnya") {
+          if (!getValues('meetingPointLainnya')?.trim()) {
+            setError('meetingPointLainnya', { message: 'Meeting point lainnya wajib diisi' });
+            return;
+          }
+          fieldsToValidate.push('meetingPointLainnya');
+        }
         if (parseInt(watchJumlahPeserta) > 1) fieldsToValidate.push('anggota');
         break;
       case 2:
@@ -182,7 +189,13 @@ export default function BookingPage() {
         break;
       case 3:
         fieldsToValidate = ['adaKondisiKesehatan'];
-        if (watchAdaKondisi === "Iya") fieldsToValidate.push('penjelasanKondisiKesehatan');
+        if (watchAdaKondisi === "Iya") {
+          if (!getValues('penjelasanKondisiKesehatan')?.trim()) {
+            setError('penjelasanKondisiKesehatan', { message: 'Penjelasan kondisi kesehatan wajib diisi' });
+            return;
+          }
+          fieldsToValidate.push('penjelasanKondisiKesehatan');
+        }
         break;
       case 4:
         fieldsToValidate = ['sumberInformasi'];
@@ -204,6 +217,7 @@ export default function BookingPage() {
   };
 
   const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
     try {
       const res = await fetch('/api/bookings', {
         method: 'POST',
@@ -222,6 +236,8 @@ export default function BookingPage() {
     } catch (error) {
       console.error(error);
       alert("Gagal mengirim pendaftaran. Silakan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -367,7 +383,13 @@ export default function BookingPage() {
                     name="destinasi"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <Select 
+                        onValueChange={(val) => {
+                          field.onChange(val);
+                          setValue('jadwalTrip', '');
+                        }} 
+                        value={field.value || ""}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih Destinasi" />
                         </SelectTrigger>
@@ -671,8 +693,8 @@ export default function BookingPage() {
                 Next →
               </Button>
             ) : (
-              <Button type="submit">
-                Daftar / Kirim
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Mengirim..." : "Daftar / Kirim"}
               </Button>
             )}
           </CardFooter>

@@ -15,10 +15,24 @@ export async function GET() {
   });
 }
 
+import { createClient } from "@/utils/supabase/server";
+
 export async function POST(request: Request) {
   try {
+    const supabaseServer = await createClient();
+    const { data: { user } } = await supabaseServer.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
-    const { data, error } = await supabase.from('destinations').insert([body]).select();
+    const { title, location, price, image, description, image_url } = body;
+    const payload = { title, location, price, image, description, image_url };
+    
+    // Remove undefined fields
+    Object.keys(payload).forEach(key => payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]);
+
+    const { data, error } = await supabaseServer.from('destinations').insert([payload]).select();
 
     if (error) throw error;
 

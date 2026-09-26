@@ -58,7 +58,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
   const reviewUrl = typeof window !== "undefined" ? `${window.location.origin}/beri-ulasan?booking_id=${booking.id}` : "";
   const cekUrl = typeof window !== "undefined" ? `${window.location.origin}/cek-pesanan` : "";
   
-  const waText = `Halo kak dY~S
+  const waText = `Halo kak 👋
 Kami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pendaftaran Trip dengan Data berikut:
 - Nama : ${booking.full_name}
 - Jenis Kelamin : ${booking.gender || "-"}
@@ -81,7 +81,7 @@ ${cekUrl}
 Nanti setelah selesai trip, bagikan pengalaman seru Anda di sini ya:
 ${reviewUrl}
 ---
-Terimakasih dYT?
+Terimakasih 🙏
 
 -Sharecost Trip Majalengka-`;
 

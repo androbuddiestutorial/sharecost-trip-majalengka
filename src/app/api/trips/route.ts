@@ -28,11 +28,24 @@ export async function GET() {
   });
 }
 
+import { createClient } from "@/utils/supabase/server";
+
 export async function POST(request: Request) {
   try {
+    const supabaseServer = await createClient();
+    const { data: { user } } = await supabaseServer.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
+    const { destination_id, package_id, date_start, date_end, quota, status } = body;
+    const payload = { destination_id, package_id, date_start, date_end, quota, status };
     
-    const { data, error } = await supabase.from('trips').insert([body]).select().single();
+    // Remove undefined fields
+    Object.keys(payload).forEach(key => payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]);
+
+    const { data, error } = await supabaseServer.from('trips').insert([payload]).select().single();
     if (error) throw error;
 
     return NextResponse.json({

@@ -5,6 +5,16 @@ import nodemailer from "nodemailer";
 
 // Removed insecure GET route.
 
+function escapeHtml(str: string): string {
+  if (str === undefined || str === null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -142,12 +152,12 @@ export async function POST(request: Request) {
           subject: notifTitle,
           html: `
             <h2>Ada Pendaftaran Trip Baru!</h2>
-            <p><strong>Kode Booking:</strong> ${booking_code}</p>
-            <p><strong>Nama:</strong> ${body.namaLengkap}</p>
-            <p><strong>WA:</strong> ${body.whatsapp}</p>
-            <p><strong>Jenis Trip:</strong> ${body.jenisTrip}</p>
-            <p><strong>Destinasi / Jadwal:</strong> ${body.destinasi || '-'} / ${body.jadwalTrip || '-'}</p>
-            <p><strong>Jumlah Peserta:</strong> ${body.jumlahPeserta || '1'} Orang</p>
+            <p><strong>Kode Booking:</strong> ${escapeHtml(booking_code)}</p>
+            <p><strong>Nama:</strong> ${escapeHtml(body.namaLengkap)}</p>
+            <p><strong>WA:</strong> ${escapeHtml(body.whatsapp)}</p>
+            <p><strong>Jenis Trip:</strong> ${escapeHtml(body.jenisTrip)}</p>
+            <p><strong>Destinasi / Jadwal:</strong> ${escapeHtml(body.destinasi || '-')} / ${escapeHtml(body.jadwalTrip || '-')}</p>
+            <p><strong>Jumlah Peserta:</strong> ${escapeHtml(body.jumlahPeserta || '1')} Orang</p>
             <br/>
             <a href="https://sharecosttripmajalengka.biz.id/admin/bookings" style="padding: 10px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">Buka Dashboard Admin</a>
           `
