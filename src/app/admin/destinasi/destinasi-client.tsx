@@ -22,7 +22,8 @@ import { createClient } from "@/utils/supabase/client";
 
 export type DestinasiData = {
   id: string;
-  name: string;
+  title: string;
+  location: string;
   description: string;
   image_url: string;
 };
@@ -109,8 +110,13 @@ export function CreateDestinasiButton() {
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nama Destinasi</Label>
-            <Input id="name" name="name" required placeholder="Contoh: Gunung Ciremai" />
+            <Label htmlFor="title">Nama Destinasi</Label>
+            <Input id="title" name="title" required placeholder="Contoh: Gunung Ciremai" />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="location">Lokasi</Label>
+            <Input id="location" name="location" required placeholder="Contoh: Majalengka, Jawa Barat" />
           </div>
           
           <div className="space-y-2">
@@ -220,8 +226,13 @@ export function EditDestinasiButton({ item }: { item: DestinasiData }) {
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nama Destinasi</Label>
-            <Input id="name" name="name" defaultValue={item.name} required />
+            <Label htmlFor="title">Nama Destinasi</Label>
+            <Input id="title" name="title" defaultValue={item.title} required />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="location">Lokasi</Label>
+            <Input id="location" name="location" defaultValue={item.location} required />
           </div>
           
           <div className="space-y-2">

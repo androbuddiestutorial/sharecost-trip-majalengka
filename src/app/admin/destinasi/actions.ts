@@ -5,12 +5,14 @@ import { revalidatePath } from "next/cache";
 
 export async function createDestinasi(formData: FormData) {
   const supabase = await createClient();
-  const name = formData.get("name") as string;
+  const title = formData.get("title") as string;
+  const location = formData.get("location") as string;
   const description = formData.get("description") as string;
   const image_url = formData.get("image_url") as string;
 
   const { error } = await supabase.from("destinations").insert({
-    name,
+    title,
+    location,
     description,
     image_url
   });
@@ -28,12 +30,14 @@ export async function createDestinasi(formData: FormData) {
 
 export async function updateDestinasi(id: string, formData: FormData) {
   const supabase = await createClient();
-  const name = formData.get("name") as string;
+  const title = formData.get("title") as string;
+  const location = formData.get("location") as string;
   const description = formData.get("description") as string;
   const image_url = formData.get("image_url") as string;
 
   const { error } = await supabase.from("destinations").update({
-    name,
+    title,
+    location,
     description,
     image_url
   }).eq("id", id);

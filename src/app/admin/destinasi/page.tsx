@@ -31,24 +31,26 @@ export default async function AdminDestinasiPage() {
             <TableRow>
               <TableHead className="w-[100px]">Sampul</TableHead>
               <TableHead>Nama Destinasi</TableHead>
-              <TableHead className="w-[400px]">Deskripsi Singkat</TableHead>
+              <TableHead>Lokasi</TableHead>
+              <TableHead className="w-[300px]">Deskripsi Singkat</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {safeDestinations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Belum ada data destinasi.</TableCell>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Belum ada data destinasi.</TableCell>
               </TableRow>
             ) : safeDestinations.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
                   <div className="relative h-12 w-16 rounded overflow-hidden">
-                    <Image src={item.image_url} alt={item.name} fill className="object-cover" />
+                    <Image src={item.image_url || '/placeholder.jpg'} alt={item.title || 'Destinasi'} fill className="object-cover" />
                   </div>
                 </TableCell>
-                <TableCell className="font-medium">{item.name}</TableCell>
-                <TableCell className="text-muted-foreground text-sm truncate max-w-[400px]">{item.description}</TableCell>
+                <TableCell className="font-medium">{item.title}</TableCell>
+                <TableCell>{item.location}</TableCell>
+                <TableCell className="text-muted-foreground text-sm truncate max-w-[300px]">{item.description}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <EditDestinasiButton item={item} />
                   <DeleteDestinasiButton id={item.id} />
