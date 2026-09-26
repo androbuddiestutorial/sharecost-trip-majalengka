@@ -24,7 +24,7 @@ export type TestimonialData = {
   trip_name: string;
   review: string;
   status: string;
-  rating: number;
+  
 };
 
 export function CreateTestimonialButton() {
@@ -58,10 +58,6 @@ export function CreateTestimonialButton() {
           <div className="space-y-2">
             <Label htmlFor="trip_name">Judul Trip</Label>
             <Input id="trip_name" name="trip_name" required placeholder="Contoh: Trip Gn. Ciremai via Apuy" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="rating">Rating (1-5)</Label>
-            <Input id="rating" name="rating" type="number" min="1" max="5" defaultValue="5" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="review">Isi Ulasan</Label>
@@ -117,10 +113,6 @@ export function EditTestimonialButton({ item }: { item: TestimonialData }) {
           <div className="space-y-2">
             <Label htmlFor="trip_name">Judul Trip</Label>
             <Input id="trip_name" name="trip_name" defaultValue={item.trip_name} required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="rating">Rating (1-5)</Label>
-            <Input id="rating" name="rating" type="number" min="1" max="5" defaultValue={item.rating || 5} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="review">Isi Ulasan</Label>

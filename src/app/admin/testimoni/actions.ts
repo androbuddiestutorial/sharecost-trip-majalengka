@@ -9,14 +9,12 @@ export async function createTestimonial(formData: FormData) {
   const trip_name = formData.get("trip_name") as string;
   const review = formData.get("review") as string;
   const status = formData.get("status") as string;
-  const rating = parseInt(formData.get("rating") as string) || 5;
 
   const { error } = await supabase.from("testimonials").insert({
     participant_name,
     trip_name,
     review,
-    status,
-    rating
+    status
   });
 
   if (error) {
@@ -35,14 +33,12 @@ export async function updateTestimonial(id: string, formData: FormData) {
   const trip_name = formData.get("trip_name") as string;
   const review = formData.get("review") as string;
   const status = formData.get("status") as string;
-  const rating = parseInt(formData.get("rating") as string) || 5;
 
   const { error } = await supabase.from("testimonials").update({
     participant_name,
     trip_name,
     review,
-    status,
-    rating
+    status
   }).eq("id", id);
 
   if (error) {
