@@ -367,7 +367,9 @@ export default function BookingPage() {
                     render={({ field }) => (
                       <Select onValueChange={field.onChange} value={field.value || ""}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pilih Jadwal" />
+                          <SelectValue placeholder="Pilih Jadwal">
+                            {field.value ? (trips.find(t => t.id === field.value)?.date || "Memuat tanggal...") : undefined}
+                          </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {filteredTrips.map(t => (
