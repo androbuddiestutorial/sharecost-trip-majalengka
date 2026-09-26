@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreateTripButton, EditTripButton, DeleteTripButton } from "./trips-client";
 
 export const metadata = {
@@ -10,6 +10,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminTripsPage() {
+  const supabase = await createClient();
   const [
     { data: trips, error },
     { data: destinations },

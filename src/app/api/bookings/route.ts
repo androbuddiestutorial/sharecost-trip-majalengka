@@ -9,8 +9,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    // Generate Booking Code (e.g. BK-2983)
-    const booking_code = `BK-${Math.floor(1000 + Math.random() * 9000)}`;
+    // Generate Booking Code
+    const booking_code = `BK-${Date.now().toString(36).toUpperCase().slice(-4)}${Math.random().toString(36).toUpperCase().slice(2, 4)}`;
 
     // Get actual price from database
     let pricePerPax = 0;
@@ -66,8 +66,8 @@ export async function POST(request: Request) {
     if (error) throw error;
 
     // Handle additional members (if any)
-    if (body.anggotaTambahan && body.anggotaTambahan.length > 0) {
-      const membersToInsert = body.anggotaTambahan.map((m: any) => ({
+    if (body.anggota && body.anggota.length > 0) {
+      const membersToInsert = body.anggota.map((m: any) => ({
         booking_id: newBooking.id,
         full_name: m.namaLengkap,
         whatsapp: m.whatsapp,

@@ -38,7 +38,7 @@ export function CekPesananClient() {
     const members = bookingData.booking_members || [];
     const payments = bookingData.payments || [];
     
-    const totalPrice = (trip?.price || 0) * bookingData.participants_count;
+    const totalPrice = (trip?.price || 0) * bookingData.pax;
     const totalPaid = payments
       .filter((p: any) => p.status === "Terverifikasi")
       .reduce((sum: number, p: any) => sum + p.amount, 0);
@@ -74,19 +74,19 @@ export function CekPesananClient() {
               </h3>
               {dest?.image_url && (
                 <div className="relative h-32 w-full rounded-lg overflow-hidden">
-                  <Image src={dest.image_url} alt={dest.name || "Destinasi"} fill className="object-cover" />
+                  <Image src={dest.image_url} alt={dest.title || "Destinasi"} fill className="object-cover" />
                 </div>
               )}
               <div>
-                <p className="font-medium text-lg">{dest?.name || "Trip"}</p>
+                <p className="font-medium text-lg">{dest?.title || "Trip"}</p>
                 <p className="text-sm text-muted-foreground">
-                  Keberangkatan: {new Date(trip?.start_date).toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                  Keberangkatan: {new Date(trip?.date_start).toLocaleDateString("id-ID", { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
               
               <div className="pt-2">
                 <h4 className="font-medium flex items-center gap-2 mb-2">
-                  <Users className="h-4 w-4 text-muted-foreground" /> Peserta ({bookingData.participants_count} Orang)
+                  <Users className="h-4 w-4 text-muted-foreground" /> Peserta ({bookingData.pax} Orang)
                 </h4>
                 <ul className="text-sm text-muted-foreground list-disc list-inside">
                   <li>{bookingData.full_name} (Pendaftar)</li>
@@ -109,7 +109,7 @@ export function CekPesananClient() {
                 </div>
                 <div className="flex justify-between">
                   <span>Jumlah Peserta</span>
-                  <span>x {bookingData.participants_count}</span>
+                  <span>x {bookingData.pax}</span>
                 </div>
                 <div className="flex justify-between font-bold pt-2 border-t">
                   <span>Total Tagihan</span>

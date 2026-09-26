@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Users, FileText, CheckCircle2, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 
 export const metadata = {
   title: "Dashboard Admin - Sharecosttrip Majalengka",
@@ -11,6 +11,7 @@ export const metadata = {
 export const revalidate = 0; // Disable cache to always fetch fresh data
 
 export default async function AdminDashboardPage() {
+  const supabase = await createClient();
   // 1. Get total bookings
   const { count: totalBookings } = await supabase.from('bookings').select('*', { count: 'exact', head: true });
   

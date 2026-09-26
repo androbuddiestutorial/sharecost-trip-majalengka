@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { BookingActions } from "./booking-client";
 import { PrintButton } from "@/components/ui/print-button";
 
@@ -14,6 +14,7 @@ export const metadata = {
 export const revalidate = 0; // Disable cache for admin pages
 
 export default async function AdminBookingsPage() {
+  const supabase = await createClient();
   const { data: bookings, error } = await supabase
     .from('bookings')
     .select('*, trips(date_start, date_end, destinations(title))')

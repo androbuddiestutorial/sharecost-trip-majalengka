@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreatePaymentButton, VerifyPaymentButton, DeletePaymentButton } from "./payments-client";
 import { PrintButton } from "@/components/ui/print-button";
 
@@ -14,6 +14,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminPaymentsPage() {
+  const supabase = await createClient();
   const { data: payments, error } = await supabase
     .from('payments')
     .select('*, bookings(booking_code, full_name)')

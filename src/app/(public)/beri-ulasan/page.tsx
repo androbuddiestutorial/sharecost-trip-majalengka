@@ -13,14 +13,14 @@ export default async function BeriUlasanPage({ searchParams }: { searchParams: {
   if (searchParams.booking_id) {
     const { data } = await supabase
       .from('bookings')
-      .select('full_name, trips(destinations(name))')
+      .select('full_name, trips(destinations(title))')
       .eq('id', searchParams.booking_id)
       .single();
 
     if (data) {
       defaultName = data.full_name || "";
-      // @ts-ignore
-      defaultTrip = data.trips?.destinations?.name ? `Trip ${data.trips.destinations.name}` : "";
+      const typedData = data as any;
+      defaultTrip = typedData.trips?.destinations?.title ? `Trip ${typedData.trips.destinations.title}` : "";
     }
   }
 

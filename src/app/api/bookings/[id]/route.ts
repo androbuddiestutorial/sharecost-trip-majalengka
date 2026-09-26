@@ -1,57 +1,37 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const resolvedParams = await params;
-  const bookingId = resolvedParams.id;
-  
-  // Dummy detail
-  const booking = {
-    id: bookingId,
-    status: "Menunggu Verifikasi",
-    createdAt: "24 Sep 2026, 14:30 WIB",
-    pemesan: {
-      namaLengkap: "Budi Santoso",
-      alamatLengkap: "Jl. Merdeka No. 123",
-      jenisKelamin: "Laki-laki",
-      tanggalLahir: "1995-08-15",
-      whatsapp: "081234567890",
-      email: "budi.santoso@example.com"
-    },
-    keberangkatan: {
-      jenisTrip: "Open Trip",
-      destinasi: "Gunung Ciremai",
-      jadwalTrip: "24 Okt 2026 - Gunung Ciremai",
-      meetingPoint: "Majalengka",
-      jumlahPeserta: 2,
-      anggota: [
-        {
-          namaLengkap: "Rina Santoso",
-          whatsapp: "081987654321",
-          alamat: "Jl. Merdeka No. 123"
-        }
-      ]
-    },
-    kontakDarurat: {
-      nama: "Agus Santoso",
-      hubungan: "Ayah",
-      whatsapp: "085611112222"
-    },
-    kesehatan: {
-      adaKondisi: "Tidak",
-      penjelasan: "-"
-    },
-    informasiTambahan: {
-      sumber: "Instagram",
-      username: "@budisantoso"
-    }
-  };
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-  return NextResponse.json({
-    success: true,
-    data: booking,
-    message: "Booking detail retrieved successfully"
-  });
+    if (authError || !user) {
+      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+    }
+
+    const resolvedParams = await params;
+    const bookingId = resolvedParams.id;
+    
+    const { data: booking, error } = await supabase
+      .from('bookings')
+      .select('*, trips(date_start, date_end, destinations(title, price)), booking_members(*), emergency_contacts(*), health_information(*)')
+      .eq('id', bookingId)
+      .single();
+
+    if (error || !booking) {
+      return NextResponse.json({ success: false, message: "Booking not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: booking,
+      message: "Booking detail retrieved successfully"
+    });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, message: error.message || "Internal server error" }, { status: 500 });
+  }
 }

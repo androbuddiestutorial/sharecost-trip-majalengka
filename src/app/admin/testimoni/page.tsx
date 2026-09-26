@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreateTestimonialButton, EditTestimonialButton, DeleteTestimonialButton } from "./testimoni-client";
 
 export const metadata = {
@@ -10,6 +10,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminTestimoniPage() {
+  const supabase = await createClient();
   const { data: testimonials, error } = await supabase
     .from('testimonials')
     .select('*')

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
@@ -10,6 +10,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminPesertaPage() {
+  const supabase = await createClient();
   // Fetch members and their bookings
   const { data: members, error } = await supabase
     .from('booking_members')

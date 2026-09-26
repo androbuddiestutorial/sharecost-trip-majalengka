@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreatePackageButton, EditPackageButton, DeletePackageButton } from "./paket-client";
 
 export const metadata = {
@@ -10,6 +10,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminPaketPage() {
+  const supabase = await createClient();
   const { data: packages, error } = await supabase
     .from('packages')
     .select('*')

@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreateGalleryButton, EditGalleryButton, DeleteGalleryButton } from "./gallery-client";
 
 export const metadata = {
@@ -11,6 +11,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminGalleryPage() {
+  const supabase = await createClient();
   const { data: gallery, error } = await supabase
     .from('gallery')
     .select('*')

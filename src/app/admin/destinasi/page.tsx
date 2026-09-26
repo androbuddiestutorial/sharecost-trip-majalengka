@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreateDestinasiButton, EditDestinasiButton, DeleteDestinasiButton } from "./destinasi-client";
 
 export const metadata = {
@@ -10,6 +10,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminDestinasiPage() {
+  const supabase = await createClient();
   const { data: destinations, error } = await supabase
     .from('destinations')
     .select('*')

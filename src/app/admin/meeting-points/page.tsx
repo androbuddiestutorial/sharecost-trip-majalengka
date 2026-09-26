@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/server";
 import { CreateMeetingPointButton, EditMeetingPointButton, DeleteMeetingPointButton } from "./meeting-points-client";
 
 export const metadata = {
@@ -9,6 +9,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function AdminMeetingPointsPage() {
+  const supabase = await createClient();
   const { data: meetingPoints, error } = await supabase
     .from('meeting_points')
     .select('*')
