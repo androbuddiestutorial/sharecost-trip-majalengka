@@ -75,7 +75,7 @@ export default async function Home() {
               <Card className="overflow-hidden h-full transition-shadow hover:shadow-lg">
                 <div className="relative h-48 overflow-hidden bg-muted">
                   <Image 
-                    src={d.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} 
+                    src={d.image_url || d.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} 
                     alt={d.title} 
                     fill 
                     className="object-cover transition-transform duration-500 group-hover:scale-105" 

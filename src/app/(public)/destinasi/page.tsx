@@ -32,7 +32,7 @@ export default async function DestinasiPage() {
         ) : safeDestinations.map((dest) => (
           <Card key={dest.id} className="overflow-hidden flex flex-col">
             <div className="relative h-56 w-full bg-muted">
-              <Image src={dest.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} alt={dest.title} fill className="object-cover" />
+              <Image src={dest.image_url || dest.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} alt={dest.title} fill className="object-cover" />
             </div>
             <CardHeader>
               <div className="flex justify-between items-start">

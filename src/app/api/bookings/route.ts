@@ -12,6 +12,38 @@ export async function POST(request: Request) {
     // Generate Booking Code (e.g. BK-2983)
     const booking_code = `BK-${Math.floor(1000 + Math.random() * 9000)}`;
 
+    // Get actual price from database
+    let pricePerPax = 0;
+    if (body.jadwalTrip) {
+      const { data: tripData } = await supabase
+        .from('trips')
+        .select('*, destinations(price)')
+        .eq('id', body.jadwalTrip)
+        .single();
+      
+      if (tripData?.destinations?.price) {
+        pricePerPax = Number(tripData.destinations.price);
+      }
+    }
+    
+    // Fallback if price is still 0 (e.g., custom private trip without explicit trip_id)
+    if (pricePerPax === 0) {
+      const { data: destData } = await supabase
+        .from('destinations')
+        .select('price')
+        .eq('title', body.destinasi)
+        .single();
+        
+      if (destData?.price) {
+        pricePerPax = Number(destData.price);
+      } else {
+        pricePerPax = 350000; // Ultimate fallback
+      }
+    }
+    
+    const paxCount = parseInt(body.jumlahPeserta || "1", 10);
+    const total_amount = pricePerPax * paxCount;
+
     const { data: newBooking, error } = await supabase.from('bookings').insert([{
       booking_code,
       full_name: body.namaLengkap,
@@ -20,15 +52,15 @@ export async function POST(request: Request) {
       birth_date: body.tanggalLahir,
       whatsapp: body.whatsapp,
       email: body.email,
-      trip_id: body.jadwalTrip,
+      trip_id: body.jadwalTrip || null,
       trip_type: body.jenisTrip,
       meeting_point: body.meetingPoint,
-      pax: parseInt(body.jumlahPeserta || "1", 10),
+      pax: paxCount,
       source_info: body.sumberInformasi,
       social_media: body.usernameMedsos,
       status: 'Menunggu Verifikasi',
       payment_status: 'Belum Bayar',
-      total_amount: 350000 * parseInt(body.jumlahPeserta || "1", 10) // Basic default price
+      total_amount: total_amount
     }]).select().single();
 
     if (error) throw error;
