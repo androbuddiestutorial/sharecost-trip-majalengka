@@ -14,7 +14,7 @@ export async function GET() {
     destination_id: t.destination_id,
     package_id: t.package_id,
     destination: t.destinations?.title,
-    date: new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+    date: `${new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(t.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`,
     date_start: t.date_start,
     date_end: t.date_end,
     quota: t.quota,

@@ -143,6 +143,9 @@ export default function BookingPage() {
   const watchJumlahPeserta = watch("jumlahPeserta");
   const watchMeetingPoint = watch("meetingPoint");
   const watchAdaKondisi = watch("adaKondisiKesehatan");
+  const watchDestinasi = watch("destinasi");
+
+  const filteredTrips = watchDestinasi ? trips.filter(t => t.destination === watchDestinasi) : trips;
 
   // Handle dynamic member fields based on participant count
   const handlePesertaChange = (val: string) => {
@@ -367,7 +370,7 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Jadwal" />
                         </SelectTrigger>
                         <SelectContent>
-                          {trips.map(t => (
+                          {filteredTrips.map(t => (
                             <SelectItem key={t.id} value={t.id}>{t.date} - {t.destination}</SelectItem>
                           ))}
                         </SelectContent>
