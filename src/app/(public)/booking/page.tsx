@@ -144,6 +144,7 @@ export default function BookingPage() {
   const watchMeetingPoint = watch("meetingPoint");
   const watchAdaKondisi = watch("adaKondisiKesehatan");
   const watchDestinasi = watch("destinasi");
+  const watchJenisTrip = watch("jenisTrip");
 
   const filteredTrips = watchDestinasi ? trips.filter(t => t.destination === watchDestinasi) : trips;
 
@@ -336,6 +337,28 @@ export default function BookingPage() {
                     )}
                   />
                   {errors.jenisTrip && <p className="text-sm text-destructive">{errors.jenisTrip.message}</p>}
+                  
+                  {watchJenisTrip && (
+                    <div className="mt-2 p-4 bg-muted/30 rounded-lg text-sm border">
+                      <p className="font-semibold text-primary mb-2">Fasilitas Termasuk (Include):</p>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {(() => {
+                          const selectedPkg = packages.find(p => p.title === watchJenisTrip);
+                          if (!selectedPkg) return null;
+                          let features = [];
+                          try {
+                            features = typeof selectedPkg.features === 'string' ? JSON.parse(selectedPkg.features) : selectedPkg.features;
+                          } catch (e) {}
+                          return (features || []).map((f: string, i: number) => (
+                            <li key={i} className="text-xs flex items-center gap-1.5 text-muted-foreground">
+                              <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                              {f}
+                            </li>
+                          ));
+                        })()}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
