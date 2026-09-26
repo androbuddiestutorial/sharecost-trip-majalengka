@@ -32,6 +32,7 @@ export default async function AdminDestinasiPage() {
               <TableHead className="w-[100px]">Sampul</TableHead>
               <TableHead>Nama Destinasi</TableHead>
               <TableHead>Lokasi</TableHead>
+              <TableHead>Harga</TableHead>
               <TableHead className="w-[300px]">Deskripsi Singkat</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
             </TableRow>
@@ -39,7 +40,7 @@ export default async function AdminDestinasiPage() {
           <TableBody>
             {safeDestinations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Belum ada data destinasi.</TableCell>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Belum ada data destinasi.</TableCell>
               </TableRow>
             ) : safeDestinations.map((item) => (
               <TableRow key={item.id}>
@@ -50,6 +51,7 @@ export default async function AdminDestinasiPage() {
                 </TableCell>
                 <TableCell className="font-medium">{item.title}</TableCell>
                 <TableCell>{item.location}</TableCell>
+                <TableCell>Rp {item.price?.toLocaleString('id-ID')}</TableCell>
                 <TableCell className="text-muted-foreground text-sm truncate max-w-[300px]">{item.description}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <EditDestinasiButton item={item} />

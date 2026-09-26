@@ -24,6 +24,7 @@ export type DestinasiData = {
   id: string;
   title: string;
   location: string;
+  price: number;
   description: string;
   image_url: string;
 };
@@ -117,6 +118,11 @@ export function CreateDestinasiButton() {
           <div className="space-y-2">
             <Label htmlFor="location">Lokasi</Label>
             <Input id="location" name="location" required placeholder="Contoh: Majalengka, Jawa Barat" />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price">Harga / Tiket Masuk (Rp)</Label>
+            <Input id="price" name="price" type="number" required placeholder="Contoh: 15000" min="0" />
           </div>
           
           <div className="space-y-2">
@@ -233,6 +239,11 @@ export function EditDestinasiButton({ item }: { item: DestinasiData }) {
           <div className="space-y-2">
             <Label htmlFor="location">Lokasi</Label>
             <Input id="location" name="location" defaultValue={item.location} required />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price">Harga / Tiket Masuk (Rp)</Label>
+            <Input id="price" name="price" type="number" defaultValue={item.price} required min="0" />
           </div>
           
           <div className="space-y-2">
