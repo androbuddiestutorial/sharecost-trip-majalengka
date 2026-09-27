@@ -1,8 +1,9 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Plus } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { BookingActions } from "./booking-client";
 import { PrintButton } from "@/components/ui/print-button";
@@ -31,6 +32,9 @@ export default async function AdminBookingsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Booking</h2>
         <div className="flex items-center space-x-2">
+          <Link href="/booking" target="_blank" className={buttonVariants({ variant: "outline" })}>
+            <Plus className="mr-2 h-4 w-4" /> Tambah Booking
+          </Link>
           <PrintButton />
         </div>
       </div>

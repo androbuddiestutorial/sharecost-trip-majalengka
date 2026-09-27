@@ -17,6 +17,7 @@ export default async function TripPage() {
   const { data: trips } = await supabase
     .from('trips')
     .select('*, destinations(*)')
+    .or('trip_type.eq.Open Trip,trip_type.is.null')
     .order('date_start', { ascending: true });
 
   const safeTrips = trips || [];
@@ -37,8 +38,7 @@ export default async function TripPage() {
           const startDate = new Date(trip.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
           const endDate = new Date(trip.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
           
-          const isPrivate = trip.trip_type === 'Private Trip';
-          const privateWaLink = `https://wa.me/6285721712077?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya ingin request Private Trip:\n- Destinasi: ${trip.destinations?.title}\n- Tanggal: ${startDate} - ${endDate}\n\nMohon informasi lebih lanjut. Terima kasih 🙏`)}`;
+          const privateWaLink = `https://wa.me/6285721712077?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya ingin request Private Trip untuk destinasi *${trip.destinations?.title}*.\n\nMohon informasi untuk ketersediaan tanggal custom dan harganya. Terima kasih 🙏`)}`;
           
           return (
             <Card key={trip.id} className="overflow-hidden hover:shadow-md transition-shadow">
@@ -49,8 +49,8 @@ export default async function TripPage() {
                       <h3 className="text-2xl font-bold">{trip.destinations?.title || 'Destinasi Tidak Diketahui'}</h3>
                     </div>
                     <div className="flex flex-col gap-2 items-end">
-                      <Badge variant={isPrivate ? "secondary" : "default"} className="text-sm">
-                        {trip.trip_type || 'Open Trip'}
+                      <Badge variant="default" className="text-sm">
+                        Open Trip
                       </Badge>
                       <Badge variant={trip.status === "Terbuka" ? "default" : "secondary"} className="text-sm">
                         {trip.status}
@@ -75,7 +75,7 @@ export default async function TripPage() {
                   
                   {trip.includes && (
                     <div className="mt-4 border-t pt-4">
-                      <p className="font-semibold text-primary mb-2">INCLUDE</p>
+                      <p className="font-semibold text-primary mb-2">FASILITAS INCLUDE</p>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         {(() => {
                           let features = [];
@@ -94,26 +94,25 @@ export default async function TripPage() {
                   )}
                 </div>
                 
-                <div className="flex flex-col items-center md:items-end w-full md:w-auto md:min-w-[150px] gap-4">
+                <div className="flex flex-col items-center md:items-end w-full md:w-auto md:min-w-[200px] gap-4">
                   <div className="text-center md:text-right">
                     <p className="text-sm text-muted-foreground">Harga per orang</p>
                     <p className="text-2xl font-bold text-primary">Rp {Number((trip.price > 0 ? trip.price : trip.destinations?.price) || 0).toLocaleString('id-ID')}</p>
                   </div>
-                  {trip.status === "Terbuka" ? (
-                    isPrivate ? (
-                      <a href={privateWaLink} target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ size: "lg" }), "w-full")}>
-                        REQUEST PRIVATE TRIP
-                      </a>
-                    ) : (
+                  <div className="flex flex-col gap-2 w-full mt-2">
+                    {trip.status === "Terbuka" ? (
                       <Link href={`/booking?trip=${trip.id}`} className={cn(buttonVariants({ size: "lg" }), "w-full")}>
                         Daftar Sekarang
                       </Link>
-                    )
-                  ) : (
-                    <Button size="lg" className="w-full" disabled>
-                      Penuh / Ditutup
-                    </Button>
-                  )}
+                    ) : (
+                      <Button size="lg" className="w-full" disabled>
+                        Penuh / Ditutup
+                      </Button>
+                    )}
+                    <a href={privateWaLink} target="_blank" rel="noopener noreferrer" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full border-primary/50 hover:bg-primary/5")}>
+                      Request Private Trip
+                    </a>
+                  </div>
                 </div>
               </div>
             </Card>
