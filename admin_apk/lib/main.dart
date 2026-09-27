@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_navigation.dart';
+import 'screens/booking_detail_screen.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -32,6 +34,7 @@ class AdminApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sharecosttrip Admin',
+      navigatorKey: navigatorKey,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
@@ -64,6 +67,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     await messaging.requestPermission();
     await messaging.subscribeToTopic('admin_alerts');
     
+    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,10 +75,53 @@ class _AuthWrapperState extends State<AuthWrapper> {
             content: Text('${message.notification?.title}: ${message.notification?.body}'),
             backgroundColor: Colors.teal,
             duration: const Duration(seconds: 5),
+            action: message.data['booking_id'] != null ? SnackBarAction(
+              label: 'Lihat',
+              textColor: Colors.white,
+              onPressed: () => _navigateToBooking(message.data['booking_id']),
+            ) : null,
           ),
         );
       }
     });
+
+    // Handle background messages tapped by user
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.data['booking_id'] != null) {
+        _navigateToBooking(message.data['booking_id']);
+      }
+    });
+
+    // Handle message when app was completely terminated
+    final initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null && initialMessage.data['booking_id'] != null) {
+      // Delay to ensure the app is fully mounted before navigating
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _navigateToBooking(initialMessage.data['booking_id']);
+      });
+    }
+  }
+
+  Future<void> _navigateToBooking(dynamic bookingIdStr) async {
+    // We only have the ID, so we need to fetch the full booking data first
+    try {
+      final int bookingId = int.parse(bookingIdStr.toString());
+      final data = await Supabase.instance.client
+          .from('bookings')
+          .select('*, trips(date_start, destinations(title))')
+          .eq('id', bookingId)
+          .single();
+          
+      if (navigatorKey.currentState != null) {
+        navigatorKey.currentState!.push(
+          MaterialPageRoute(
+            builder: (context) => BookingDetailScreen(booking: data),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error navigating to booking: $e');
+    }
   }
 
   Future<void> _checkAuth() async {
