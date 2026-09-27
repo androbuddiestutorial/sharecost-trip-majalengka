@@ -87,6 +87,10 @@ export default function BookingPage() {
       jumlahPeserta: "1",
       adaKondisiKesehatan: undefined,
       sumberInformasi: undefined,
+      setujuDataBenar: false,
+      setujuKetentuan: false,
+      setujuKeselamatan: false,
+      setujuPenggunaanData: false,
     },
     mode: "onChange",
   });
