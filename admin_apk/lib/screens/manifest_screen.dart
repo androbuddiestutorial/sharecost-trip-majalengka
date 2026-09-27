@@ -25,7 +25,7 @@ class _ManifestScreenState extends State<ManifestScreen> {
       final data = await Supabase.instance.client
           .from('bookings')
           .select('*, trips(date_start, destinations(title)), booking_members(*)')
-          .inFilter('status', ['Terverifikasi', 'Lunas'])
+          .inFilter('status', ['Terverifikasi', 'Lunas', 'DP'])
           .order('created_at', ascending: false);
           
       List<dynamic> flattened = [];

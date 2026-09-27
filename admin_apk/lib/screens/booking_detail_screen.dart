@@ -48,17 +48,93 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           .update({'status': status})
           .eq('id', paymentId);
           
+      // Recalculate Total Paid
+      final allPayments = await Supabase.instance.client
+          .from('payments')
+          .select('amount')
+          .eq('booking_id', widget.booking['id'])
+          .eq('status', 'Terverifikasi');
+          
+      num totalPaid = 0;
+      for (var p in allPayments) {
+        totalPaid += (p['amount'] ?? 0);
+      }
+      
+      num totalAmount = widget.booking['total_amount'] ?? 0;
+      
+      String calculatedStatus = 'Terverifikasi';
+      if (totalPaid > 0 && totalPaid < totalAmount) {
+        calculatedStatus = 'DP';
+      } else if (totalPaid >= totalAmount) {
+        calculatedStatus = 'Lunas';
+      }
+
       if (status == 'Terverifikasi') {
-        await _updateStatus('Terverifikasi');
+        await _updateStatus(calculatedStatus);
       }
       
       _fetchPayments();
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pembayaran diubah menjadi $status')));
+        if (status == 'Terverifikasi') {
+          _openWhatsAppVerification(calculatedStatus, totalPaid);
+        }
       }
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+    }
+  }
+
+  Future<void> _openWhatsAppVerification(String bookingStatus, num totalPaid) async {
+    final phone = widget.booking['whatsapp'] as String?;
+    if (phone == null || phone.isEmpty) return;
+
+    String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
+
+    final name = widget.booking['full_name'] ?? 'Peserta';
+    final code = widget.booking['booking_code'] ?? '-';
+    final totalAmount = widget.booking['total_amount'] ?? 0;
+    
+    var tripData = widget.booking['trips'];
+    if (tripData is List && tripData.isNotEmpty) tripData = tripData[0];
+    var destData = tripData?['destinations'];
+    if (destData is List && destData.isNotEmpty) destData = destData[0];
+    
+    final destinasi = destData?['title'] ?? '-';
+    
+    final amountStr = totalAmount.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
+    final paidStr = totalPaid.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
+    final sisa = (totalAmount - totalPaid);
+    final sisaStr = sisa > 0 ? sisa.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.') : '0';
+
+    final cekUrl = 'https://sharecosttripmajalengka.biz.id/cek-pesanan';
+
+    final message = '''Halo kak $name 🙏
+
+Pembayaran untuk pendaftaran trip Anda telah kami *Verifikasi*.
+
+*Rincian Pesanan:*
+- Kode Booking: *$code*
+- Destinasi: $destinasi
+- Total Tagihan: Rp $amountStr
+- Total Dibayar: Rp $paidStr
+- Sisa Tagihan: Rp $sisaStr
+- Status Pesanan: *$bookingStatus*
+
+Silakan cek rincian lengkap pesanan Anda di sini:
+$cekUrl
+
+Terima kasih 🙏
+-Sharecost Trip Majalengka-''';
+    
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
+    
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('WhatsApp launch failed');
     }
   }
 
