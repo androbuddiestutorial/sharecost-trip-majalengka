@@ -15,6 +15,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
   final _addressController = TextEditingController();
   final _paxController = TextEditingController(text: '1');
   
+  // ignore: prefer_final_fields
   String? _gender = 'Laki-laki';
   final String? _tripType = 'Open Trip';
   String? _selectedTripId;
@@ -24,10 +25,24 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
   List<dynamic> _meetingPoints = [];
   bool _isLoading = false;
 
+  final List<TextEditingController> _memberNameControllers = [];
+  final List<TextEditingController> _memberWaControllers = [];
+
   @override
   void initState() {
     super.initState();
     _fetchData();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _waController.dispose();
+    _addressController.dispose();
+    _paxController.dispose();
+    for (var c in _memberNameControllers) { c.dispose(); }
+    for (var c in _memberWaControllers) { c.dispose(); }
+    super.dispose();
   }
 
   Future<void> _fetchData() async {
@@ -63,9 +78,25 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     return (price + mpPrice) * pax;
   }
 
+  void _updateMembers(String val) {
+    int pax = int.tryParse(val) ?? 1;
+    int extra = pax > 1 ? pax - 1 : 0;
+    
+    setState(() {
+      while (_memberNameControllers.length < extra) {
+        _memberNameControllers.add(TextEditingController());
+        _memberWaControllers.add(TextEditingController());
+      }
+      while (_memberNameControllers.length > extra) {
+        _memberNameControllers.removeLast().dispose();
+        _memberWaControllers.removeLast().dispose();
+      }
+    });
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate() || _selectedTripId == null || _selectedMeetingPoint == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Isi semua data')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Isi semua data yang wajib')));
       return;
     }
     
@@ -74,7 +105,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
       final totalAmount = _calculateTotal();
       final pax = int.tryParse(_paxController.text) ?? 1;
 
-      await Supabase.instance.client.from('bookings').insert({
+      final inserted = await Supabase.instance.client.from('bookings').insert({
         'booking_code': _generateBookingCode(),
         'trip_id': _selectedTripId,
         'full_name': _nameController.text,
@@ -88,7 +119,21 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
         'total_amount': totalAmount,
         'payment_status': 'Belum Bayar',
         'status': 'Terverifikasi', 
-      });
+      }).select().single();
+
+      final bookingId = inserted['id'];
+
+      if (_memberNameControllers.isNotEmpty) {
+        List<Map<String, dynamic>> membersData = [];
+        for (int i = 0; i < _memberNameControllers.length; i++) {
+           membersData.add({
+             'booking_id': bookingId,
+             'full_name': _memberNameControllers[i].text,
+             'whatsapp': _memberWaControllers[i].text,
+           });
+        }
+        await Supabase.instance.client.from('booking_members').insert(membersData);
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking berhasil ditambahkan')));
@@ -125,9 +170,10 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
               validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
             ),
             const SizedBox(height: 16),
+            // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Jenis Kelamin', border: OutlineInputBorder()),
-              initialValue: _gender,
+              value: _gender,
               items: ['Laki-laki', 'Perempuan'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _gender = v),
             ),
@@ -137,9 +183,10 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
               decoration: const InputDecoration(labelText: 'Alamat / Domisili', border: OutlineInputBorder()),
             ),
             const SizedBox(height: 16),
+            // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Jadwal Trip', border: OutlineInputBorder()),
-              initialValue: _selectedTripId,
+              value: _selectedTripId,
               items: _trips.map((t) {
                 var destData = t['destinations'];
                 if (destData is List && destData.isNotEmpty) destData = destData[0];
@@ -152,9 +199,10 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
               onChanged: (v) => setState(() => _selectedTripId = v),
             ),
             const SizedBox(height: 16),
+            // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Meeting Point', border: OutlineInputBorder()),
-              initialValue: _selectedMeetingPoint,
+              value: _selectedMeetingPoint,
               items: _meetingPoints.map((m) {
                 int mpPrice = m['price'] ?? 0;
                 String label = m['name'];
@@ -171,8 +219,41 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
               controller: _paxController,
               decoration: const InputDecoration(labelText: 'Jumlah Peserta (Pax)', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
-              onChanged: (v) => setState(() {}),
+              onChanged: _updateMembers,
+              validator: (v) => v!.isEmpty || (int.tryParse(v) ?? 0) < 1 ? 'Minimal 1' : null,
             ),
+            
+            if (_memberNameControllers.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              const Text('Data Anggota Tambahan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const SizedBox(height: 8),
+              ...List.generate(_memberNameControllers.length, (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(8)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Anggota ${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _memberNameControllers[index],
+                          decoration: const InputDecoration(labelText: 'Nama Lengkap', border: OutlineInputBorder(), isDense: true),
+                          validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _memberWaControllers[index],
+                          decoration: const InputDecoration(labelText: 'No WhatsApp (Opsional)', border: OutlineInputBorder(), isDense: true),
+                        ),
+                      ],
+                    ),
+                  );
+              }),
+            ],
+            
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
