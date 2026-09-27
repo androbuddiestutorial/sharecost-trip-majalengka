@@ -49,10 +49,10 @@ export default async function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link href="/trip" className={cn(buttonVariants({ size: "lg" }), "text-lg")}>
-              Lihat Trip
+              Lihat Jadwal Trip
             </Link>
-            <Link href="/booking" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "text-lg bg-white/10 hover:bg-white/20 border-white text-white")}>
-              Daftar Sekarang
+            <Link href="/kontak" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "text-lg bg-white/10 hover:bg-white/20 border-white text-white")}>
+              Hubungi Admin
             </Link>
           </div>
         </div>
@@ -233,8 +233,8 @@ export default async function Home() {
       <section className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold tracking-tight mb-6">Siap Mendaki Bersama Kami?</h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/booking" className={buttonVariants({ size: "lg" })}>
-            Daftar Trip Sekarang
+          <Link href="/trip" className={buttonVariants({ size: "lg" })}>
+            Pilih Jadwal & Daftar
           </Link>
           <Link href="/kontak" className={buttonVariants({ size: "lg", variant: "outline" })}>
             Chat WhatsApp Admin
