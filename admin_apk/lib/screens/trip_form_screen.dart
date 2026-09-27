@@ -55,7 +55,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
         'date_end': _dateEndController.text,
         'price': price,
         'quota': quota,
-        'status': widget.trip != null ? widget.trip!['status'] : 'Aktif',
+        'status': widget.trip != null ? widget.trip!['status'] : 'Terbuka',
       };
 
       if (widget.trip != null) {
@@ -108,6 +108,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
           children: [
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Destinasi', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _selectedDestinationId,
               items: _destinations.map((d) => DropdownMenuItem<String>(
                 value: d['id'].toString(),
@@ -167,5 +168,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
     );
   }
 }
+
+
 
 

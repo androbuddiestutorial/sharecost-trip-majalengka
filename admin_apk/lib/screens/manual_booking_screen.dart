@@ -46,7 +46,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
   }
 
   Future<void> _fetchData() async {
-    final t = await Supabase.instance.client.from('trips').select('*, destinations(title)').eq('status', 'Aktif');
+    final t = await Supabase.instance.client.from('trips').select('*, destinations(title)').eq('status', 'Terbuka');
     final m = await Supabase.instance.client.from('meeting_points').select();
     setState(() {
       _trips = t;
@@ -284,6 +284,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     );
   }
 }
+
 
 
 
