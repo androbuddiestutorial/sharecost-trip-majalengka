@@ -36,9 +36,9 @@ export function ExportButton({ data, filename = "Laporan_Booking.pdf" }: { data:
         b.whatsapp,
         tripName,
         tripDate,
-        b.pax.toString(),
-        b.status,
-        b.payment_status,
+        String(b.pax ?? 0),
+        String(b.status || "-"),
+        String(b.payment_status || "-"),
         `Rp ${(b.total_amount || 0).toLocaleString('id-ID')}`
       ];
     });
