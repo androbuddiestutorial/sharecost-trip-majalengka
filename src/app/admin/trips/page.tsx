@@ -16,7 +16,7 @@ export default async function AdminTripsPage() {
     { data: destinations },
     { data: packages }
   ] = await Promise.all([
-    supabase.from('trips').select('*, destinations(title, price), packages(title)').order('date_start', { ascending: true }),
+    supabase.from('trips').select('*, destinations(title, price), packages(title, features)').order('date_start', { ascending: true }),
     supabase.from('destinations').select('id, title').order('title', { ascending: true }),
     supabase.from('packages').select('id, title').order('title', { ascending: true })
   ]);
@@ -38,7 +38,7 @@ export default async function AdminTripsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Destinasi</TableHead>
-              <TableHead>Paket</TableHead>
+              <TableHead>Paket / Include</TableHead>
               <TableHead>Tanggal Pelaksanaan</TableHead>
               <TableHead>Kuota</TableHead>
               <TableHead>Status</TableHead>
@@ -54,13 +54,26 @@ export default async function AdminTripsPage() {
               const startDate = new Date(trip.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
               const endDate = new Date(trip.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
               
+              let features = [];
+              try {
+                features = typeof trip.packages?.features === 'string' ? JSON.parse(trip.packages.features) : (trip.packages?.features || []);
+              } catch (e) {}
+
               return (
                 <TableRow key={trip.id}>
                   <TableCell className="font-medium">
                     {trip.destinations?.title || '-'}
                   </TableCell>
                   <TableCell>
-                    {trip.packages?.title || '-'}
+                    <div className="font-medium">{trip.packages?.title || '-'}</div>
+                    {features.length > 0 && (
+                      <ul className="text-xs text-muted-foreground mt-1 max-w-[200px]">
+                        {features.slice(0, 3).map((f: string, i: number) => (
+                          <li key={i} className="truncate truncate-1-lines">• {f}</li>
+                        ))}
+                        {features.length > 3 && <li>• +{features.length - 3} lainnya</li>}
+                      </ul>
+                    )}
                   </TableCell>
                   <TableCell>
                     {startDate} - {endDate}

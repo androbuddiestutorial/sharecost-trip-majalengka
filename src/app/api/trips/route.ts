@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET() {
-  const { data, error } = await supabase.from('trips').select('*, destinations(title)');
+  const { data, error } = await supabase.from('trips').select('*, destinations(id, title, location, price, image_url), packages(id, title, features)');
   
   if (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
@@ -18,7 +18,9 @@ export async function GET() {
     date_start: t.date_start,
     date_end: t.date_end,
     quota: t.quota,
-    status: t.status
+    status: t.status,
+    destinations: t.destinations,
+    packages: t.packages
   }));
 
   return NextResponse.json({

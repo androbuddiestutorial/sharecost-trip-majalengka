@@ -93,15 +93,33 @@ Terimakasih 🙏
   async function onUpdateStatus(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.currentTarget);
-    await updateBookingStatus(booking.id, formData.get("status") as string);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const result = await updateBookingStatus(booking.id, formData.get("status") as string);
+      if (!result.success) {
+        alert(result.error || "Gagal mengubah status");
+      } else {
+        router.refresh();
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan saat mengubah status");
+    }
     setLoading(false);
     setStatusOpen(false);
   }
 
   async function onDelete() {
     setLoading(true);
-    await deleteBooking(booking.id);
+    try {
+      const result = await deleteBooking(booking.id);
+      if (!result.success) {
+        alert(result.error || "Gagal menghapus booking");
+      } else {
+        router.refresh();
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan saat menghapus booking");
+    }
     setLoading(false);
     setDeleteOpen(false);
   }

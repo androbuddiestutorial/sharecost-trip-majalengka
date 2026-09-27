@@ -7,14 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, CalendarDays, Wallet, Menu, Search, Bell, LogOut, FileText, Image as ImageIcon, MessageSquare, Package, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -112,21 +105,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="sr-only">Toggle notifications</span>
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger className="relative h-8 w-8 rounded-full inline-flex items-center justify-center hover:bg-muted">
+          <MenuPrimitive.Root>
+            <MenuPrimitive.Trigger className="relative h-8 w-8 rounded-full inline-flex items-center justify-center hover:bg-muted focus-visible:outline-none">
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xs">AD</AvatarFallback>
               </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Akun Admin</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => window.location.href = '/auth/logout'} className="cursor-pointer w-full flex items-center text-red-600 focus:text-red-600">
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Keluar (Logout)</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </MenuPrimitive.Trigger>
+            <MenuPrimitive.Portal>
+              <MenuPrimitive.Positioner align="end" sideOffset={4} className="z-50 outline-none">
+                <MenuPrimitive.Popup className="z-50 min-w-[10rem] rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none">
+                  <MenuPrimitive.GroupLabel className="px-1.5 py-1 text-xs font-medium text-muted-foreground">
+                    Akun Admin
+                  </MenuPrimitive.GroupLabel>
+                  <MenuPrimitive.Separator className="-mx-1 my-1 h-px bg-border" />
+                  <MenuPrimitive.Item onClick={() => window.location.href = '/auth/logout'} className="group relative flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1.5 text-sm outline-hidden select-none text-red-600 hover:bg-accent focus:bg-accent">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Keluar (Logout)</span>
+                  </MenuPrimitive.Item>
+                </MenuPrimitive.Popup>
+              </MenuPrimitive.Positioner>
+            </MenuPrimitive.Portal>
+          </MenuPrimitive.Root>
         </header>
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
