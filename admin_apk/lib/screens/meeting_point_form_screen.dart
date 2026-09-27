@@ -12,6 +12,7 @@ class MeetingPointFormScreen extends StatefulWidget {
 class _MeetingPointFormScreenState extends State<MeetingPointFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _priceController = TextEditingController(text: '0');
   bool _isLoading = false;
 
   @override
@@ -19,6 +20,7 @@ class _MeetingPointFormScreenState extends State<MeetingPointFormScreen> {
     super.initState();
     if (widget.meetingPoint != null) {
       _nameController.text = widget.meetingPoint!['name'] ?? '';
+      _priceController.text = (widget.meetingPoint!['price'] ?? 0).toString();
     }
   }
 
@@ -27,7 +29,11 @@ class _MeetingPointFormScreenState extends State<MeetingPointFormScreen> {
     
     setState(() => _isLoading = true);
     try {
-      final data = {'name': _nameController.text};
+      final price = int.tryParse(_priceController.text) ?? 0;
+      final data = {
+        'name': _nameController.text,
+        'price': price,
+      };
 
       if (widget.meetingPoint != null) {
         await Supabase.instance.client.from('meeting_points').update(data).eq('id', widget.meetingPoint!['id']);
@@ -49,6 +55,7 @@ class _MeetingPointFormScreenState extends State<MeetingPointFormScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _priceController.dispose();
     super.dispose();
   }
 
@@ -64,6 +71,13 @@ class _MeetingPointFormScreenState extends State<MeetingPointFormScreen> {
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Nama Kota / Lokasi', border: OutlineInputBorder()),
+              validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _priceController,
+              decoration: const InputDecoration(labelText: 'Harga / Biaya Tambahan (Rp)', border: OutlineInputBorder(), prefixText: 'Rp '),
+              keyboardType: TextInputType.number,
               validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
             ),
             const SizedBox(height: 24),

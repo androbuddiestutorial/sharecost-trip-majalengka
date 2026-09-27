@@ -70,6 +70,7 @@ class _MeetingPointsScreenState extends State<MeetingPointsScreen> {
                         child: Icon(Icons.location_on, color: Colors.white),
                       ),
                       title: Text(item['name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text('Tambahan: Rp ${item['price'] ?? 0}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

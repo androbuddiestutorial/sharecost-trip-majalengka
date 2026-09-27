@@ -43,6 +43,26 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     return 'MANUAL-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
   }
 
+  int _calculateTotal() {
+    if (_selectedTripId == null) return 0;
+    
+    final trip = _trips.firstWhere((e) => e['id'].toString() == _selectedTripId, orElse: () => null);
+    if (trip == null) return 0;
+
+    int price = trip['price'] ?? 0;
+    int mpPrice = 0;
+    
+    if (_selectedMeetingPoint != null) {
+      final mp = _meetingPoints.firstWhere((e) => e['name'] == _selectedMeetingPoint, orElse: () => null);
+      if (mp != null) {
+        mpPrice = mp['price'] ?? 0;
+      }
+    }
+    
+    final pax = int.tryParse(_paxController.text) ?? 1;
+    return (price + mpPrice) * pax;
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate() || _selectedTripId == null || _selectedMeetingPoint == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Isi semua data')));
@@ -51,10 +71,8 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     
     setState(() => _isLoading = true);
     try {
-      final trip = _trips.firstWhere((element) => element['id'].toString() == _selectedTripId);
-      final price = trip['price'] ?? 0;
+      final totalAmount = _calculateTotal();
       final pax = int.tryParse(_paxController.text) ?? 1;
-      final totalAmount = price * pax;
 
       await Supabase.instance.client.from('bookings').insert({
         'booking_code': _generateBookingCode(),
@@ -65,10 +83,11 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
         'address': _addressController.text,
         'trip_type': _tripType,
         'meeting_point': _selectedMeetingPoint,
+        'meeting_point_price': _selectedMeetingPoint != null ? (_meetingPoints.firstWhere((e) => e['name'] == _selectedMeetingPoint, orElse: () => null)?['price'] ?? 0) : 0,
         'pax': pax,
         'total_amount': totalAmount,
         'payment_status': 'Belum Bayar',
-        'status': 'Terverifikasi', // Admin adds it manually, assume it's verified
+        'status': 'Terverifikasi', 
       });
       
       if (mounted) {
@@ -84,6 +103,8 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    int total = _calculateTotal();
+    
     return Scaffold(
       appBar: AppBar(title: const Text('Tambah Pesanan Manual')),
       body: Form(
@@ -125,7 +146,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
                 final title = destData?['title'] ?? 'Trip';
                 return DropdownMenuItem<String>(
                   value: t['id'].toString(),
-                  child: Text('$title (${t['date_start']})'),
+                  child: Text('$title (Rp ${t['price'] ?? 0})'),
                 );
               }).toList(),
               onChanged: (v) => setState(() => _selectedTripId = v),
@@ -134,10 +155,15 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Meeting Point', border: OutlineInputBorder()),
               value: _selectedMeetingPoint,
-              items: _meetingPoints.map((m) => DropdownMenuItem<String>(
-                value: m['name'],
-                child: Text(m['name']),
-              )).toList(),
+              items: _meetingPoints.map((m) {
+                int mpPrice = m['price'] ?? 0;
+                String label = m['name'];
+                if (mpPrice > 0) label += ' (+ Rp $mpPrice)';
+                return DropdownMenuItem<String>(
+                  value: m['name'],
+                  child: Text(label),
+                );
+              }).toList(),
               onChanged: (v) => setState(() => _selectedMeetingPoint = v),
             ),
             const SizedBox(height: 16),
@@ -145,6 +171,19 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
               controller: _paxController,
               decoration: const InputDecoration(labelText: 'Jumlah Peserta (Pax)', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
+              onChanged: (v) => setState(() {}),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(8)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Total Tagihan:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text('Rp $total', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(

@@ -104,6 +104,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     
     final destinasi = destData?['title'] ?? '-';
     
+    final mpPrice = widget.booking['meeting_point_price'] ?? 0;
+    String mpText = mpPrice > 0 ? '\n- Biaya Meeting Point: Rp ${mpPrice.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.')}' : '';
+    
     final amountStr = totalAmount.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
     final paidStr = totalPaid.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
     final sisa = (totalAmount - totalPaid);
@@ -117,7 +120,7 @@ Pembayaran untuk pendaftaran trip Anda telah kami *Verifikasi*.
 
 *Rincian Pesanan:*
 - Kode Booking: *$code*
-- Destinasi: $destinasi
+- Destinasi: $destinasi$mpText
 - Total Tagihan: Rp $amountStr
 - Total Dibayar: Rp $paidStr
 - Sisa Tagihan: Rp $sisaStr
@@ -222,6 +225,9 @@ Terima kasih 🙏
     final cekUrl = 'https://sharecosttripmajalengka.biz.id/cek-pesanan';
     final reviewUrl = 'https://sharecosttripmajalengka.biz.id/beri-ulasan?booking_id=${widget.booking['id']}';
 
+    final mpPrice = widget.booking['meeting_point_price'] ?? 0;
+    String mpText = mpPrice > 0 ? ' (+ Rp ${mpPrice.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.')})' : '';
+
     final message = '''Halo kak 🙏
 Kami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pendaftaran Trip dengan Data berikut:
 - Nama : $name
@@ -231,7 +237,7 @@ Kami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pe
 - Tujuan/Destinasi : $destinasi
 - Tanggal Keberangkatan : $tglKeberangkatan
 - Jenis Trip : $tripType
-- Meeting Point : $meetingPoint
+- Meeting Point : $meetingPoint$mpText
 - Jumlah Peserta: $pax Orang$membersText
 - Total Tagihan: *Rp $amountStr*
 
