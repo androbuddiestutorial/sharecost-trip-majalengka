@@ -32,11 +32,37 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "Sharecost Trip Majalengka",
+    "image": "https://sharecosttripmajalengka.biz.id/logo.png",
+    "url": "https://sharecosttripmajalengka.biz.id",
+    "telephone": "+6285721712077",
+    "email": "sharecosttripmajalengka@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Desa Ciborelang, Kec. Jatiwangi",
+      "addressLocality": "Kab. Majalengka",
+      "addressRegion": "Jawa Barat",
+      "postalCode": "45454",
+      "addressCountry": "ID"
+    },
+    "priceRange": "Rp 250.000 - Rp 1.500.000",
+    "description": "Penyedia layanan open trip, private trip, dan petualangan alam yang terorganisir, aman, dan transparan."
+  };
+
   return (
     <html
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
       </body>
