@@ -60,6 +60,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
 
   const reviewUrl = typeof window !== "undefined" ? `${window.location.origin}/beri-ulasan?booking_id=${booking.id}` : "";
   const cekUrl = typeof window !== "undefined" ? `${window.location.origin}/cek-pesanan` : "";
+  const paymentLink = typeof window !== "undefined" ? `${window.location.origin}/pembayaran?booking_code=${booking.booking_code}` : "";
   
   let membersText = "";
   if (booking.booking_members && booking.booking_members.length > 0) {
@@ -68,7 +69,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
 
   const tagihanFormat = `Rp ${(booking.total_amount || 0).toLocaleString('id-ID')}`;
 
-  const waText = `Halo kak 👋\nKami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pendaftaran Trip dengan Data berikut:\n- Nama : ${booking.full_name}\n- Jenis Kelamin : ${booking.gender || "-"}\n- No HP (WA) : ${booking.whatsapp}\n- Alamat : ${booking.address || "-"}\n- Tujuan/Destinasi : ${destinasi}\n- Tanggal Keberangkatan : ${tglKeberangkatan}\n- Jenis Trip : ${booking.trip_type || "Open Trip"}\n- Meeting Point : ${booking.meeting_point || "-"}\n- Jumlah Peserta: ${booking.pax || 1} Orang${membersText}\n- Total Tagihan: *${tagihanFormat}*\n\nKode Booking Anda: *${booking.booking_code}*\n\nMohon konfirmasi Dengan membalas pesan ini.\n\n---\nUntuk kemudahan, cek rincian tagihan & jadwal trip Anda di sini:\n${cekUrl}\n\nNanti setelah selesai trip, bagikan pengalaman seru Anda di sini ya:\n${reviewUrl}\n---\nTerimakasih 🙏\n\n-Sharecost Trip Majalengka-`;
+  const waText = `Halo kak 👋\nKami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pendaftaran Trip dengan Data berikut:\n- Nama : ${booking.full_name}\n- Jenis Kelamin : ${booking.gender || "-"}\n- No HP (WA) : ${booking.whatsapp}\n- Alamat : ${booking.address || "-"}\n- Tujuan/Destinasi : ${destinasi}\n- Tanggal Keberangkatan : ${tglKeberangkatan}\n- Jenis Trip : ${booking.trip_type || "Open Trip"}\n- Meeting Point : ${booking.meeting_point || "-"}\n- Jumlah Peserta: ${booking.pax || 1} Orang${membersText}\n- Total Tagihan: *${tagihanFormat}*\n\nKode Booking Anda: *${booking.booking_code}*\n\nMohon konfirmasi Dengan membalas pesan ini.\n\n---\nUntuk kemudahan, silakan lakukan pembayaran melalui link berikut:\n${paymentLink}\n\nAnda juga dapat mengecek rincian tagihan & jadwal trip Anda di sini:\n${cekUrl}\n\nNanti setelah selesai trip, bagikan pengalaman seru Anda di sini ya:\n${reviewUrl}\n---\nTerimakasih 🙏\n\n-Sharecost Trip Majalengka-`;
 
   const waNumber = booking.whatsapp || "";
   const waFormatted = waNumber.startsWith("0") ? "62" + waNumber.substring(1) : waNumber;

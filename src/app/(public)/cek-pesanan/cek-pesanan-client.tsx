@@ -38,19 +38,24 @@ export function CekPesananClient() {
     const members = bookingData.booking_members || [];
     const payments = bookingData.payments || [];
     
-    const totalPrice = (trip?.price || 0) * bookingData.pax;
+    const totalPrice = bookingData.total_amount || 0;
     const totalPaid = payments
       .filter((p: any) => p.status === "Terverifikasi")
       .reduce((sum: number, p: any) => sum + p.amount, 0);
     const remaining = totalPrice - totalPaid;
 
     return (
-      <div className="space-y-6">
-        <Button variant="ghost" onClick={() => setBookingData(null)} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Kembali Pencarian
-        </Button>
+      <div className="space-y-6 print:m-0 print:p-0">
+        <div className="flex justify-between items-center mb-4 print:hidden">
+          <Button variant="ghost" onClick={() => setBookingData(null)}>
+            <ArrowLeft className="h-4 w-4 mr-2" /> Kembali Pencarian
+          </Button>
+          <Button variant="outline" onClick={() => window.print()} className="gap-2">
+            Print / Download PDF
+          </Button>
+        </div>
 
-        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border overflow-hidden print:shadow-none print:border-gray-200">
           {/* Header Panel */}
           <div className="bg-slate-50 border-b p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -105,7 +110,7 @@ export function CekPesananClient() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Harga per pax</span>
-                  <span>Rp {((trip?.price || 0)).toLocaleString("id-ID")}</span>
+                  <span>Rp {((totalPrice / (bookingData.pax || 1))).toLocaleString("id-ID")}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Jumlah Peserta</span>
