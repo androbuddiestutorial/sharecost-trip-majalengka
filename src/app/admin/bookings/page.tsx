@@ -18,7 +18,7 @@ export default async function AdminBookingsPage() {
   const supabase = await createClient();
   const { data: bookings, error } = await supabase
     .from('bookings')
-    .select('*, trips(date_start, date_end, destinations(title))')
+    .select('*, trips(date_start, date_end, destinations(title)), booking_members(full_name, whatsapp)')
     .order('created_at', { ascending: false });
 
   if (error) {

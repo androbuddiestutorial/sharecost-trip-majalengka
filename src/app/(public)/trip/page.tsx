@@ -41,6 +41,26 @@ export default async function TripPage({ searchParams }: Props) {
     if (dest) destName = dest.title;
   }
 
+  // Calculate booked quota
+  const tripIds = safeTrips.map(t => t.id);
+  const bookingsMap: Record<string, number> = {};
+  if (tripIds.length > 0) {
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select('trip_id, pax, status')
+      .in('trip_id', tripIds)
+      .neq('status', 'Dibatalkan');
+      
+    if (bookings) {
+      bookings.forEach(b => {
+        if (b.trip_id) {
+          if (!bookingsMap[b.trip_id]) bookingsMap[b.trip_id] = 0;
+          bookingsMap[b.trip_id] += (b.pax || 1);
+        }
+      });
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 pt-32 pb-12">
       <div className="text-center mb-12">
@@ -70,6 +90,10 @@ export default async function TripPage({ searchParams }: Props) {
              </div>
            </div>
         ) : safeTrips.map((trip) => {
+          const bookedPax = bookingsMap[trip.id] || 0;
+          const sisaKuota = Math.max(0, trip.quota - bookedPax);
+          const isFull = trip.status === 'Penuh' || trip.status === 'Ditutup' || sisaKuota <= 0;
+
           const startDate = new Date(trip.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
           const endDate = new Date(trip.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
           
@@ -87,8 +111,8 @@ export default async function TripPage({ searchParams }: Props) {
                       <Badge variant="default" className="text-sm">
                         Open Trip
                       </Badge>
-                      <Badge variant={trip.status === "Terbuka" ? "default" : "secondary"} className="text-sm">
-                        {trip.status}
+                      <Badge variant={isFull ? "secondary" : (trip.status === "Terbuka" ? "default" : "secondary")} className="text-sm">
+                        {isFull ? "Penuh" : trip.status}
                       </Badge>
                     </div>
                   </div>
@@ -100,7 +124,7 @@ export default async function TripPage({ searchParams }: Props) {
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>Kuota: <span className="font-medium">{trip.quota}</span> Orang</span>
+                      <span>Sisa Kuota: <span className={cn("font-bold", sisaKuota <= 2 ? "text-red-500" : "text-primary")}>{sisaKuota}</span> / {trip.quota}</span>
                     </div>
                     <div className="flex items-center gap-2 sm:col-span-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -135,7 +159,7 @@ export default async function TripPage({ searchParams }: Props) {
                     <p className="text-2xl font-bold text-primary">Rp {Number((trip.price > 0 ? trip.price : trip.destinations?.price) || 0).toLocaleString('id-ID')}</p>
                   </div>
                   <div className="flex flex-col gap-2 w-full mt-2">
-                    {trip.status === "Terbuka" ? (
+                    {!isFull && trip.status === "Terbuka" ? (
                       <Link href={`/booking?trip=${trip.id}`} className={cn(buttonVariants({ size: "lg" }), "w-full")}>
                         Daftar Sekarang
                       </Link>
