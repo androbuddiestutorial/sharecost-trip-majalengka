@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sharecosttripmajalengka.biz.id"),
-  title: "Sharecost Trip Majalengka - Open Trip Alam & Petualangan",
+  title: "Sharecost Trip Majalengka | Open Trip | Private Trip",
   description: "Teman perjalanan untuk menjelajahi berbagai destinasi alam dan petualangan dengan perjalanan yang terorganisir, aman, dan menyenangkan.",
   openGraph: {
-    title: "Sharecost Trip Majalengka - Open Trip & Petualangan",
+    title: "Sharecost Trip Majalengka | Open Trip | Private Trip",
     description: "Teman perjalanan untuk menjelajahi berbagai destinasi alam dan petualangan dengan perjalanan yang terorganisir, aman, dan menyenangkan.",
     url: "https://sharecosttripmajalengka.biz.id",
     siteName: "Sharecost Trip Majalengka",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sharecost Trip Majalengka - Open Trip",
+    title: "Sharecost Trip Majalengka | Open Trip | Private Trip",
     description: "Jelajahi destinasi wisata alam dan petualangan dengan mudah dan terorganisir.",
   }
 };
