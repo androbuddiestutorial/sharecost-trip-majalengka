@@ -20,8 +20,14 @@ export default async function AdminPaymentsPage() {
     .select('*, bookings(booking_code, full_name)')
     .order('created_at', { ascending: false });
 
+  const { data: bookingsList } = await supabase
+    .from('bookings')
+    .select('id, booking_code, full_name')
+    .order('created_at', { ascending: false });
+
   if (error) console.error("Error fetching payments:", error);
   const safePayments = payments || [];
+  const safeBookingsList = bookingsList || [];
 
   return (
     <div className="space-y-6">
@@ -29,7 +35,7 @@ export default async function AdminPaymentsPage() {
         <h2 className="text-3xl font-bold tracking-tight">Data Pembayaran</h2>
         <div className="flex items-center space-x-2">
           <PrintButton />
-          <CreatePaymentButton />
+          <CreatePaymentButton bookings={safeBookingsList} />
         </div>
       </div>
 

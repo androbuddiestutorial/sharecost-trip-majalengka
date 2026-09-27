@@ -27,7 +27,7 @@ export type PaymentData = {
   proof_url: string;
 };
 
-export function CreatePaymentButton() {
+export function CreatePaymentButton({ bookings = [] }: { bookings?: any[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -63,8 +63,15 @@ export function CreatePaymentButton() {
           <div className="grid gap-4 py-4">
             {errorMsg && <div className="text-red-500 text-sm font-medium">{errorMsg}</div>}
             <div className="grid gap-2">
-              <Label htmlFor="booking_id">Kode Booking (Atau UUID)</Label>
-              <Input id="booking_id" name="booking_id" required placeholder="Contoh: BK-98765432" />
+              <Label htmlFor="booking_id">Pilih Booking</Label>
+              <select id="booking_id" name="booking_id" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <option value="">-- Pilih Booking --</option>
+                {bookings.map(b => (
+                  <option key={b.id} value={b.id}>
+                    {b.booking_code} - {b.full_name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="amount">Jumlah (Rp)</Label>
