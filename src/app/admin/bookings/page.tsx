@@ -32,7 +32,7 @@ export default async function AdminBookingsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Booking</h2>
         <div className="flex items-center space-x-2">
-          <Link href="/booking" target="_blank" className={buttonVariants({ variant: "outline" })}>
+          <Link href="/admin/bookings/create" className={buttonVariants({ variant: "outline" })}>
             <Plus className="mr-2 h-4 w-4" /> Tambah Booking
           </Link>
           <ExportButton data={safeBookings} filename={`Data_Booking_${new Date().toISOString().slice(0,10)}.csv`} />
