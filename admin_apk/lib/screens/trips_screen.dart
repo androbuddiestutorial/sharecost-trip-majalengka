@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'trip_form_screen.dart';
+import 'trip_participants_screen.dart';
 
 class TripsScreen extends StatefulWidget {
   const TripsScreen({super.key});
@@ -31,8 +32,10 @@ class _TripsScreenState extends State<TripsScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
+      }
     }
   }
 
@@ -64,15 +67,58 @@ class _TripsScreenState extends State<TripsScreen> {
                 
                 final destTitle = destData?['title'] ?? 'Destinasi Unknown';
                 
+                // Cek H-2 Alarm
+                Widget? alarmWidget;
+                if (trip['date_start'] != null) {
+                  try {
+                    DateTime startDate = DateTime.parse(trip['date_start']);
+                    DateTime now = DateTime.now();
+                    // Set time to midnight for accurate day comparison
+                    DateTime startMidnight = DateTime(startDate.year, startDate.month, startDate.day);
+                    DateTime nowMidnight = DateTime(now.year, now.month, now.day);
+                    
+                    int diff = startMidnight.difference(nowMidnight).inDays;
+                    if (diff >= 0 && diff <= 2) {
+                      alarmWidget = Container(
+                        margin: const EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade100,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.warning_amber_rounded, color: Colors.red, size: 16),
+                            const SizedBox(width: 4),
+                            Text(diff == 0 ? 'Hari H!' : 'H-$diff Persiapan!', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 12)),
+                          ],
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    // Ignore date parse errors
+                  }
+                }
+                
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => TripParticipantsScreen(trip: trip)));
+                    },
                     leading: const CircleAvatar(
                       backgroundColor: Colors.teal,
                       child: Icon(Icons.event, color: Colors.white),
                     ),
                     title: Text(destTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('${trip['date_start']} - ${trip['date_end']}\nKuota: ${trip['quota']} | Sisa: ${trip['sisa_kuota'] ?? trip['quota']}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${trip['date_start']} - ${trip['date_end']}\nKuota: ${trip['quota']} | Sisa: ${trip['sisa_kuota'] ?? trip['quota']}'),
+                        if (alarmWidget != null) alarmWidget,
+                      ],
+                    ),
                     isThreeLine: true,
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
