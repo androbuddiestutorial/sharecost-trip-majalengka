@@ -105,7 +105,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            CircleAvatar(backgroundColor: color.withOpacity(0.2), child: Icon(icon, color: color)),
+            CircleAvatar(backgroundColor: color.withValues(alpha: 0.2), child: Icon(icon, color: color)),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -177,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: statusColor.withOpacity(0.2),
+                              backgroundColor: statusColor.withValues(alpha: 0.2),
                               child: Icon(Icons.person, color: statusColor),
                             ),
                             title: Text(booking['full_name'] ?? 'Tanpa Nama', style: const TextStyle(fontWeight: FontWeight.bold)),

@@ -59,16 +59,22 @@ class _GalleryFormScreenState extends State<GalleryFormScreen> {
             const Text('Pilih Jenis Media:', style: TextStyle(fontWeight: FontWeight.bold)),
             Row(
               children: [
+                // ignore: deprecated_member_use
                 Radio<String>(
                   value: 'foto',
+                  // ignore: deprecated_member_use
                   groupValue: _mediaType,
+                  // ignore: deprecated_member_use
                   onChanged: (v) => setState(() { _mediaType = v!; _categoryController.clear(); }),
                 ),
                 const Text('Foto URL'),
                 const SizedBox(width: 16),
+                // ignore: deprecated_member_use
                 Radio<String>(
                   value: 'video',
+                  // ignore: deprecated_member_use
                   groupValue: _mediaType,
+                  // ignore: deprecated_member_use
                   onChanged: (v) => setState(() { _mediaType = v!; _categoryController.text = 'Video'; }),
                 ),
                 const Text('YouTube URL'),

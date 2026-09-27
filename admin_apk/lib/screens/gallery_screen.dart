@@ -39,9 +39,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
     try {
       await Supabase.instance.client.from('gallery').delete().eq('id', id);
       _fetchData();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dihapus')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dihapus')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal hapus: $e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal hapus: $e')));
     }
   }
 

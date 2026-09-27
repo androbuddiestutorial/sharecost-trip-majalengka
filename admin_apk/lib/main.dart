@@ -38,7 +38,7 @@ void main() {
     try {
       await Supabase.initialize(
         url: 'https://wlpwrgcnhacsxgyjcvqr.supabase.co',
-        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
+        publishableKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
       );
     } catch (e) {
       debugPrint('Supabase init failed: $e');
@@ -63,7 +63,7 @@ class AdminApp extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Text(
-              details.exceptionAsString() + '\n\n' + (details.stack?.toString() ?? ''),
+              '${details.exceptionAsString()}\n\n${details.stack?.toString() ?? ''}',
               style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
           ),

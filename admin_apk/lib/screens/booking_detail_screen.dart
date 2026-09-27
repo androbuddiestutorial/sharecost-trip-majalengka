@@ -246,16 +246,11 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           final pay = _payments[index];
                           final payStatus = pay['status'];
                           final proofUrl = pay['proof_url'] as String?;
-                          
-                          Color pColor = Colors.grey;
-                          if (payStatus == 'Menunggu Verifikasi') pColor = Colors.orange;
-                          if (payStatus == 'Terverifikasi') pColor = Colors.green;
-                          if (payStatus == 'Ditolak') pColor = Colors.red;
 
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text('Rp ${pay['amount']}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text('${pay['payment_method']} | ${payStatus}'),
+                            subtitle: Text('${pay['payment_method']} | $payStatus'),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

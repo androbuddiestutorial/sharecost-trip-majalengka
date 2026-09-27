@@ -115,7 +115,7 @@ class _ManifestScreenState extends State<ManifestScreen> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
-                  value: _selectedTripId,
+                  initialValue: _selectedTripId,
                   isExpanded: true,
                   items: _trips.map((t) {
                     var destData = t['destinations'];

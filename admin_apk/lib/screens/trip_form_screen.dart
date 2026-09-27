@@ -94,7 +94,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
           children: [
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Destinasi', border: OutlineInputBorder()),
-              value: _selectedDestinationId,
+              initialValue: _selectedDestinationId,
               items: _destinations.map((d) => DropdownMenuItem<String>(
                 value: d['id'].toString(),
                 child: Text(d['title']),
