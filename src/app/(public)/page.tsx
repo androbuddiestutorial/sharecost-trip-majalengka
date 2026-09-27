@@ -48,8 +48,8 @@ export default async function Home() {
             SHARECOSTTRIP MAJALENGKA — Teman perjalanan untuk menjelajahi berbagai destinasi alam dengan perjalanan yang terorganisir, aman, dan menyenangkan.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Link href="/trip" className={cn(buttonVariants({ size: "lg" }), "text-lg")}>
-              Lihat Jadwal Trip
+            <Link href="/destinasi" className={cn(buttonVariants({ size: "lg" }), "text-lg")}>
+              Pilih Destinasi
             </Link>
             <Link href="/kontak" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "text-lg bg-white/10 hover:bg-white/20 border-white text-white")}>
               Hubungi Admin
@@ -233,8 +233,8 @@ export default async function Home() {
       <section className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold tracking-tight mb-6">Siap Mendaki Bersama Kami?</h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/trip" className={buttonVariants({ size: "lg" })}>
-            Pilih Jadwal & Daftar
+          <Link href="/destinasi" className={buttonVariants({ size: "lg" })}>
+            Pilih Destinasi & Daftar
           </Link>
           <Link href="/kontak" className={buttonVariants({ size: "lg", variant: "outline" })}>
             Chat WhatsApp Admin

@@ -45,8 +45,8 @@ export function Navbar() {
             <Link href="/cek-pesanan" className={buttonVariants({ variant: "outline" })}>
               Cek Pesanan
             </Link>
-            <Link href="/trip" className={buttonVariants()}>
-              Pilih Jadwal & Daftar
+            <Link href="/destinasi" className={buttonVariants()}>
+              Pilih Destinasi & Daftar
             </Link>
           </div>
         </nav>
@@ -76,8 +76,8 @@ export function Navbar() {
                 <Link href="/cek-pesanan" onClick={() => setIsOpen(false)} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full text-lg")}>
                   Cek Pesanan
                 </Link>
-                <Link href="/trip" onClick={() => setIsOpen(false)} className={cn(buttonVariants({ size: "lg" }), "w-full text-lg")}>
-                  Pilih Jadwal & Daftar
+                <Link href="/destinasi" onClick={() => setIsOpen(false)} className={cn(buttonVariants({ size: "lg" }), "w-full text-lg")}>
+                  Pilih Destinasi & Daftar
                 </Link>
               </div>
             </SheetContent>
