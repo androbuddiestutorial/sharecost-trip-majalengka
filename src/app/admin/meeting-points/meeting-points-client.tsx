@@ -41,8 +41,8 @@ export function CreateMeetingPointButton() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="gap-2"><Plus className="h-4 w-4" /> Tambah Meeting Point</Button>
+      <DialogTrigger render={<Button className="gap-2" />}>
+        <Plus className="h-4 w-4" /> Tambah Meeting Point
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -59,7 +59,7 @@ export function CreateMeetingPointButton() {
             <Input id="price" name="price" type="number" defaultValue="0" />
           </div>
           <DialogFooter className="pt-4">
-            <DialogClose asChild><Button type="button" variant="outline">Batal</Button></DialogClose>
+            <DialogClose render={<Button type="button" variant="outline" />}>Batal</DialogClose>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Simpan
@@ -98,10 +98,10 @@ export function EditMeetingPointButton({ item }: { item: MeetingPointData }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+      <DialogTrigger render={<Button variant="ghost" size="icon" />}>
+        
           <Edit className="h-4 w-4 text-muted-foreground" />
-        </Button>
+        
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -117,7 +117,7 @@ export function EditMeetingPointButton({ item }: { item: MeetingPointData }) {
             <Input id="price" name="price" type="number" defaultValue={item.price || 0} />
           </div>
           <DialogFooter className="pt-4">
-            <DialogClose asChild><Button type="button" variant="outline">Batal</Button></DialogClose>
+            <DialogClose render={<Button type="button" variant="outline" />}>Batal</DialogClose>
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Simpan Perubahan
@@ -142,10 +142,10 @@ export function DeleteMeetingPointButton({ id }: { id: string }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+      <DialogTrigger render={<Button variant="ghost" size="icon" />}>
+        
           <Trash2 className="h-4 w-4 text-destructive" />
-        </Button>
+        
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -155,7 +155,7 @@ export function DeleteMeetingPointButton({ id }: { id: string }) {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="pt-4">
-          <DialogClose asChild><Button variant="outline">Batal</Button></DialogClose>
+          <DialogClose render={<Button variant="outline" />}>Batal</DialogClose>
           <Button variant="destructive" onClick={onDelete} disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Ya, Hapus
@@ -165,3 +165,4 @@ export function DeleteMeetingPointButton({ id }: { id: string }) {
     </Dialog>
   );
 }
+
