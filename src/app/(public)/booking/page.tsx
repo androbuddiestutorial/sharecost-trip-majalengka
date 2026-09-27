@@ -247,6 +247,19 @@ export default function BookingPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-center">Pendaftaran Trip</h1>
         
+        {isLockedByUrl && watchDestinasi && (
+          <div className="mt-4 flex flex-col items-center animate-in fade-in slide-in-from-top-2">
+            <span className="bg-primary/10 text-primary px-4 py-1.5 rounded-full font-semibold border border-primary/20 text-sm md:text-base text-center">
+              {watchDestinasi}
+            </span>
+            {watchJadwalTrip && trips.length > 0 && (
+              <span className="text-muted-foreground text-sm mt-2 font-medium bg-muted px-3 py-1 rounded-md">
+                Jadwal: {trips.find(t => t.id === watchJadwalTrip)?.date || "-"}
+              </span>
+            )}
+          </div>
+        )}
+        
         {/* Progress Bar */}
         <div className="mt-8 relative">
           <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-muted">
