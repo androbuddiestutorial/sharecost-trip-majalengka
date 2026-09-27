@@ -5,15 +5,15 @@ export const metadata = {
 const faqs = [
   {
     q: "Apa itu Sharecost Trip Majalengka?",
-    a: "Sharecost Trip Majalengka adalah penyedia layanan open trip, private trip, dan regular trip untuk pendakian gunung yang aman, terorganisir, dan mengutamakan kenyamanan bersama dengan konsep berbagi biaya (sharecost) yang transparan."
+    a: "Sharecost Trip Majalengka adalah penyedia layanan open trip, private trip, dan regular trip untuk wisata alam dan petualangan yang aman, terorganisir, dan mengutamakan kenyamanan bersama dengan konsep berbagi biaya (sharecost) yang transparan."
   },
   {
     q: "Apakah pemula bisa ikut open trip ini?",
-    a: "Tentu bisa! Kami memiliki beberapa destinasi yang sangat cocok untuk pemula. Guide kami yang ramah dan berpengalaman akan mendampingi dan mengajarkan dasar-dasar pendakian yang aman."
+    a: "Tentu bisa! Kami memiliki beberapa destinasi yang sangat cocok untuk pemula. Guide kami yang ramah dan berpengalaman akan mendampingi dan mengajarkan persiapan trip yang aman."
   },
   {
     q: "Fasilitas apa saja yang didapatkan?",
-    a: "Fasilitas bervariasi tergantung paket. Untuk paket standar, fasilitas meliputi tiket masuk/simaksi, transportasi dari meeting point (opsional), tenda, alat masak, makan selama pendakian, guide, dan P3K standar."
+    a: "Fasilitas bervariasi tergantung paket. Untuk paket standar, fasilitas meliputi tiket masuk/simaksi, transportasi dari meeting point (opsional), tenda, alat masak, makan selama trip, guide, dan P3K standar."
   },
   {
     q: "Bagaimana sistem pembayarannya?",
@@ -31,7 +31,7 @@ export default function FAQPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Frequently Asked Questions</h1>
         <p className="text-lg text-muted-foreground">
-          Pertanyaan yang sering diajukan seputar pendakian bersama kami.
+          Pertanyaan yang sering diajukan seputar perjalanan bersama kami.
         </p>
       </div>
 

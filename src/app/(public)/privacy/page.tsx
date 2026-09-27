@@ -27,7 +27,7 @@ export default function PrivacyPage() {
 
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-foreground">2. Penggunaan Informasi</h2>
-          <p>Informasi yang kami kumpulkan digunakan semata-mata untuk keperluan operasional pendakian, antara lain:</p>
+          <p>Informasi yang kami kumpulkan digunakan semata-mata untuk keperluan operasional trip, antara lain:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li>Pendaftaran Surat Izin Masuk Kawasan Konservasi (SIMAKSI) kepada pihak Taman Nasional.</li>
             <li>Menghubungi Anda terkait jadwal, pembayaran, dan informasi teknis trip.</li>

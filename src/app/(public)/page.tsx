@@ -94,7 +94,7 @@ export default async function Home() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground line-clamp-2">
-                    {d.description || "Destinasi pendakian dengan pemandangan menakjubkan dan jalur yang menantang."}
+                    {d.description || "Destinasi trip dengan pemandangan menakjubkan dan jalur yang menantang."}
                   </p>
                 </CardContent>
               </Card>
@@ -129,7 +129,7 @@ export default async function Home() {
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium">Tanggal Pendakian</p>
+                        <p className="text-sm font-medium">Tanggal Trip</p>
                         <p className="text-sm text-muted-foreground">{dateStart}</p>
                       </div>
                     </div>

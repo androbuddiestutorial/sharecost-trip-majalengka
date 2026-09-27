@@ -21,7 +21,7 @@ export default function TentangKamiPage() {
         <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
           <Image 
             src="https://images.unsplash.com/photo-1522199755839-a2bacb67c546?q=80&w=1000&auto=format&fit=crop" 
-            alt="Pendakian Bersama" 
+            alt="Petualangan Bersama" 
             fill 
             className="object-cover"
           />
@@ -29,13 +29,13 @@ export default function TentangKamiPage() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold">Misi Kami</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Berawal dari kecintaan kami terhadap alam dan pendakian gunung, kami menyadari bahwa mendaki seringkali membutuhkan biaya yang tidak sedikit dan persiapan yang sangat matang jika dilakukan sendirian.
+            Berawal dari kecintaan kami terhadap alam dan petualangan alam, kami menyadari bahwa bepergian seringkali membutuhkan biaya yang tidak sedikit dan persiapan yang sangat matang jika dilakukan sendirian.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            Oleh karena itu, <strong>Sharecost Trip Majalengka</strong> hadir dengan konsep <em>sharecost</em> (berbagi biaya). Misi kami adalah memfasilitasi para pendaki, baik pemula maupun berpengalaman, untuk menjelajahi keindahan alam Indonesia dengan biaya yang lebih terjangkau, aman, dan terorganisir dengan baik.
+            Oleh karena itu, <strong>Sharecost Trip Majalengka</strong> hadir dengan konsep <em>sharecost</em> (berbagi biaya). Misi kami adalah memfasilitasi para petualang, baik pemula maupun berpengalaman, untuk menjelajahi keindahan alam Indonesia dengan biaya yang lebih terjangkau, aman, dan terorganisir dengan baik.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            Kami percaya bahwa alam adalah tempat terbaik untuk belajar, bersyukur, dan menemukan keluarga baru di setiap langkah pendakian.
+            Kami percaya bahwa alam adalah tempat terbaik untuk belajar, bersyukur, dan menemukan keluarga baru di setiap langkah perjalanan.
           </p>
         </div>
       </div>

@@ -32,7 +32,7 @@ export default async function BeriUlasanPage({ searchParams }: { searchParams: {
             Bagikan Pengalaman Anda!
           </h1>
           <p className="text-lg text-gray-600">
-            Kesan dan pesan Anda sangat berarti untuk memotivasi pendaki lainnya.
+            Kesan dan pesan Anda sangat berarti untuk memotivasi peserta lainnya.
           </p>
         </div>
 

@@ -20,7 +20,7 @@ export default async function DestinasiPage() {
   return (
     <div className="container mx-auto px-4 pt-32 pb-12">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Destinasi Pendakian</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-4">Destinasi Trip</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Pilih gunung tujuanmu selanjutnya. Kami menyediakan berbagai pilihan destinasi dengan tingkat kesulitan yang beragam untuk memenuhi jiwa petualangmu.
         </p>
