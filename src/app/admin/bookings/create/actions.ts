@@ -27,7 +27,8 @@ export async function createAdminBooking(data: any) {
 
     if (!trip) return { success: false, error: "Trip tidak ditemukan" };
 
-    const pricePerPax = trip.price > 0 ? trip.price : (trip.destinations?.price || 350000);
+    const destInfo = Array.isArray(trip.destinations) ? trip.destinations[0] : trip.destinations;
+    const pricePerPax = trip.price > 0 ? trip.price : ((destInfo as any)?.price || 350000);
     const total_amount = pricePerPax * pax;
     const booking_code = generateBookingCode();
 
