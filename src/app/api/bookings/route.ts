@@ -80,7 +80,14 @@ export async function POST(request: Request) {
     }
     
     const paxCount = parseInt(body.jumlahPeserta || "1", 10);
-    const total_amount = pricePerPax * paxCount;
+        let meetingPointPrice = 0;
+    if (body.meetingPoint && body.meetingPoint !== "Lainnya") {
+      const { data: mpData } = await supabase.from('meeting_points').select('price').eq('name', body.meetingPoint).single();
+      if (mpData?.price) {
+        meetingPointPrice = Number(mpData.price);
+      }
+    }
+    const total_amount = (pricePerPax + meetingPointPrice) * paxCount;
 
     const { data: newBooking, error } = await supabase.from('bookings').insert([{
       booking_code,
@@ -93,6 +100,7 @@ export async function POST(request: Request) {
       trip_id: body.jadwalTrip || null,
       trip_type: body.jenisTrip,
       meeting_point: body.meetingPoint,
+      meeting_point_price: meetingPointPrice,
       pax: paxCount,
       source_info: body.sumberInformasi,
       social_media: body.usernameMedsos,

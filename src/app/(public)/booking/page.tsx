@@ -456,8 +456,10 @@ export default function BookingPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {meetingPoints.map(mp => (
-                            <SelectItem key={mp.id} value={mp.name}>{mp.name}</SelectItem>
-                          ))}
+                              <SelectItem key={mp.id} value={mp.name}>
+                                {mp.name} {mp.price > 0 ? `(+ ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(mp.price)})` : ''}
+                              </SelectItem>
+                            ))}
                           <SelectItem value="Lainnya">Lainnya</SelectItem>
                         </SelectContent>
                       </Select>
@@ -629,6 +631,36 @@ export default function BookingPage() {
             {/* STEP 6: Persetujuan */}
             {currentStep === 5 && (
               <div className="space-y-6">
+                                <div className="bg-primary/5 p-4 rounded-lg border border-primary/20 space-y-2 mb-6">
+                  <h3 className="font-semibold text-primary border-b border-primary/10 pb-2 mb-2">Ringkasan Pemesanan</h3>
+                  {(() => {
+                    const selectedTripObj = trips.find(t => t.id === watchJadwalTrip);
+                    const destObj = destinations.find(d => d.title === watchDestinasi);
+                    const tripPrice = Number(selectedTripObj?.price) || Number(destObj?.price) || 0;
+                    
+                    const selectedMpObj = meetingPoints.find(mp => mp.name === watchMeetingPoint);
+                    const mpPrice = Number(selectedMpObj?.price) || 0;
+                    
+                    const pax = parseInt(watchJumlahPeserta || "1", 10);
+                    const totalPerPax = tripPrice + mpPrice;
+                    const grandTotal = totalPerPax * pax;
+                    
+                    const formatRp = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+
+                    return (
+                      <div className="text-sm space-y-1">
+                        <div className="flex justify-between"><span>Harga Trip:</span> <span>{formatRp(tripPrice)}</span></div>
+                        <div className="flex justify-between"><span>Biaya Meeting Point:</span> <span>{formatRp(mpPrice)}</span></div>
+                        <div className="flex justify-between font-medium pt-1 border-t border-primary/10 mt-1">
+                          <span>Total per Pax:</span> <span>{formatRp(totalPerPax)}</span>
+                        </div>
+                        <div className="flex justify-between text-base font-bold text-primary pt-2 mt-2 border-t border-primary/20">
+                          <span>Total Keseluruhan ({pax} Pax):</span> <span>{formatRp(grandTotal)}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
                 <div className="bg-amber-50 text-amber-800 p-4 rounded-lg text-sm mb-6">
                   Silakan periksa kembali data Anda. Beri centang pada pernyataan di bawah ini untuk melanjutkan pendaftaran.
                 </div>
