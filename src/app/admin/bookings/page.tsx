@@ -6,7 +6,7 @@ import { Search, Filter, Plus } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { BookingActions } from "./booking-client";
-import { PrintButton } from "@/components/ui/print-button";
+import { ExportButton } from "@/components/ui/export-button";
 
 export const metadata = {
   title: "Kelola Bookings - Sharecosttrip Majalengka",
@@ -35,7 +35,7 @@ export default async function AdminBookingsPage() {
           <Link href="/booking" target="_blank" className={buttonVariants({ variant: "outline" })}>
             <Plus className="mr-2 h-4 w-4" /> Tambah Booking
           </Link>
-          <PrintButton />
+          <ExportButton data={safeBookings} filename={`Data_Booking_${new Date().toISOString().slice(0,10)}.csv`} />
         </div>
       </div>
 
