@@ -30,14 +30,17 @@ export default async function AdminPesertaPage() {
   const combinedParticipants: any[] = [];
   
   if (bookingsData) {
-    bookingsData.forEach(b => {
+    bookingsData.forEach((b: any) => {
+      const tripData = Array.isArray(b.trips) ? b.trips[0] : b.trips;
+      const destData = Array.isArray(tripData?.destinations) ? tripData?.destinations[0] : tripData?.destinations;
+
       combinedParticipants.push({
         id: `main-${b.id}`,
         full_name: b.full_name,
         whatsapp: b.whatsapp,
         address: b.address,
         booking_code: b.booking_code,
-        trip_name: b.trips?.destinations?.title || '-',
+        trip_name: destData?.title || '-',
         is_main: true,
         created_at: b.created_at
       });
@@ -45,14 +48,19 @@ export default async function AdminPesertaPage() {
   }
 
   if (membersData) {
-    membersData.forEach(m => {
+    membersData.forEach((m: any) => {
+      // In some Supabase setups, inner joins might return as an array in TS types even if it's singular
+      const bookingData = Array.isArray(m.bookings) ? m.bookings[0] : m.bookings;
+      const tripData = Array.isArray(bookingData?.trips) ? bookingData?.trips[0] : bookingData?.trips;
+      const destData = Array.isArray(tripData?.destinations) ? tripData?.destinations[0] : tripData?.destinations;
+      
       combinedParticipants.push({
         id: `member-${m.id}`,
         full_name: m.full_name,
         whatsapp: m.whatsapp,
         address: m.address,
-        booking_code: m.bookings?.booking_code || '-',
-        trip_name: m.bookings?.trips?.destinations?.title || '-',
+        booking_code: bookingData?.booking_code || '-',
+        trip_name: destData?.title || '-',
         is_main: false,
         created_at: m.created_at
       });
