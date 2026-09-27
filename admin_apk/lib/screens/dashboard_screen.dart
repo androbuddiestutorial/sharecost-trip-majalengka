@@ -25,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final data = await Supabase.instance.client
           .from('bookings')
-          .select('*, trip:trips(name)')
+          .select('*, trips(date_start, destinations(title))')
           .order('created_at', ascending: false)
           .limit(50);
           
@@ -55,10 +55,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       .subscribe();
   }
 
-  Future<void> _logout() async {
-    await Supabase.instance.client.auth.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,12 +68,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 itemCount: _bookings.length,
                 itemBuilder: (context, index) {
                   final booking = _bookings[index];
-                  final status = booking['status'] as String;
+                  final status = booking['status'] as String? ?? 'Menunggu Verifikasi';
                   
                   Color statusColor = Colors.grey;
                   if (status == 'Menunggu Verifikasi') statusColor = Colors.orange;
-                  if (status == 'Lunas' || status == 'DP Selesai') statusColor = Colors.green;
+                  if (status == 'Lunas' || status == 'Terverifikasi') statusColor = Colors.green;
                   if (status == 'Dibatalkan') statusColor = Colors.red;
+
+                  // Handle relation arrays/objects from Supabase safely
+                  var tripData = booking['trips'];
+                  if (tripData is List && tripData.isNotEmpty) tripData = tripData[0];
+                  var destData = tripData?['destinations'];
+                  if (destData is List && destData.isNotEmpty) destData = destData[0];
+                  
+                  final tripTitle = destData?['title'] ?? 'Trip';
 
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -86,8 +90,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         backgroundColor: statusColor.withOpacity(0.2),
                         child: Icon(Icons.person, color: statusColor),
                       ),
-                      title: Text(booking['participant_name'] ?? 'Tanpa Nama', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('${booking['trip']?['name'] ?? 'Trip'} - ${booking['whatsapp_number'] ?? ''}'),
+                      title: Text(booking['full_name'] ?? 'Tanpa Nama', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text('$tripTitle - ${booking['whatsapp'] ?? ''}'),
                       trailing: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
