@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CekPesananClient } from "./cek-pesanan-client";
 
 export const metadata = {
@@ -18,7 +19,9 @@ export default function CekPesananPage() {
           </p>
         </div>
 
-        <CekPesananClient />
+        <Suspense fallback={<div>Memuat data...</div>}>
+          <CekPesananClient />
+        </Suspense>
       </div>
     </div>
   );

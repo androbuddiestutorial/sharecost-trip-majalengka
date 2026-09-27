@@ -112,15 +112,18 @@ export function PembayaranClient() {
 
       if (!result.success) {
         setErrorMsg("Gagal menyimpan pembayaran: " + result.error);
+        setLoading(false);
       } else {
-        setSuccess(true);
+        // Redirect to cek-pesanan
+        router.push(`/cek-pesanan?booking_code=${bookingData.booking_code}`);
       }
     } catch (err: any) {
       setErrorMsg("Terjadi kesalahan sistem.");
+      setLoading(false);
     }
-    setLoading(false);
   }
 
+  // Optional: keep success block if needed, but since we redirect we won't see it long
   if (success) {
     return (
       <div className="bg-white p-8 rounded-2xl shadow-sm border text-center space-y-4 max-w-md mx-auto">
@@ -183,27 +186,40 @@ export function PembayaranClient() {
           <div className="space-y-4 pt-4 border-t">
             {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
             
-            <div className="space-y-2">
-              <Label htmlFor="amount">Nominal Transfer (Rp)</Label>
-              <Input 
-                id="amount" 
-                name="amount" 
-                type="number" 
-                required 
-                placeholder="Contoh: 150000" 
-                min="10000" 
-                defaultValue={bookingData.remaining > 0 ? bookingData.remaining : ""}
-              />
-              <p className="text-xs text-muted-foreground">Isi sesuai dengan nominal yang Anda transfer.</p>
+            <div className="space-y-3">
+              <Label>Pilih Nominal Pembayaran</Label>
+              <div className="flex flex-col gap-3">
+                {bookingData.totalPaid === 0 && (
+                  <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-slate-50">
+                    <input type="radio" name="amount" value={Math.floor(bookingData.total_amount / 2)} required className="h-4 w-4" />
+                    <div>
+                      <p className="font-semibold">DP 50%</p>
+                      <p className="text-sm text-muted-foreground">Rp {Math.floor(bookingData.total_amount / 2).toLocaleString('id-ID')}</p>
+                    </div>
+                  </label>
+                )}
+                <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-slate-50">
+                  <input type="radio" name="amount" value={bookingData.remaining} required className="h-4 w-4" defaultChecked />
+                  <div>
+                    <p className="font-semibold">{bookingData.totalPaid === 0 ? "Pelunasan Penuh" : "Pelunasan Sisa"}</p>
+                    <p className="text-sm text-muted-foreground">Rp {Math.max(0, bookingData.remaining).toLocaleString('id-ID')}</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg text-sm space-y-1">
+              <p className="font-semibold text-blue-900 mb-2">Informasi Rekening Pembayaran</p>
+              <p className="text-blue-800 font-mono text-lg font-bold">{process.env.NEXT_PUBLIC_ADMIN_BANK?.split('A/N')[0] || "BNI 1935742681"}</p>
+              <p className="text-blue-800">A/N: {process.env.NEXT_PUBLIC_ADMIN_BANK?.split('A/N')[1]?.replace(':','') || "Restu Firmansyah"}</p>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="payment_method">Metode Transfer ke Admin</Label>
               <select id="payment_method" name="payment_method" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" required>
-                <option value="BCA">BCA (Bank Central Asia)</option>
-                <option value="Mandiri">Bank Mandiri</option>
-                <option value="BRI">Bank BRI</option>
-                <option value="E-Wallet">E-Wallet (Dana / OVO / GoPay)</option>
+                <option value="BNI">Transfer BNI (Manual)</option>
+                <option value="BCA">Transfer Bank Lain (Ke BNI)</option>
+                <option value="E-Wallet">E-Wallet (Dana/OVO/Gopay dsb ke BNI)</option>
               </select>
             </div>
 

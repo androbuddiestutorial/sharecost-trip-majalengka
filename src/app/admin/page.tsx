@@ -19,8 +19,9 @@ export default async function AdminDashboardPage() {
   const { data: bookingsData } = await supabase.from('bookings').select('pax, total_amount, status');
   const totalPeserta = bookingsData?.reduce((acc, curr) => acc + (curr.pax || 1), 0) || 0;
   
-  // 3. Get total revenue (sum of total_amount for all bookings)
-  const totalPendapatan = bookingsData?.reduce((acc, curr) => acc + (Number(curr.total_amount) || 0), 0) || 0;
+  // 3. Get total revenue (sum of verified payments only)
+  const { data: paymentsData } = await supabase.from('payments').select('amount').eq('status', 'Terverifikasi');
+  const totalPendapatan = paymentsData?.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) || 0;
   
   // 4. Get completed trips
   const { count: completedTrips } = await supabase.from('trips').select('*', { count: 'exact', head: true }).eq('status', 'Selesai');
@@ -86,7 +87,7 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Rp {totalPendapatan.toLocaleString('id-ID')}</div>
-            <p className="text-xs text-muted-foreground">Nilai transaksi (kotor)</p>
+            <p className="text-xs text-muted-foreground">Pembayaran Terverifikasi</p>
           </CardContent>
         </Card>
       </div>

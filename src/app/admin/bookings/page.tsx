@@ -98,7 +98,13 @@ export default async function AdminBookingsPage() {
                     >
                       {booking.status}
                     </Badge>
-                    <div className="text-[10px] text-muted-foreground mt-1">Pay: {booking.payment_status}</div>
+                    <div className="mt-2">
+                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Pay Status:</span>
+                      <br/>
+                      <span className="text-xs font-medium text-amber-600">
+                        {booking.payment_status && booking.payment_status !== "0" ? booking.payment_status : "Belum Bayar"}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     Rp {(booking.total_amount || 0).toLocaleString('id-ID')}

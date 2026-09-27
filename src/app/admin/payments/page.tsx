@@ -22,12 +22,22 @@ export default async function AdminPaymentsPage() {
 
   const { data: bookingsList } = await supabase
     .from('bookings')
-    .select('id, booking_code, full_name')
+    .select('id, booking_code, full_name, total_amount')
     .order('created_at', { ascending: false });
 
   if (error) console.error("Error fetching payments:", error);
   const safePayments = payments || [];
   const safeBookingsList = bookingsList || [];
+
+  const totalPenerimaan = safePayments
+    .filter(p => p.status === "Terverifikasi")
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+    
+  const menungguVerifikasi = safePayments
+    .filter(p => p.status !== "Terverifikasi").length;
+
+  const totalBookingAmount = safeBookingsList.reduce((sum, b) => sum + (Number(b.total_amount) || 0), 0);
+  const totalPiutang = totalBookingAmount - totalPenerimaan;
 
   return (
     <div className="space-y-6">
@@ -41,21 +51,21 @@ export default async function AdminPaymentsPage() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-          <p className="text-sm font-medium text-muted-foreground">Total Penerimaan Bulan Ini</p>
+          <p className="text-sm font-medium text-muted-foreground">Total Penerimaan (Terverifikasi)</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold">Rp 0</h3>
+            <h3 className="text-2xl font-bold">Rp {totalPenerimaan.toLocaleString('id-ID')}</h3>
           </div>
         </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
           <p className="text-sm font-medium text-muted-foreground">Menunggu Verifikasi</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold text-amber-600">0 Transaksi</h3>
+            <h3 className="text-2xl font-bold text-amber-600">{menungguVerifikasi} Transaksi</h3>
           </div>
         </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
           <p className="text-sm font-medium text-muted-foreground">Total Piutang (Belum Lunas)</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold text-red-600">Rp 0</h3>
+            <h3 className="text-2xl font-bold text-red-600">Rp {Math.max(0, totalPiutang).toLocaleString('id-ID')}</h3>
           </div>
         </div>
       </div>

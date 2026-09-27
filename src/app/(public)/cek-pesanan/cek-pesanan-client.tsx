@@ -8,8 +8,12 @@ import { Loader2, Search, ArrowLeft, Receipt, Calendar, Users, Wallet } from "lu
 import { cekPesanan } from "./actions";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export function CekPesananClient() {
+  const searchParams = useSearchParams();
+  const initialCode = searchParams.get("booking_code") || "";
+  
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [bookingData, setBookingData] = useState<any>(null);
@@ -169,7 +173,7 @@ export function CekPesananClient() {
       )}
       <div className="space-y-2">
         <Label htmlFor="booking_code">Kode Booking</Label>
-        <Input id="booking_code" name="booking_code" required placeholder="Contoh: SCT-123456" className="uppercase" />
+        <Input id="booking_code" name="booking_code" required defaultValue={initialCode} placeholder="Contoh: SCT-123456" className="uppercase" />
         <p className="text-xs text-muted-foreground">Kode ini Anda dapatkan setelah mengisi form pendaftaran.</p>
       </div>
       <div className="space-y-2">
