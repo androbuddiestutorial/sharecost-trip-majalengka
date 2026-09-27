@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sharecost Trip Majalengka | Open Trip | Private Trip",
     description: "Jelajahi destinasi wisata alam dan petualangan dengan mudah dan terorganisir.",
+  },
+  verification: {
+    google: "GnE1Y6Q5sPkYeAWbsbjNqhQtSj5Xr1nXUsryA5taCvU",
   }
 };
 
