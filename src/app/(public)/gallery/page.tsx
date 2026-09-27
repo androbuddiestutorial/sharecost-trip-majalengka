@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
 
 export const metadata = {
-  title: "Galeri Trip - Sharecosttrip Majalengka",
-  description: "Dokumentasi perjalanan dan keseruan open trip gunung bersama Sharecosttrip Majalengka.",
+  title: "Galeri Trip - Sharecost Trip Majalengka",
+  description: "Dokumentasi perjalanan dan keseruan open trip gunung bersama Sharecost Trip Majalengka.",
 };
 
 export const revalidate = 60;

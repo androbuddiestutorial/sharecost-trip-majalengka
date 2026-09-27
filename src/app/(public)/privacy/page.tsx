@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Kebijakan Privasi - Sharecosttrip Majalengka",
+  title: "Kebijakan Privasi - Sharecost Trip Majalengka",
 };
 
 export default function PrivacyPage() {
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-foreground">4. Dokumentasi Media</h2>
           <p>
-            Foto dan video yang diambil selama trip berlangsung adalah hak milik Sharecosttrip Majalengka. Kami berhak menggunakan materi tersebut untuk keperluan promosi dan galeri di platform kami, kecuali Anda menyatakan keberatan secara tertulis sebelumnya.
+            Foto dan video yang diambil selama trip berlangsung adalah hak milik Sharecost Trip Majalengka. Kami berhak menggunakan materi tersebut untuk keperluan promosi dan galeri di platform kami, kecuali Anda menyatakan keberatan secara tertulis sebelumnya.
           </p>
         </section>
 

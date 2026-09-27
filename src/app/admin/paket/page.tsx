@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { CreatePackageButton, EditPackageButton, DeletePackageButton } from "./paket-client";
 
 export const metadata = {
-  title: "Kelola Paket - Sharecosttrip Majalengka",
+  title: "Kelola Paket - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

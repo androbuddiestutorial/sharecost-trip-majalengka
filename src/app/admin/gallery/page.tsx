@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { CreateGalleryButton, EditGalleryButton, DeleteGalleryButton } from "./gallery-client";
 
 export const metadata = {
-  title: "Kelola Galeri - Sharecosttrip Majalengka",
+  title: "Kelola Galeri - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

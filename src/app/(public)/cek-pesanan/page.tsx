@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { CekPesananClient } from "./cek-pesanan-client";
 
 export const metadata = {
-  title: "Cek Pesanan - Sharecosttrip Majalengka",
+  title: "Cek Pesanan - Sharecost Trip Majalengka",
   description: "Cek status pendaftaran, rincian biaya, dan invoice perjalanan Anda.",
 };
 

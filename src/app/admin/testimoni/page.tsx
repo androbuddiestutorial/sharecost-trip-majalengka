@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { CreateTestimonialButton, EditTestimonialButton, DeleteTestimonialButton } from "./testimoni-client";
 
 export const metadata = {
-  title: "Kelola Testimoni - Sharecosttrip Majalengka",
+  title: "Kelola Testimoni - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

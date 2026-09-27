@@ -7,7 +7,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 
 export const metadata = {
-  title: "Jadwal Trip - Sharecosttrip Majalengka",
+  title: "Jadwal Trip - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 60;

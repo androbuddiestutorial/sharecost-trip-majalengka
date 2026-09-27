@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { DashboardExportButton } from "@/components/ui/dashboard-export-button";
 
 export const metadata = {
-  title: "Dashboard Admin - Sharecosttrip Majalengka",
+  title: "Dashboard Admin - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0; // Disable cache to always fetch fresh data

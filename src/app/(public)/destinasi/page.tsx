@@ -8,7 +8,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export const metadata = {
-  title: "Destinasi Trip Gunung - Sharecosttrip Majalengka",
+  title: "Destinasi Trip Gunung - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 60;

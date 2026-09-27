@@ -9,7 +9,7 @@ import { BookingActions } from "./booking-client";
 import { ExportButton } from "@/components/ui/export-button";
 
 export const metadata = {
-  title: "Kelola Bookings - Sharecosttrip Majalengka",
+  title: "Kelola Bookings - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0; // Disable cache for admin pages

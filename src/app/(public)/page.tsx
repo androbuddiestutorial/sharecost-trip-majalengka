@@ -45,7 +45,7 @@ export default async function Home() {
             Jelajahi Alam, Nikmati Perjalanan, Bagikan Pengalaman.
           </h1>
           <p className="text-lg md:text-xl text-gray-200">
-            SHARECOSTTRIP MAJALENGKA — Teman perjalanan untuk menjelajahi berbagai destinasi alam dengan perjalanan yang terorganisir, aman, dan menyenangkan.
+            Sharecost Trip Majalengka — Teman perjalanan untuk menjelajahi berbagai destinasi alam dengan perjalanan yang terorganisir, aman, dan menyenangkan.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link href="/destinasi" className={cn(buttonVariants({ size: "lg" }), "text-lg")}>

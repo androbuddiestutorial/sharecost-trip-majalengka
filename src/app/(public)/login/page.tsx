@@ -1,7 +1,7 @@
 import { LoginButton } from "./login-button";
 
 export const metadata = {
-  title: "Admin Login - Sharecosttrip Majalengka",
+  title: "Admin Login - Sharecost Trip Majalengka",
 };
 
 export default function LoginPage() {

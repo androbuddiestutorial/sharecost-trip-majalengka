@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { CreateMeetingPointButton, EditMeetingPointButton, DeleteMeetingPointButton } from "./meeting-points-client";
 
 export const metadata = {
-  title: "Kelola Meeting Point - Sharecosttrip Majalengka",
+  title: "Kelola Meeting Point - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

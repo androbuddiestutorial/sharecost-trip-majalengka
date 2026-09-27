@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { CreateDestinasiButton, EditDestinasiButton, DeleteDestinasiButton } from "./destinasi-client";
 
 export const metadata = {
-  title: "Kelola Destinasi - Sharecosttrip Majalengka",
+  title: "Kelola Destinasi - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

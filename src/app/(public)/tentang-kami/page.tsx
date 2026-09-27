@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Tentang Kami - Sharecosttrip Majalengka",
+  title: "Tentang Kami - Sharecost Trip Majalengka",
 };
 
 export default function TentangKamiPage() {
@@ -13,7 +13,7 @@ export default function TentangKamiPage() {
       <div className="text-center mb-16">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Tentang Kami</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Mengenal lebih dekat Sharecosttrip Majalengka, teman perjalanan andalan Anda.
+          Mengenal lebih dekat Sharecost Trip Majalengka, teman perjalanan andalan Anda.
         </p>
       </div>
 
@@ -32,7 +32,7 @@ export default function TentangKamiPage() {
             Berawal dari kecintaan kami terhadap alam dan pendakian gunung, kami menyadari bahwa mendaki seringkali membutuhkan biaya yang tidak sedikit dan persiapan yang sangat matang jika dilakukan sendirian.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            Oleh karena itu, <strong>Sharecosttrip Majalengka</strong> hadir dengan konsep <em>sharecost</em> (berbagi biaya). Misi kami adalah memfasilitasi para pendaki, baik pemula maupun berpengalaman, untuk menjelajahi keindahan alam Indonesia dengan biaya yang lebih terjangkau, aman, dan terorganisir dengan baik.
+            Oleh karena itu, <strong>Sharecost Trip Majalengka</strong> hadir dengan konsep <em>sharecost</em> (berbagi biaya). Misi kami adalah memfasilitasi para pendaki, baik pemula maupun berpengalaman, untuk menjelajahi keindahan alam Indonesia dengan biaya yang lebih terjangkau, aman, dan terorganisir dengan baik.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             Kami percaya bahwa alam adalah tempat terbaik untuk belajar, bersyukur, dan menemukan keluarga baru di setiap langkah pendakian.

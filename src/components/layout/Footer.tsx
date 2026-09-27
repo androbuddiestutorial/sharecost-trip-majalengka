@@ -47,7 +47,7 @@ export function Footer() {
         </div>
         
         <div className="border-t mt-12 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Sharecosttrip Majalengka. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Sharecost Trip Majalengka. All rights reserved.</p>
         </div>
       </div>
     </footer>

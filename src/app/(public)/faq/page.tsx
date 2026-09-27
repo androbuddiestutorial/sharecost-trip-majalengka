@@ -1,11 +1,11 @@
 export const metadata = {
-  title: "FAQ - Sharecosttrip Majalengka",
+  title: "FAQ - Sharecost Trip Majalengka",
 };
 
 const faqs = [
   {
-    q: "Apa itu Sharecosttrip Majalengka?",
-    a: "Sharecosttrip Majalengka adalah penyedia layanan open trip, private trip, dan regular trip untuk pendakian gunung yang aman, terorganisir, dan mengutamakan kenyamanan bersama dengan konsep berbagi biaya (sharecost) yang transparan."
+    q: "Apa itu Sharecost Trip Majalengka?",
+    a: "Sharecost Trip Majalengka adalah penyedia layanan open trip, private trip, dan regular trip untuk pendakian gunung yang aman, terorganisir, dan mengutamakan kenyamanan bersama dengan konsep berbagi biaya (sharecost) yang transparan."
   },
   {
     q: "Apakah pemula bisa ikut open trip ini?",

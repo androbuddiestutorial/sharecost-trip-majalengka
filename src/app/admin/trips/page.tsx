@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { CreateTripButton, EditTripButton, DeleteTripButton } from "./trips-client";
 
 export const metadata = {
-  title: "Kelola Jadwal Trip - Sharecosttrip Majalengka",
+  title: "Kelola Jadwal Trip - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

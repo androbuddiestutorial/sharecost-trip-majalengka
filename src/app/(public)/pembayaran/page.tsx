@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { PembayaranClient } from "./pembayaran-client";
 
 export const metadata = {
-  title: "Form Pembayaran - Sharecosttrip Majalengka",
+  title: "Form Pembayaran - Sharecost Trip Majalengka",
   description: "Form konfirmasi pembayaran pendaftaran trip.",
 };
 

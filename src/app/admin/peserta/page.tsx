@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
-  title: "Daftar Peserta - Sharecosttrip Majalengka",
+  title: "Daftar Peserta - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

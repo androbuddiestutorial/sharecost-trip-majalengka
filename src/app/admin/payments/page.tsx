@@ -8,7 +8,7 @@ import { CreatePaymentButton, VerifyPaymentButton, DeletePaymentButton } from ".
 import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
-  title: "Kelola Pembayaran - Sharecosttrip Majalengka",
+  title: "Kelola Pembayaran - Sharecost Trip Majalengka",
 };
 
 export const revalidate = 0;

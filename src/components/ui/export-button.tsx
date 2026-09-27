@@ -17,7 +17,7 @@ export function ExportButton({ data, filename = "Laporan_Booking.pdf" }: { data:
 
     // Header Laporan
     doc.setFontSize(16);
-    doc.text("Laporan Data Booking - Sharecosttrip Majalengka", 14, 15);
+    doc.text("Laporan Data Booking - Sharecost Trip Majalengka", 14, 15);
     
     doc.setFontSize(10);
     doc.text(`Dicetak pada: ${new Date().toLocaleString('id-ID')}`, 14, 22);

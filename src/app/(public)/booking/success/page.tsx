@@ -4,7 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Pendaftaran Berhasil - Sharecosttrip Majalengka",
+  title: "Pendaftaran Berhasil - Sharecost Trip Majalengka",
 };
 
 export default function BookingSuccessPage() {

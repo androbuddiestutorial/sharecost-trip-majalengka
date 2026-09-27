@@ -2,7 +2,7 @@ import { ReviewForm } from "./form";
 import { supabase } from "@/lib/supabase";
 
 export const metadata = {
-  title: "Beri Ulasan - Sharecosttrip Majalengka",
+  title: "Beri Ulasan - Sharecost Trip Majalengka",
   description: "Bagikan pengalaman seru Anda mendaki gunung bersama kami.",
 };
 
