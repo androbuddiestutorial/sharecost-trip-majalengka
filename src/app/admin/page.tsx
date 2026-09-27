@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FileText, CheckCircle2, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { DashboardExportButton } from "@/components/ui/dashboard-export-button";
 
 export const metadata = {
   title: "Dashboard Admin - Sharecosttrip Majalengka",
@@ -31,12 +31,20 @@ export default async function AdminDashboardPage() {
     .order('created_at', { ascending: false })
     .limit(5);
 
+  const stats = {
+    totalBookings: totalBookings || 0,
+    totalPeserta,
+    totalPendapatan,
+    completedTrips: completedTrips || 0,
+    recentBookings: recentBookings || []
+  };
+
   return (
     <div className="space-y-6 flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
         <div className="flex items-center space-x-2">
-          <Button>Download Laporan</Button>
+          <DashboardExportButton stats={stats} />
         </div>
       </div>
 
