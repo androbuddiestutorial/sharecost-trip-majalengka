@@ -100,20 +100,23 @@ export default async function TripPage({ searchParams }: Props) {
           const privateWaLink = `https://wa.me/6285721712077?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya ingin request Private Trip untuk destinasi *${trip.destinations?.title}*.\n\nMohon informasi untuk ketersediaan tanggal custom dan harganya. Terima kasih 🙏`)}`;
           
           return (
-            <Card key={trip.id} className="overflow-hidden hover:shadow-md transition-shadow">
-              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center">
+            <Card key={trip.id} className="relative overflow-hidden hover:shadow-md transition-shadow">
+              
+              {/* Badge Status (Pojok Kanan Atas) */}
+              <div className="absolute top-4 right-4 md:top-6 md:right-6">
+                <Badge 
+                  variant={isFull ? "destructive" : (trip.status === "Terbuka" ? "default" : "secondary")} 
+                  className="text-sm px-4 py-1.5 font-bold tracking-wide shadow-sm"
+                >
+                  {isFull ? "PENUH" : trip.status.toUpperCase()}
+                </Badge>
+              </div>
+
+              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center pt-12 md:pt-8">
                 <div className="flex-grow w-full">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 w-full md:pr-24">
                       <h3 className="text-2xl font-bold">{trip.destinations?.title || 'Destinasi Tidak Diketahui'}</h3>
-                    </div>
-                    <div className="flex flex-col gap-2 items-end">
-                      <Badge variant="default" className="text-sm">
-                        Open Trip
-                      </Badge>
-                      <Badge variant={isFull ? "secondary" : (trip.status === "Terbuka" ? "default" : "secondary")} className="text-sm">
-                        {isFull ? "Penuh" : trip.status}
-                      </Badge>
                     </div>
                   </div>
                   
