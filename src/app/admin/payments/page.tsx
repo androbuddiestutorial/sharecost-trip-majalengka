@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, ExternalLink } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import { CreatePaymentButton, VerifyPaymentButton, DeletePaymentButton } from "./payments-client";
 import { PrintButton } from "@/components/ui/print-button";
@@ -82,6 +82,7 @@ export default async function AdminPaymentsPage() {
               <TableHead>Booking</TableHead>
               <TableHead>Tanggal</TableHead>
               <TableHead>Metode</TableHead>
+              <TableHead>Bukti</TableHead>
               <TableHead className="text-right">Jumlah</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Aksi</TableHead>
@@ -90,7 +91,7 @@ export default async function AdminPaymentsPage() {
           <TableBody>
             {safePayments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Belum ada data pembayaran.</TableCell>
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pembayaran.</TableCell>
               </TableRow>
             ) : safePayments.map((payment) => {
               const payDate = new Date(payment.payment_date || payment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -103,6 +104,20 @@ export default async function AdminPaymentsPage() {
                   </TableCell>
                   <TableCell>{payDate}</TableCell>
                   <TableCell>{payment.payment_method}</TableCell>
+                  <TableCell>
+                    {payment.proof_url ? (
+                      <a 
+                        href={payment.proof_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded"
+                      >
+                        <ExternalLink className="h-3 w-3" /> Lihat
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right font-medium">
                     Rp {(payment.amount || 0).toLocaleString('id-ID')}
                   </TableCell>
