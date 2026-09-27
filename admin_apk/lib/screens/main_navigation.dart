@@ -4,6 +4,7 @@ import 'dashboard_screen.dart';
 import 'trips_screen.dart';
 import 'destinations_screen.dart';
 import 'gallery_screen.dart';
+import 'manifest_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -20,6 +21,7 @@ class _MainNavigationState extends State<MainNavigation> {
     const TripsScreen(),     // Index 1: Trips
     const DestinationsScreen(), // Index 2: Destinations
     const GalleryScreen(),   // Index 3: Gallery
+    const ManifestScreen(),  // Index 4: Manifest
   ];
 
   void _onItemTapped(int index) {
@@ -59,7 +61,7 @@ class _MainNavigationState extends State<MainNavigation> {
             label: 'Pesanan',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
+            icon: Icon(Icons.event),
             label: 'Jadwal',
           ),
           BottomNavigationBarItem(
@@ -69,6 +71,10 @@ class _MainNavigationState extends State<MainNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.photo_library),
             label: 'Galeri',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Manifest',
           ),
         ],
       ),
