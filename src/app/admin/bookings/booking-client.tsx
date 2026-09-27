@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/dialog";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { Label } from "@/components/ui/label";
-import { MoreHorizontal, Eye, MessageCircle, Edit, Trash2, Loader2, Copy } from "lucide-react";
+import { MoreHorizontal, Eye, MessageCircle, Edit, Trash2, Loader2, Copy, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { updateBookingStatus, deleteBooking } from "./actions";
+import { updateBookingStatus, deleteBooking, processPelunasan } from "./actions";
 
 export type BookingData = {
   id: string;
@@ -45,6 +45,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
   const router = useRouter();
   const [statusOpen, setStatusOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [pelunasanOpen, setPelunasanOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const destinasi = booking.trips?.destinations?.name || booking.trips?.destinations?.title || "-";
@@ -108,6 +109,22 @@ Terimakasih 🙏
     setStatusOpen(false);
   }
 
+  async function onPelunasan() {
+    setLoading(true);
+    try {
+      const result = await processPelunasan(booking.id);
+      if (!result.success) {
+        alert(result.error || "Gagal memproses pelunasan");
+      } else {
+        router.refresh();
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan saat memproses pelunasan");
+    }
+    setLoading(false);
+    setPelunasanOpen(false);
+  }
+
   async function onDelete() {
     setLoading(true);
     try {
@@ -153,6 +170,12 @@ Terimakasih 🙏
                 Salin Link Ulasan
               </MenuPrimitive.Item>
               <MenuPrimitive.Separator className="-mx-1 my-1 h-px bg-border" />
+              {booking.payment_status === "DP" && (
+                <MenuPrimitive.Item onClick={() => setPelunasanOpen(true)} className="group relative flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1.5 text-sm outline-hidden select-none text-emerald-600 hover:bg-accent hover:text-emerald-700 focus:bg-accent focus:text-emerald-700">
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Proses Pelunasan
+                </MenuPrimitive.Item>
+              )}
               <MenuPrimitive.Item onClick={() => setStatusOpen(true)} className="group relative flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1.5 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
                 <Edit className="mr-2 h-4 w-4" />
                 Ubah Status
@@ -165,6 +188,25 @@ Terimakasih 🙏
           </MenuPrimitive.Positioner>
         </MenuPrimitive.Portal>
       </MenuPrimitive.Root>
+
+      {/* Dialog Proses Pelunasan */}
+      <Dialog open={pelunasanOpen} onOpenChange={setPelunasanOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Proses Pelunasan</DialogTitle>
+            <DialogDescription>
+              Tandai booking {booking.booking_code} ({booking.full_name}) sebagai Lunas? Sistem akan otomatis mencatat sisa tagihan ke data Pembayaran.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setPelunasanOpen(false)} disabled={loading}>Batal</Button>
+            <Button onClick={onPelunasan} disabled={loading} className="bg-emerald-600 hover:bg-emerald-700">
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Ya, Proses Pelunasan
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={statusOpen} onOpenChange={setStatusOpen}>
         <DialogContent>
