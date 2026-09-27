@@ -98,6 +98,7 @@ export async function createAdminBooking(data: any) {
     revalidatePath("/admin/bookings");
     revalidatePath("/admin/payments");
     revalidatePath("/admin/peserta");
+    revalidatePath("/trip"); // Pastikan halaman publik ter-refresh
     
     return { success: true, booking_id: booking.id };
   } catch (error: any) {
