@@ -22,6 +22,7 @@ export type TripData = {
   destination_id: string;
   includes?: any;
   trip_type?: string;
+  price?: number;
   date_start: string;
   date_end: string;
   quota: number;
@@ -71,12 +72,18 @@ export function CreateTripButton({ destinations }: { destinations: DestinationOp
               ))}
             </select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="trip_type">Jenis Trip</Label>
-            <select id="trip_type" name="trip_type" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-              <option value="Open Trip">Open Trip</option>
-              <option value="Private Trip">Private Trip</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="trip_type">Jenis Trip</Label>
+              <select id="trip_type" name="trip_type" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                <option value="Open Trip">Open Trip</option>
+                <option value="Private Trip">Private Trip</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Harga Trip (Rp)</Label>
+              <Input type="number" id="price" name="price" placeholder="350000" min="0" />
+            </div>
           </div>
           <div className="space-y-2 col-span-2">
             <Label htmlFor="includes">Fasilitas Termasuk (Include)</Label>
@@ -157,12 +164,18 @@ export function EditTripButton({ trip, destinations }: { trip: TripData, destina
               ))}
             </select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="trip_type">Jenis Trip</Label>
-            <select id="trip_type" name="trip_type" defaultValue={trip.trip_type || 'Open Trip'} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-              <option value="Open Trip">Open Trip</option>
-              <option value="Private Trip">Private Trip</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="trip_type">Jenis Trip</Label>
+              <select id="trip_type" name="trip_type" defaultValue={trip.trip_type || 'Open Trip'} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                <option value="Open Trip">Open Trip</option>
+                <option value="Private Trip">Private Trip</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="price">Harga Trip (Rp)</Label>
+              <Input type="number" id="price" name="price" defaultValue={trip.price || ""} placeholder="350000" min="0" />
+            </div>
           </div>
           <div className="space-y-2 col-span-2">
             <Label htmlFor="includes">Fasilitas Termasuk (Include)</Label>

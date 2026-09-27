@@ -14,11 +14,13 @@ export async function createTrip(formData: FormData) {
     const status = formData.get("status") as string;
     const includesRaw = formData.get("includes") as string;
     const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(s => s !== '') : [];
+    const price = parseInt(formData.get("price") as string) || 0;
 
     const { error } = await supabase.from("trips").insert({
       destination_id,
       includes,
       trip_type: trip_type || 'Open Trip',
+      price,
       date_start,
       date_end,
       quota,
@@ -50,11 +52,13 @@ export async function updateTrip(id: string, formData: FormData) {
     const status = formData.get("status") as string;
     const includesRaw = formData.get("includes") as string;
     const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(s => s !== '') : [];
+    const price = parseInt(formData.get("price") as string) || 0;
 
     const { error } = await supabase.from("trips").update({
       destination_id,
       includes,
       trip_type: trip_type || 'Open Trip',
+      price,
       date_start,
       date_end,
       quota,

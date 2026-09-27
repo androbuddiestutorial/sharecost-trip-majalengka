@@ -97,7 +97,7 @@ export default async function TripPage() {
                 <div className="flex flex-col items-center md:items-end w-full md:w-auto md:min-w-[150px] gap-4">
                   <div className="text-center md:text-right">
                     <p className="text-sm text-muted-foreground">Harga per orang</p>
-                    <p className="text-2xl font-bold text-primary">Rp {Number(trip.destinations?.price || 0).toLocaleString('id-ID')}</p>
+                    <p className="text-2xl font-bold text-primary">Rp {Number((trip.price > 0 ? trip.price : trip.destinations?.price) || 0).toLocaleString('id-ID')}</p>
                   </div>
                   {trip.status === "Terbuka" ? (
                     isPrivate ? (

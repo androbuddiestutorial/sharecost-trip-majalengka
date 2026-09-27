@@ -22,7 +22,6 @@ export async function POST(request: Request) {
     // Generate Booking Code
     const booking_code = `BK-${Date.now().toString(36).toUpperCase().slice(-4)}${Math.random().toString(36).toUpperCase().slice(2, 4)}`;
 
-    // Get actual price from database
     let pricePerPax = 0;
     if (body.jadwalTrip) {
       const { data: tripData } = await supabase
@@ -31,7 +30,9 @@ export async function POST(request: Request) {
         .eq('id', body.jadwalTrip)
         .single();
       
-      if (tripData?.destinations?.price) {
+      if (tripData?.price && Number(tripData.price) > 0) {
+        pricePerPax = Number(tripData.price);
+      } else if (tripData?.destinations?.price) {
         pricePerPax = Number(tripData.destinations.price);
       }
     }

@@ -227,3 +227,4 @@ CREATE POLICY "push_subscriptions_admin_delete" ON public.push_subscriptions
 -- ============================================================
 ALTER TABLE public.trips ADD COLUMN IF NOT EXISTS trip_type VARCHAR(50) DEFAULT 'Open Trip'; 
 ALTER TABLE public.trips ADD COLUMN IF NOT EXISTS includes JSONB DEFAULT '[]'::jsonb; 
+ALTER TABLE public.trips ADD COLUMN IF NOT EXISTS price NUMERIC DEFAULT 0; 
