@@ -51,7 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final data = await Supabase.instance.client
           .from('bookings')
-          .select('*, trips(date_start, destinations(title))')
+          .select('*, trips(date_start, destinations(title)), booking_members(*)')
           .order('created_at', ascending: false);
           
       int totalPeserta = 0;

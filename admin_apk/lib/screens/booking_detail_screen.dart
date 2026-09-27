@@ -112,9 +112,66 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     }
 
     final name = widget.booking['full_name'] ?? 'Peserta';
+    final gender = widget.booking['gender'] ?? '-';
+    final address = widget.booking['address'] ?? '-';
+    final tripType = widget.booking['trip_type'] ?? 'Open Trip';
+    final meetingPoint = widget.booking['meeting_point'] ?? '-';
+    final pax = widget.booking['pax'] ?? 1;
     final code = widget.booking['booking_code'] ?? '-';
+    final amountStr = (widget.booking['total_amount'] ?? 0).toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
     
-    final message = "Halo Kak $name,\n\nTerima kasih telah mendaftar di Sharecosttrip Majalengka!\n\nBooking Code: *$code*\nStatus saat ini: *$_currentStatus*\n\nSilakan balas pesan ini jika ada pertanyaan terkait keberangkatan atau pembayaran.";
+    var tripData = widget.booking['trips'];
+    if (tripData is List && tripData.isNotEmpty) tripData = tripData[0];
+    var destData = tripData?['destinations'];
+    if (destData is List && destData.isNotEmpty) destData = destData[0];
+    
+    final destinasi = destData?['title'] ?? '-';
+    final tglKeberangkatan = tripData?['date_start'] ?? '-';
+    
+    String membersText = "";
+    final members = widget.booking['booking_members'];
+    if (members is List && members.isNotEmpty) {
+      membersText = "\n- Anggota Tambahan:\n";
+      for (int i = 0; i < members.length; i++) {
+        final m = members[i];
+        membersText += "  ${i + 1}. ${m['full_name']} (${m['whatsapp'] ?? ''})\n";
+      }
+    }
+
+    final paymentLink = 'https://sharecosttripmajalengka.biz.id/pembayaran?booking_code=$code';
+    final cekUrl = 'https://sharecosttripmajalengka.biz.id/cek-pesanan';
+    final reviewUrl = 'https://sharecosttripmajalengka.biz.id/beri-ulasan?booking_id=${widget.booking['id']}';
+
+    final message = '''Halo kak 🙏
+Kami dari Sharecost Trip Majalengka mau mengkonfirmasi apakah benar melakukan Pendaftaran Trip dengan Data berikut:
+- Nama : $name
+- Jenis Kelamin : $gender
+- No HP (WA) : $phone
+- Alamat : $address
+- Tujuan/Destinasi : $destinasi
+- Tanggal Keberangkatan : $tglKeberangkatan
+- Jenis Trip : $tripType
+- Meeting Point : $meetingPoint
+- Jumlah Peserta: $pax Orang$membersText
+- Total Tagihan: *Rp $amountStr*
+
+Kode Booking Anda: *$code*
+
+Mohon konfirmasi Dengan membalas pesan ini.
+
+---
+Untuk kemudahan, silakan lakukan pembayaran melalui link berikut:
+$paymentLink
+
+Anda juga dapat mengecek rincian tagihan & jadwal trip Anda di sini:
+$cekUrl
+
+Nanti setelah selesai trip, bagikan pengalaman seru Anda di sini ya:
+$reviewUrl
+---
+Terimakasih 🙏
+
+-Sharecost Trip Majalengka-''';
     
     final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
     
