@@ -10,56 +10,42 @@ class ManifestScreen extends StatefulWidget {
 }
 
 class _ManifestScreenState extends State<ManifestScreen> {
-  List<dynamic> _trips = [];
-  String? _selectedTripId;
   List<dynamic> _participants = [];
-  bool _isLoadingTrips = true;
-  bool _isLoadingParticipants = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchTrips();
+    _fetchManifest();
   }
 
-  Future<void> _fetchTrips() async {
+  Future<void> _fetchManifest() async {
+    setState(() => _isLoading = true);
     try {
-      final data = await Supabase.instance.client
-          .from('trips')
-          .select('*, destinations(title)')
-          .order('date_start', ascending: false);
-      setState(() {
-        _trips = data;
-        _isLoadingTrips = false;
-        if (data.isNotEmpty) {
-          _selectedTripId = data.first['id'].toString();
-          _fetchParticipants(_selectedTripId!);
-        }
-      });
-    } catch (e) {
-      setState(() => _isLoadingTrips = false);
-    }
-  }
-
-  Future<void> _fetchParticipants(String tripId) async {
-    setState(() => _isLoadingParticipants = true);
-    try {
-      // Fetch bookings for this trip that are Terverifikasi or Lunas
       final data = await Supabase.instance.client
           .from('bookings')
-          .select('*, booking_members(*)')
-          .eq('trip_id', tripId)
+          .select('*, trips(date_start, destinations(title)), booking_members(*)')
           .inFilter('status', ['Terverifikasi', 'Lunas'])
-          .order('created_at', ascending: true);
+          .order('created_at', ascending: false);
           
       List<dynamic> flattened = [];
       for (var booking in data) {
+        var tripData = booking['trips'];
+        if (tripData is List && tripData.isNotEmpty) tripData = tripData[0];
+        var destData = tripData?['destinations'];
+        if (destData is List && destData.isNotEmpty) destData = destData[0];
+        
+        final tripTitle = destData?['title'] ?? 'Trip';
+        final tripDate = tripData?['date_start'] ?? '-';
+
         // Main booker
         flattened.add({
           'name': booking['full_name'],
           'whatsapp': booking['whatsapp'],
           'gender': booking['gender'],
           'status': booking['status'],
+          'trip_title': tripTitle,
+          'trip_date': tripDate,
           'is_main': true,
         });
         
@@ -72,6 +58,8 @@ class _ManifestScreenState extends State<ManifestScreen> {
               'whatsapp': m['whatsapp'] ?? booking['whatsapp'],
               'gender': m['gender'],
               'status': booking['status'],
+              'trip_title': tripTitle,
+              'trip_date': tripDate,
               'is_main': false,
             });
           }
@@ -80,10 +68,10 @@ class _ManifestScreenState extends State<ManifestScreen> {
       
       setState(() {
         _participants = flattened;
-        _isLoadingParticipants = false;
+        _isLoading = false;
       });
     } catch (e) {
-      setState(() => _isLoadingParticipants = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -104,63 +92,36 @@ class _ManifestScreenState extends State<ManifestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.teal.shade50,
-            child: _isLoadingTrips 
-              ? const Center(child: CircularProgressIndicator())
-              : DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Pilih Jadwal Trip',
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  initialValue: _selectedTripId,
-                  isExpanded: true,
-                  items: _trips.map((t) {
-                    var destData = t['destinations'];
-                    if (destData is List && destData.isNotEmpty) destData = destData[0];
-                    final title = destData?['title'] ?? 'Trip';
-                    return DropdownMenuItem<String>(
-                      value: t['id'].toString(),
-                      child: Text('$title (${t['date_start']})'),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    setState(() => _selectedTripId = val);
-                    if (val != null) _fetchParticipants(val);
-                  },
-                ),
-          ),
-          Expanded(
-            child: _isLoadingParticipants 
-              ? const Center(child: CircularProgressIndicator())
-              : _participants.isEmpty
-                ? const Center(child: Text('Belum ada peserta yang terverifikasi/lunas.'))
-                : ListView.builder(
-                    itemCount: _participants.length,
-                    itemBuilder: (context, index) {
-                      final p = _participants[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: p['is_main'] ? Colors.teal : Colors.teal.shade200,
-                          child: Text((index + 1).toString(), style: const TextStyle(color: Colors.white)),
-                        ),
-                        title: Text(p['name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('${p['gender']} | ${p['status']}'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.chat, color: Colors.green),
-                          onPressed: () => _callWa(p['whatsapp']),
-                        ),
-                      );
-                    },
-                  ),
-          )
-        ],
-      ),
+      appBar: AppBar(title: const Text('Manifest Peserta')),
+      body: _isLoading 
+        ? const Center(child: CircularProgressIndicator())
+        : _participants.isEmpty
+          ? const Center(child: Text('Belum ada peserta yang terverifikasi/lunas.'))
+          : RefreshIndicator(
+              onRefresh: _fetchManifest,
+              child: ListView.builder(
+                itemCount: _participants.length,
+                itemBuilder: (context, index) {
+                  final p = _participants[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: p['is_main'] ? Colors.teal : Colors.teal.shade200,
+                        child: Icon(p['is_main'] ? Icons.person : Icons.group, color: Colors.white),
+                      ),
+                      title: Text(p['name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text('${p['trip_title']} (${p['trip_date']})\n${p['status']}'),
+                      isThreeLine: true,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.chat, color: Colors.green),
+                        onPressed: () => _callWa(p['whatsapp']),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }
