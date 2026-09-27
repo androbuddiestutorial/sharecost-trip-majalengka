@@ -82,7 +82,7 @@ export default function BookingPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       jenisKelamin: undefined,
-      jenisTrip: undefined,
+      jenisTrip: "Open Trip",
       jumlahPeserta: "1",
       adaKondisiKesehatan: undefined,
       sumberInformasi: undefined,
@@ -340,13 +340,12 @@ export default function BookingPage() {
                     name="jenisTrip"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <Select onValueChange={field.onChange} value={field.value || "Open Trip"}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pilih Jenis Trip" />
+                          <SelectValue placeholder="Open Trip" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Open Trip">Open Trip</SelectItem>
-                          <SelectItem value="Private Trip">Private Trip</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
