@@ -645,7 +645,7 @@ export default function BookingPage() {
                     const totalPerPax = tripPrice + mpPrice;
                     const grandTotal = totalPerPax * pax;
                     
-                    const formatRp = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+                    const formatRp = (val: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
 
                     return (
                       <div className="text-sm space-y-1">
@@ -752,3 +752,4 @@ export default function BookingPage() {
     </div>
   );
 }
+
