@@ -97,7 +97,7 @@ CREATE POLICY "meeting_points_public_read" ON public.meeting_points
 
 -- Testimonials: anyone can read approved ones
 CREATE POLICY "testimonials_public_read" ON public.testimonials
-  FOR SELECT USING (status = 'Dipublikasikan' OR status = 'Approved');
+  FOR SELECT USING (status = 'Dipublikasikan' OR status = 'Approved' OR status = 'Published');
 
 -- ---- PUBLIC INSERT POLICIES (for booking form & reviews) ----
 
