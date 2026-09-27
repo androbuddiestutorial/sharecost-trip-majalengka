@@ -1,6 +1,23 @@
-# Changelog
+﻿# Changelog
 
 Semua perubahan yang mencolok pada project **Sharecosttrip Majalengka** akan didokumentasikan di file ini.
+
+## [Fase Integrasi Database & Penyempurnaan Sistem] - 2026-09-27
+
+### Added (Ditambahkan)
+- **Form Tambah Booking Manual (Admin)**: Halaman khusus /admin/bookings/create bagi admin untuk memindahkan data peserta offline/lama. Dilengkapi auto-kalkulasi harga, perhitungan otomatis DP (50%) & Lunas, serta sinkronisasi otomatis ke Sisa Kuota jadwal publik.
+- **Form Pembayaran Publik (/pembayaran)**: Halaman untuk peserta melakukan konfirmasi pembayaran dan mengunggah bukti transfer, terhubung otomatis dengan WhatsApp verifikasi admin.
+- **Cek Pesanan (/cek-pesanan)**: Halaman tracking invoice dan status pembayaran peserta secara real-time.
+- **Dynamic Gallery & YouTube Support**: Fitur kategori dinamis pada galeri, *Lightbox Modal* untuk melihat foto berukuran penuh, serta dukungan input link YouTube (Biasa/Shorts) untuk ditampilkan sebagai *Video Embed* di galeri.
+
+### Changed (Diubah)
+- **Generalisasi Kosakata Alam**: Penyesuaian kata-kata dari "Pendakian/Pendaki" menjadi "Trip/Petualangan/Peserta" di seluruh bagian website untuk menjangkau target market yang lebih luas (pantai, air terjun, camping umum).
+- **SEO & Metadata Optimization**: Update metadata (Title, OpenGraph, Twitter Card) menjadi format baku **"Sharecost Trip Majalengka | Open Trip | Private Trip"** untuk mempermudah indeks Google dan tampilan *WhatsApp Preview* yang lebih profesional.
+
+### Fixed (Diperbaiki)
+- **Sisa Kuota Real-time**: Perhitungan sisa kuota dihitung secara live berdasarkan total Pax dari pesanan yang valid, dengan auto-disable tombol daftar jika jadwal penuh.
+- **Supabase RLS & Bucket Upload**: Penyesuaian kebijakan *Row Level Security* (RLS) di database yang mengizinkan *public anon key* untuk mengunggah bukti pembayaran tanpa harus *login*.
+- **PDF Print View Invoice**: Menyembunyikan elemen Navbar dan Footer dengan CSS khusus (print:hidden) ketika halaman Cek Pesanan dicetak atau disave ke PDF.
 
 ## [Unreleased] - Fase UI/UX Frontend & API Skeleton
 
@@ -47,3 +64,4 @@ Semua perubahan yang mencolok pada project **Sharecosttrip Majalengka** akan did
 ### Security & Performance
 - Menerapkan desain *Mobile-First* di seluruh layout (Admin & Publik).
 - Implementasi Next/Image untuk optimisasi aset gambar otomatis dengan pendaftaran remote URL dari Unsplash di `next.config.ts`.
+
