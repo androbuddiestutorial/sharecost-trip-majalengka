@@ -16,7 +16,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
   final _paxController = TextEditingController(text: '1');
   
   String? _gender = 'Laki-laki';
-  String? _tripType = 'Open Trip';
+  final String? _tripType = 'Open Trip';
   String? _selectedTripId;
   String? _selectedMeetingPoint;
   
@@ -127,7 +127,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Jenis Kelamin', border: OutlineInputBorder()),
-              value: _gender,
+              initialValue: _gender,
               items: ['Laki-laki', 'Perempuan'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _gender = v),
             ),
@@ -139,7 +139,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Jadwal Trip', border: OutlineInputBorder()),
-              value: _selectedTripId,
+              initialValue: _selectedTripId,
               items: _trips.map((t) {
                 var destData = t['destinations'];
                 if (destData is List && destData.isNotEmpty) destData = destData[0];
@@ -154,7 +154,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Meeting Point', border: OutlineInputBorder()),
-              value: _selectedMeetingPoint,
+              initialValue: _selectedMeetingPoint,
               items: _meetingPoints.map((m) {
                 int mpPrice = m['price'] ?? 0;
                 String label = m['name'];
@@ -199,3 +199,4 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     );
   }
 }
+

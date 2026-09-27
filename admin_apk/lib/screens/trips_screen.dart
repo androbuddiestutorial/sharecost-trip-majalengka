@@ -116,7 +116,7 @@ class _TripsScreenState extends State<TripsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('${trip['date_start']} - ${trip['date_end']}\nKuota: ${trip['quota']} | Sisa: ${trip['sisa_kuota'] ?? trip['quota']}'),
-                        if (alarmWidget != null) alarmWidget,
+                        alarmWidget ?? const SizedBox.shrink(),
                       ],
                     ),
                     isThreeLine: true,

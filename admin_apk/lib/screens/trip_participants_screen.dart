@@ -95,8 +95,11 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
                 itemBuilder: (context, index) {
                   final p = _participants[index];
                   Color statusColor = Colors.grey;
-                  if (p['status'] == 'Lunas' || p['status'] == 'Terverifikasi') statusColor = Colors.green;
-                  else if (p['status'] == 'DP') statusColor = Colors.orange;
+                  if (p['status'] == 'Lunas' || p['status'] == 'Terverifikasi') {
+                    statusColor = Colors.green;
+                  } else if (p['status'] == 'DP') {
+                    statusColor = Colors.orange;
+                  }
 
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -106,7 +109,13 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
                         child: Text((index + 1).toString(), style: const TextStyle(color: Colors.white)),
                       ),
                       title: Text(p['name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('${p['gender']}\nStatus: ${p['status']}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${p['gender']}'),
+                          Text('Status: ${p['status']}', style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                       isThreeLine: true,
                       trailing: IconButton(
                         icon: const Icon(Icons.chat, color: Colors.green),

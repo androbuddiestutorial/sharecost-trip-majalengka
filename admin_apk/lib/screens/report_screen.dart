@@ -43,7 +43,7 @@ class _ReportScreenState extends State<ReportScreen> {
         pax += (b['pax'] ?? 1) as int;
       }
 
-      final trips = await Supabase.instance.client.from('trips').select('id', const FetchOptions(count: CountOption.exact));
+      final trips = await Supabase.instance.client.from('trips').select('id');
 
       setState(() {
         _totalPendapatan = income;

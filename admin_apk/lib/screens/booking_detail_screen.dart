@@ -343,7 +343,7 @@ Terimakasih 🙏
                     _buildRow('Status', b['payment_status']),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: _currentStatus,
+                      initialValue: _currentStatus,
                       decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Ubah Status Pesanan'),
                       items: const [
                         DropdownMenuItem(value: 'Menunggu Verifikasi', child: Text('Menunggu Verifikasi')),
@@ -439,3 +439,4 @@ Terimakasih 🙏
     );
   }
 }
+
