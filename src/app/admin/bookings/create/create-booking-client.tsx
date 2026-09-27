@@ -16,6 +16,12 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
   const [pax, setPax] = useState(1);
   const [members, setMembers] = useState<{full_name: string, whatsapp: string}[]>([]);
   const [paymentStatus, setPaymentStatus] = useState("Belum Bayar");
+  const [tripId, setTripId] = useState("");
+
+  const selectedTrip = trips.find(t => t.id === tripId);
+  const basePrice = selectedTrip ? (selectedTrip.price > 0 ? selectedTrip.price : (selectedTrip.destinations?.price || 350000)) : 0;
+  const totalAmount = basePrice * pax;
+  const dpAmount = Math.floor(totalAmount / 2);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,7 +30,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      trip_id: formData.get("trip_id"),
+      trip_id: tripId,
       full_name: formData.get("full_name"),
       whatsapp: formData.get("whatsapp"),
       gender: formData.get("gender"),
@@ -34,7 +40,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       pax,
       members,
       payment_status: paymentStatus,
-      payment_amount: formData.get("payment_amount")
+      payment_amount: paymentStatus === "DP" ? dpAmount : (paymentStatus === "Lunas" ? totalAmount : 0)
     };
 
     const result = await createAdminBooking(data);
@@ -60,7 +66,14 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
         <h3 className="text-lg font-semibold border-b pb-2">1. Jadwal Trip</h3>
         <div className="space-y-2">
           <Label htmlFor="trip_id">Pilih Jadwal Trip</Label>
-          <select id="trip_id" name="trip_id" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+          <select 
+            id="trip_id" 
+            name="trip_id" 
+            required 
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            value={tripId}
+            onChange={(e) => setTripId(e.target.value)}
+          >
             <option value="">-- Pilih Trip --</option>
             {trips.map(t => {
               const date = new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -167,6 +180,16 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
             </div>
           </div>
         ))}
+        
+        {tripId && (
+          <div className="mt-4 p-4 bg-primary/5 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center border border-primary/20 gap-2">
+            <div>
+              <span className="font-semibold text-primary block">Total Tagihan</span>
+              <span className="text-xs text-muted-foreground">Rp {basePrice.toLocaleString('id-ID')} x {pax} Orang</span>
+            </div>
+            <span className="text-xl font-bold text-primary">Rp {totalAmount.toLocaleString('id-ID')}</span>
+          </div>
+        )}
       </div>
 
       <div className="space-y-4 pt-2">
@@ -179,17 +202,25 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
             onChange={(e) => setPaymentStatus(e.target.value)}
           >
             <option value="Belum Bayar">Belum Bayar</option>
-            <option value="DP">Uang Muka (DP)</option>
+            <option value="DP">Uang Muka (DP 50%)</option>
             <option value="Lunas">Lunas (Full)</option>
           </select>
           <p className="text-xs text-muted-foreground">Jika memilih DP atau Lunas, sistem akan otomatis mencatatkan uang masuk ke tabel Pembayaran.</p>
         </div>
 
-        {paymentStatus === "DP" && (
+        {paymentStatus === "DP" && tripId && (
           <div className="space-y-2 mt-4 p-4 border rounded-lg bg-amber-50">
-            <Label htmlFor="payment_amount">Nominal DP (Rp)</Label>
-            <Input id="payment_amount" name="payment_amount" type="number" required placeholder="Contoh: 150000" />
-            <p className="text-xs text-amber-700 mt-1">Masukkan total nominal uang muka yang sudah diterima dari peserta ini.</p>
+            <p className="font-medium text-amber-900">Nominal DP Terkalkulasi (50%)</p>
+            <p className="text-2xl font-bold text-amber-700">Rp {dpAmount.toLocaleString('id-ID')}</p>
+            <p className="text-xs text-amber-700 mt-1">Sistem otomatis mencatat nominal ini saat disimpan.</p>
+          </div>
+        )}
+        
+        {paymentStatus === "Lunas" && tripId && (
+          <div className="space-y-2 mt-4 p-4 border rounded-lg bg-green-50">
+            <p className="font-medium text-green-900">Nominal Lunas Terkalkulasi (100%)</p>
+            <p className="text-2xl font-bold text-green-700">Rp {totalAmount.toLocaleString('id-ID')}</p>
+            <p className="text-xs text-green-700 mt-1">Sistem otomatis mencatat pelunasan ini saat disimpan.</p>
           </div>
         )}
       </div>
