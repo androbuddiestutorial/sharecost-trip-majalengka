@@ -72,6 +72,7 @@ export default function BookingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLockedByUrl, setIsLockedByUrl] = useState(false);
   
   const [destinations, setDestinations] = useState<any[]>([]);
   const [trips, setTrips] = useState<any[]>([]);
@@ -103,9 +104,9 @@ export default function BookingPage() {
           if (tripId) {
             const foundTrip = data.data.find((t: any) => t.id === tripId);
             if (foundTrip) {
+              setIsLockedByUrl(true);
               setValue('jadwalTrip', tripId);
               setValue('destinasi', foundTrip.destination || foundTrip.destinations?.title);
-              // We need packages to set jenisTrip
             }
           }
         }
@@ -365,6 +366,7 @@ export default function BookingPage() {
                           setValue('jadwalTrip', '');
                         }} 
                         value={field.value || ""}
+                        disabled={isLockedByUrl}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih Destinasi" />
@@ -386,7 +388,7 @@ export default function BookingPage() {
                     name="jadwalTrip"
                     control={control}
                     render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                      <Select onValueChange={field.onChange} value={field.value || ""} disabled={isLockedByUrl}>
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih Jadwal">
                             {field.value ? (trips.find(t => t.id === field.value)?.date || "Memuat tanggal...") : undefined}
