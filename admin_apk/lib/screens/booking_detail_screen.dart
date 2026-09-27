@@ -116,14 +116,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     
     final message = "Halo Kak $name,\n\nTerima kasih telah mendaftar di Sharecosttrip Majalengka!\n\nBooking Code: *$code*\nStatus saat ini: *$_currentStatus*\n\nSilakan balas pesan ini jika ada pertanyaan terkait keberangkatan atau pembayaran.";
     
-    final url = Uri.parse('whatsapp://send?phone=$cleanPhone&text=${Uri.encodeComponent(message)}');
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
     
     try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url);
-      } else {
-        throw 'Tidak dapat membuka WhatsApp.';
-      }
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

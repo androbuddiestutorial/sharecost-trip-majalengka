@@ -92,9 +92,12 @@ class _ManifestScreenState extends State<ManifestScreen> {
     String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
     if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
     
-    final url = Uri.parse('whatsapp://send?phone=$cleanPhone');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+    final url = Uri.parse('https://wa.me/$cleanPhone');
+    
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp gagal dibuka')));
     }
   }
 
