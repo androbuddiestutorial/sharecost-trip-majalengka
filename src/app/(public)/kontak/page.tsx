@@ -69,7 +69,7 @@ export default function KontakPage() {
             <h3 className="text-2xl font-bold">Fast Response via WhatsApp</h3>
             <p className="text-muted-foreground">Untuk respon yang lebih cepat, silakan klik tombol di bawah ini untuk langsung terhubung dengan Admin kami via WhatsApp.</p>
             <Link 
-              href="https://wa.me/6285862284166?text=Halo%20Admin%20Sharecosttrip%20Majalengka,%20saya%20ingin%20bertanya..." 
+              href="https://wa.me/6285862284166?text=Halo%20Admin%20Sharecost%20Trip%20Majalengka,%20saya%20ingin%20bertanya..." 
               target="_blank"
               className={cn(buttonVariants({ size: "lg" }), "w-full text-lg")}
             >

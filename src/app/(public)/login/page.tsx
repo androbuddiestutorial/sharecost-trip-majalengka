@@ -13,7 +13,7 @@ export default function LoginPage() {
             Login Admin
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Masuk dengan akun Google yang terdaftar sebagai admin untuk mengelola website Sharecosttrip.
+            Masuk dengan akun Google yang terdaftar sebagai admin untuk mengelola website Sharecost Trip.
           </p>
         </div>
         <div className="mt-8 space-y-6">

@@ -36,7 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px]">
           <Link href="/admin" className="flex items-center gap-2 font-semibold text-primary">
             <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
-            <span>SHARECOSTTRIP</span>
+            <span>SHARECOST TRIP</span>
           </Link>
         </div>
         <div className="flex-1 overflow-auto py-2">
@@ -71,7 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="flex h-14 items-center border-b px-4">
                 <Link href="/admin" className="flex items-center gap-2 font-semibold text-primary" onClick={() => setIsSidebarOpen(false)}>
                   <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
-                  <span>SHARECOSTTRIP</span>
+                  <span>SHARECOST TRIP</span>
                 </Link>
               </div>
               <div className="flex-1 overflow-auto py-2">

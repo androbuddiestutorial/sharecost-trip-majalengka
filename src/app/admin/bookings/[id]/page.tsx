@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
-  title: "Detail Booking - Sharecosttrip Majalengka",
+  title: "Detail Booking - Sharecost Trip Majalengka",
 };
 
 export default async function BookingDetailPage({ params }: { params: any }) {

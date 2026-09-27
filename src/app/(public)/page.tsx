@@ -155,7 +155,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Mengapa SHARECOSTTRIP */}
+      {/* Mengapa SHARECOST TRIP */}
       <section className="container mx-auto px-4">
         <h2 className="text-3xl font-bold tracking-tight mb-12 text-center">Mengapa Memilih Kami?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
