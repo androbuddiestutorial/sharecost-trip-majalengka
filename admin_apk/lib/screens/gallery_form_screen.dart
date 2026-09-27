@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 
 class GalleryFormScreen extends StatefulWidget {
   const GalleryFormScreen({super.key});
@@ -15,17 +17,47 @@ class _GalleryFormScreenState extends State<GalleryFormScreen> {
   
   bool _isLoading = false;
   String _mediaType = 'foto'; // foto atau video
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+        _urlController.text = 'Akan diupload...';
+      });
+    }
+  }
+
+  Future<String?> _uploadImage(File file) async {
+    try {
+      final ext = file.path.split('.').last;
+      final fileName = 'gallery-${DateTime.now().millisecondsSinceEpoch}.$ext';
+      await Supabase.instance.client.storage.from('gallery').upload(fileName, file);
+      return Supabase.instance.client.storage.from('gallery').getPublicUrl(fileName);
+    } catch (e) {
+      debugPrint('Upload error: $e');
+      return null;
+    }
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     
     setState(() => _isLoading = true);
     try {
+      String finalUrl = _urlController.text;
+      if (_mediaType == 'foto' && _selectedImage != null) {
+        final uploadedUrl = await _uploadImage(_selectedImage!);
+        if (uploadedUrl != null) finalUrl = uploadedUrl;
+      }
+
       String category = _mediaType == 'video' ? 'Video' : _categoryController.text.trim();
       if (category.isEmpty) category = 'Umum';
 
       await Supabase.instance.client.from('gallery').insert({
-        'image_url': _urlController.text,
+        'image_url': finalUrl,
         'category': category,
       });
       
@@ -36,7 +68,7 @@ class _GalleryFormScreenState extends State<GalleryFormScreen> {
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -67,7 +99,7 @@ class _GalleryFormScreenState extends State<GalleryFormScreen> {
                   // ignore: deprecated_member_use
                   onChanged: (v) => setState(() { _mediaType = v!; _categoryController.clear(); }),
                 ),
-                const Text('Foto URL'),
+                const Text('Foto'),
                 const SizedBox(width: 16),
                 // ignore: deprecated_member_use
                 Radio<String>(
@@ -75,21 +107,46 @@ class _GalleryFormScreenState extends State<GalleryFormScreen> {
                   // ignore: deprecated_member_use
                   groupValue: _mediaType,
                   // ignore: deprecated_member_use
-                  onChanged: (v) => setState(() { _mediaType = v!; _categoryController.text = 'Video'; }),
+                  onChanged: (v) => setState(() { _mediaType = v!; _categoryController.text = 'Video'; _selectedImage = null; _urlController.clear(); }),
                 ),
-                const Text('YouTube URL'),
+                const Text('YouTube Video'),
               ],
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _urlController,
-              decoration: InputDecoration(
-                labelText: _mediaType == 'video' ? 'Link YouTube' : 'URL Gambar Foto',
-                border: const OutlineInputBorder()
+            if (_mediaType == 'foto')
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _urlController,
+                      decoration: const InputDecoration(labelText: 'URL Gambar', border: OutlineInputBorder()),
+                      readOnly: _selectedImage != null,
+                      validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.photo_library, color: Colors.teal, size: 32),
+                    onPressed: _pickImage,
+                    tooltip: 'Pilih dari Galeri',
+                  )
+                ],
+              )
+            else
+              TextFormField(
+                controller: _urlController,
+                decoration: const InputDecoration(
+                  labelText: 'Link YouTube',
+                  border: OutlineInputBorder()
+                ),
+                keyboardType: TextInputType.url,
+                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
               ),
-              keyboardType: TextInputType.url,
-              validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
-            ),
+            if (_selectedImage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Image.file(_selectedImage!, height: 150, fit: BoxFit.cover),
+              ),
             const SizedBox(height: 16),
             if (_mediaType == 'foto')
               TextFormField(

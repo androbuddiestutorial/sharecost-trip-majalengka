@@ -74,9 +74,35 @@ class _TripsScreenState extends State<TripsScreen> {
                     title: Text(destTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text('${trip['date_start']} - ${trip['date_end']}\nKuota: ${trip['quota']} | Sisa: ${trip['sisa_kuota'] ?? trip['quota']}'),
                     isThreeLine: true,
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteTrip(trip['id']),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => TripFormScreen(trip: trip)),
+                            );
+                            if (result == true) _fetchTrips();
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (c) => AlertDialog(
+                                title: const Text('Hapus Jadwal?'),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(c), child: const Text('Batal')),
+                                  TextButton(onPressed: () { Navigator.pop(c); _deleteTrip(trip['id'].toString()); }, child: const Text('Hapus')),
+                                ],
+                              )
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );

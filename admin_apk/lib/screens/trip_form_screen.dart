@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TripFormScreen extends StatefulWidget {
-  const TripFormScreen({super.key});
+  final Map<String, dynamic>? trip;
+  const TripFormScreen({super.key, this.trip});
 
   @override
   State<TripFormScreen> createState() => _TripFormScreenState();
@@ -23,6 +24,13 @@ class _TripFormScreenState extends State<TripFormScreen> {
   void initState() {
     super.initState();
     _fetchDestinations();
+    if (widget.trip != null) {
+      _selectedDestinationId = widget.trip!['destination_id']?.toString();
+      _dateStartController.text = widget.trip!['date_start'] ?? '';
+      _dateEndController.text = widget.trip!['date_end'] ?? '';
+      _priceController.text = (widget.trip!['price'] ?? '').toString();
+      _quotaController.text = (widget.trip!['quota'] ?? '').toString();
+    }
   }
 
   Future<void> _fetchDestinations() async {
@@ -41,23 +49,29 @@ class _TripFormScreenState extends State<TripFormScreen> {
       final price = int.tryParse(_priceController.text) ?? 0;
       final quota = int.tryParse(_quotaController.text) ?? 0;
       
-      await Supabase.instance.client.from('trips').insert({
+      final data = {
         'destination_id': _selectedDestinationId,
         'date_start': _dateStartController.text,
         'date_end': _dateEndController.text,
         'price': price,
         'quota': quota,
-        'status': 'Aktif',
-      });
+        'status': widget.trip != null ? widget.trip!['status'] : 'Aktif',
+      };
+
+      if (widget.trip != null) {
+        await Supabase.instance.client.from('trips').update(data).eq('id', widget.trip!['id']);
+      } else {
+        await Supabase.instance.client.from('trips').insert(data);
+      }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Jadwal Trip ditambahkan')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(widget.trip != null ? 'Jadwal diperbarui' : 'Jadwal ditambahkan')));
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -65,7 +79,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime(DateTime.now().year + 5),
     );
     if (picked != null) {
@@ -86,7 +100,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tambah Jadwal Trip')),
+      appBar: AppBar(title: Text(widget.trip != null ? 'Edit Jadwal Trip' : 'Tambah Jadwal Trip')),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -94,7 +108,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
           children: [
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Destinasi', border: OutlineInputBorder()),
-              initialValue: _selectedDestinationId,
+              value: _selectedDestinationId,
               items: _destinations.map((d) => DropdownMenuItem<String>(
                 value: d['id'].toString(),
                 child: Text(d['title']),
