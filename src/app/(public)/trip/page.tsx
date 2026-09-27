@@ -16,7 +16,7 @@ export default async function TripPage() {
   const supabase = await createClient();
   const { data: trips } = await supabase
     .from('trips')
-    .select('*, destinations(*), packages(*)')
+    .select('*, destinations(*)')
     .order('date_start', { ascending: true });
 
   const safeTrips = trips || [];
@@ -73,15 +73,14 @@ export default async function TripPage() {
                     </div>
                   </div>
                   
-                  {trip.packages && (
+                  {trip.includes && (
                     <div className="mt-4 border-t pt-4">
-                      <p className="font-semibold text-primary mb-2">Paket: {trip.packages.title}</p>
-                      <p className="text-sm text-muted-foreground mb-2">{trip.packages.description}</p>
+                      <p className="font-semibold text-primary mb-2">INCLUDE</p>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         {(() => {
                           let features = [];
                           try {
-                            features = typeof trip.packages.features === 'string' ? JSON.parse(trip.packages.features) : trip.packages.features;
+                            features = typeof trip.includes === 'string' ? JSON.parse(trip.includes) : trip.includes;
                           } catch (e) {}
                           return (features || []).map((f: string, i: number) => (
                             <li key={i} className="text-xs flex items-center gap-1.5">

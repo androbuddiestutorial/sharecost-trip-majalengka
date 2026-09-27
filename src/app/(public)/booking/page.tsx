@@ -409,10 +409,10 @@ export default function BookingPage() {
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {(() => {
                           const selectedTrip = trips.find(t => t.id === watchJadwalTrip);
-                          if (!selectedTrip || !selectedTrip.packages) return null;
+                          if (!selectedTrip || !selectedTrip.includes) return null;
                           let features = [];
                           try {
-                            features = typeof selectedTrip.packages.features === 'string' ? JSON.parse(selectedTrip.packages.features) : selectedTrip.packages.features;
+                            features = typeof selectedTrip.includes === 'string' ? JSON.parse(selectedTrip.includes) : selectedTrip.includes;
                           } catch (e) {}
                           return (features || []).map((f: string, i: number) => (
                             <li key={i} className="text-xs flex items-center gap-1.5 text-muted-foreground">

@@ -20,7 +20,7 @@ import { createTrip, updateTrip, deleteTrip } from "./actions";
 export type TripData = {
   id: string;
   destination_id: string;
-  package_id?: string;
+  includes?: any;
   trip_type?: string;
   date_start: string;
   date_end: string;
@@ -38,7 +38,7 @@ export type PackageOption = {
   title: string;
 };
 
-export function CreateTripButton({ destinations, packages }: { destinations: DestinationOption[], packages: PackageOption[] }) {
+export function CreateTripButton({ destinations }: { destinations: DestinationOption[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -78,14 +78,17 @@ export function CreateTripButton({ destinations, packages }: { destinations: Des
               <option value="Private Trip">Private Trip</option>
             </select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="package_id">Paket Trip (Rincian Fitur)</Label>
-            <select id="package_id" name="package_id" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-              <option value="">-- Pilih Paket Trip --</option>
-              {packages.map(pkg => (
-                <option key={pkg.id} value={pkg.id}>{pkg.title}</option>
-              ))}
-            </select>
+          <div className="space-y-2 col-span-2">
+            <Label htmlFor="includes">Fasilitas Termasuk (Include)</Label>
+            <textarea 
+              id="includes" 
+              name="includes" 
+              rows={5} 
+              placeholder="Transportasi PP&#10;Tiket Masuk Kawasan&#10;Makan 1x&#10;Guide"
+              className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              required
+            />
+            <p className="text-xs text-muted-foreground">Pisahkan setiap fasilitas dengan baris baru (Enter).</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -123,7 +126,7 @@ export function CreateTripButton({ destinations, packages }: { destinations: Des
   );
 }
 
-export function EditTripButton({ trip, destinations, packages }: { trip: TripData, destinations: DestinationOption[], packages: PackageOption[] }) {
+export function EditTripButton({ trip, destinations }: { trip: TripData, destinations: DestinationOption[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -161,14 +164,18 @@ export function EditTripButton({ trip, destinations, packages }: { trip: TripDat
               <option value="Private Trip">Private Trip</option>
             </select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="package_id">Paket Trip (Rincian Fitur)</Label>
-            <select id="package_id" name="package_id" defaultValue={trip.package_id || ""} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-              <option value="">-- Pilih Paket Trip --</option>
-              {packages.map(pkg => (
-                <option key={pkg.id} value={pkg.id}>{pkg.title}</option>
-              ))}
-            </select>
+          <div className="space-y-2 col-span-2">
+            <Label htmlFor="includes">Fasilitas Termasuk (Include)</Label>
+            <textarea 
+              id="includes" 
+              name="includes" 
+              rows={5} 
+              defaultValue={trip.includes ? (typeof trip.includes === 'string' ? JSON.parse(trip.includes) : trip.includes).join('\n') : ''}
+              placeholder="Transportasi PP&#10;Tiket Masuk Kawasan&#10;Makan 1x&#10;Guide"
+              className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              required
+            />
+            <p className="text-xs text-muted-foreground">Pisahkan setiap fasilitas dengan baris baru (Enter).</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

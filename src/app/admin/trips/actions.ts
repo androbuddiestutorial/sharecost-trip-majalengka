@@ -7,16 +7,17 @@ export async function createTrip(formData: FormData) {
   try {
     const { supabase } = await assertAdmin();
     const destination_id = formData.get("destination_id") as string;
-    const package_id = formData.get("package_id") as string;
     const trip_type = formData.get("trip_type") as string;
     const date_start = formData.get("date_start") as string;
     const date_end = formData.get("date_end") as string;
     const quota = parseInt(formData.get("quota") as string);
     const status = formData.get("status") as string;
+    const includesRaw = formData.get("includes") as string;
+    const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(s => s !== '') : [];
 
     const { error } = await supabase.from("trips").insert({
       destination_id,
-      package_id: package_id || null,
+      includes,
       trip_type: trip_type || 'Open Trip',
       date_start,
       date_end,
@@ -42,16 +43,17 @@ export async function updateTrip(id: string, formData: FormData) {
   try {
     const { supabase } = await assertAdmin();
     const destination_id = formData.get("destination_id") as string;
-    const package_id = formData.get("package_id") as string;
     const trip_type = formData.get("trip_type") as string;
     const date_start = formData.get("date_start") as string;
     const date_end = formData.get("date_end") as string;
     const quota = parseInt(formData.get("quota") as string);
     const status = formData.get("status") as string;
+    const includesRaw = formData.get("includes") as string;
+    const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(s => s !== '') : [];
 
     const { error } = await supabase.from("trips").update({
       destination_id,
-      package_id: package_id || null,
+      includes,
       trip_type: trip_type || 'Open Trip',
       date_start,
       date_end,

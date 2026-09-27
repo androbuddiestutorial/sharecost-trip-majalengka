@@ -13,24 +13,21 @@ export default async function AdminTripsPage() {
   const supabase = await createClient();
   const [
     { data: trips, error },
-    { data: destinations },
-    { data: packages }
+    { data: destinations }
   ] = await Promise.all([
-    supabase.from('trips').select('*, destinations(title, price), packages(title, features)').order('date_start', { ascending: true }),
-    supabase.from('destinations').select('id, title').order('title', { ascending: true }),
-    supabase.from('packages').select('id, title').order('title', { ascending: true })
+    supabase.from('trips').select('*, destinations(title, price)').order('date_start', { ascending: true }),
+    supabase.from('destinations').select('id, title').order('title', { ascending: true })
   ]);
 
   if (error) console.error("Error fetching trips:", error);
   const safeTrips = trips || [];
   const safeDestinations = destinations || [];
-  const safePackages = packages || [];
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h2 className="text-3xl font-bold tracking-tight">Manajemen Jadwal Trip</h2>
-        <CreateTripButton destinations={safeDestinations} packages={safePackages} />
+        <CreateTripButton destinations={safeDestinations} />
       </div>
 
       <div className="rounded-md border bg-white overflow-hidden">
@@ -57,7 +54,7 @@ export default async function AdminTripsPage() {
               
               let features = [];
               try {
-                features = typeof trip.packages?.features === 'string' ? JSON.parse(trip.packages.features) : (trip.packages?.features || []);
+                features = typeof trip.includes === 'string' ? JSON.parse(trip.includes) : (trip.includes || []);
               } catch (e) {}
 
               return (
@@ -71,14 +68,15 @@ export default async function AdminTripsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium">{trip.packages?.title || '-'}</div>
-                    {features.length > 0 && (
+                    {features.length > 0 ? (
                       <ul className="text-xs text-muted-foreground mt-1 max-w-[200px]">
                         {features.slice(0, 3).map((f: string, i: number) => (
                           <li key={i} className="truncate truncate-1-lines">• {f}</li>
                         ))}
                         {features.length > 3 && <li>• +{features.length - 3} lainnya</li>}
                       </ul>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">-</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -91,7 +89,7 @@ export default async function AdminTripsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <EditTripButton trip={trip} destinations={safeDestinations} packages={safePackages} />
+                    <EditTripButton trip={trip} destinations={safeDestinations} />
                     <DeleteTripButton id={trip.id} />
                   </TableCell>
                 </TableRow>
