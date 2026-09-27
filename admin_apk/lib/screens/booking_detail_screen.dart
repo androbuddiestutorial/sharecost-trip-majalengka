@@ -47,6 +47,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           .from('payments')
           .update({'status': status})
           .eq('id', paymentId);
+          
+      if (status == 'Terverifikasi') {
+        await _updateStatus('Terverifikasi');
+      }
       
       _fetchPayments();
       
