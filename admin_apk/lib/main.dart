@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,29 +11,43 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-}
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
   try {
     await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } catch (e) {
-    debugPrint('Firebase init failed: $e');
+    debugPrint('BG Firebase Init Error: $e');
   }
+}
 
-  try {
-    await Supabase.initialize(
-      url: 'https://wlpwrgcnhacsxgyjcvqr.supabase.co',
-      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
-    );
-  } catch (e) {
-    debugPrint('Supabase init failed: $e');
-  }
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    
+    // Setup global error handling
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint(details.exceptionAsString());
+    };
+    
+    try {
+      await Firebase.initializeApp();
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    } catch (e) {
+      debugPrint('Firebase init failed: $e');
+    }
 
-  runApp(const AdminApp());
+    try {
+      await Supabase.initialize(
+        url: 'https://wlpwrgcnhacsxgyjcvqr.supabase.co',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
+      );
+    } catch (e) {
+      debugPrint('Supabase init failed: $e');
+    }
+
+    runApp(const AdminApp());
+  }, (error, stack) {
+    debugPrint('Caught by runZonedGuarded: $error');
+  });
 }
 
 class AdminApp extends StatelessWidget {
@@ -40,6 +55,22 @@ class AdminApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Override error widget to show errors in release mode for debugging
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      return Material(
+        child: Container(
+          color: Colors.red,
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
+            child: Text(
+              details.exceptionAsString() + '\n\n' + (details.stack?.toString() ?? ''),
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+            ),
+          ),
+        ),
+      );
+    };
+
     return MaterialApp(
       title: 'Sharecosttrip Admin',
       navigatorKey: navigatorKey,
