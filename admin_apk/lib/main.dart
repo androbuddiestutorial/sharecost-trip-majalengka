@@ -16,13 +16,21 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  try {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    debugPrint('Firebase init failed: $e');
+  }
 
-  await Supabase.initialize(
-    url: 'https://wlpwrgcnhacsxgyjcvqr.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
-  );
+  try {
+    await Supabase.initialize(
+      url: 'https://wlpwrgcnhacsxgyjcvqr.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndscHdyZ2NuaGFjc3hneWpjdnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzMjQzOTIsImV4cCI6MjEwNTkwMDM5Mn0.2sB0SLHghPJFhMa907usH4Wh4dYF9sZwC7JXIKhrZ2Y',
+    );
+  } catch (e) {
+    debugPrint('Supabase init failed: $e');
+  }
 
   runApp(const AdminApp());
 }
