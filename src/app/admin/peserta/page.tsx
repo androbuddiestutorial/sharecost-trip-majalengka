@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/server";
 import { PrintButton } from "@/components/ui/print-button";
 
@@ -11,14 +11,56 @@ export const revalidate = 0;
 
 export default async function AdminPesertaPage() {
   const supabase = await createClient();
-  // Fetch members and their bookings
-  const { data: members, error } = await supabase
-    .from('booking_members')
-    .select('*, bookings(booking_code, trips(date_start, destinations(title)))')
+  
+  // Ambil data Pendaftar Utama yang statusnya Terverifikasi atau Lunas
+  const { data: bookingsData } = await supabase
+    .from('bookings')
+    .select('id, full_name, whatsapp, address, booking_code, status, created_at, trips(date_start, destinations(title))')
+    .in('status', ['Terverifikasi', 'Lunas'])
     .order('created_at', { ascending: false });
 
-  if (error) console.error("Error fetching members:", error);
-  const safeMembers = members || [];
+  // Ambil data Anggota Tambahan dari booking yang Terverifikasi atau Lunas
+  const { data: membersData } = await supabase
+    .from('booking_members')
+    .select('id, full_name, whatsapp, address, created_at, bookings!inner(booking_code, status, trips(date_start, destinations(title)))')
+    .in('bookings.status', ['Terverifikasi', 'Lunas'])
+    .order('created_at', { ascending: false });
+
+  // Gabungkan kedua data ke dalam satu array Manifest
+  const combinedParticipants: any[] = [];
+  
+  if (bookingsData) {
+    bookingsData.forEach(b => {
+      combinedParticipants.push({
+        id: `main-${b.id}`,
+        full_name: b.full_name,
+        whatsapp: b.whatsapp,
+        address: b.address,
+        booking_code: b.booking_code,
+        trip_name: b.trips?.destinations?.title || '-',
+        is_main: true,
+        created_at: b.created_at
+      });
+    });
+  }
+
+  if (membersData) {
+    membersData.forEach(m => {
+      combinedParticipants.push({
+        id: `member-${m.id}`,
+        full_name: m.full_name,
+        whatsapp: m.whatsapp,
+        address: m.address,
+        booking_code: m.bookings?.booking_code || '-',
+        trip_name: m.bookings?.trips?.destinations?.title || '-',
+        is_main: false,
+        created_at: m.created_at
+      });
+    });
+  }
+
+  // Urutkan berdasarkan waktu pendaftaran terbaru
+  combinedParticipants.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
   return (
     <div className="space-y-6">
@@ -32,6 +74,7 @@ export default async function AdminPesertaPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Nama Lengkap</TableHead>
+              <TableHead>Peran</TableHead>
               <TableHead>WhatsApp</TableHead>
               <TableHead>Kode Booking</TableHead>
               <TableHead>Trip</TableHead>
@@ -39,20 +82,27 @@ export default async function AdminPesertaPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {safeMembers.length === 0 ? (
+            {combinedParticipants.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Belum ada data peserta.</TableCell>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  Belum ada data peserta (Hanya booking yang Terverifikasi/Lunas yang masuk ke Manifest).
+                </TableCell>
               </TableRow>
-            ) : safeMembers.map((member) => {
-              const tripName = member.bookings?.trips?.destinations?.title || '-';
-              
+            ) : combinedParticipants.map((p) => {
               return (
-                <TableRow key={member.id}>
-                  <TableCell className="font-medium">{member.full_name}</TableCell>
-                  <TableCell>{member.whatsapp}</TableCell>
-                  <TableCell>{member.bookings?.booking_code || '-'}</TableCell>
-                  <TableCell>{tripName}</TableCell>
-                  <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground">{member.address}</TableCell>
+                <TableRow key={p.id}>
+                  <TableCell className="font-medium">{p.full_name}</TableCell>
+                  <TableCell>
+                    {p.is_main ? (
+                      <Badge variant="default" className="bg-blue-600">Pendaftar Utama</Badge>
+                    ) : (
+                      <Badge variant="secondary">Anggota</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>{p.whatsapp || '-'}</TableCell>
+                  <TableCell>{p.booking_code}</TableCell>
+                  <TableCell>{p.trip_name}</TableCell>
+                  <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground">{p.address || '-'}</TableCell>
                 </TableRow>
               )
             })}
