@@ -160,14 +160,9 @@ export function PembayaranClient() {
         </div>
       ) : (
         <form onSubmit={onSubmit} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border space-y-6">
-          <div className="flex items-center justify-between border-b pb-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Kode Booking</p>
-              <h2 className="text-xl font-bold">{bookingData.booking_code}</h2>
-            </div>
-            <Button type="button" variant="ghost" size="sm" onClick={() => setBookingData(null)}>
-              Ganti
-            </Button>
+          <div className="border-b pb-4">
+            <p className="text-sm text-muted-foreground">Kode Booking</p>
+            <h2 className="text-xl font-bold">{bookingData.booking_code}</h2>
           </div>
 
           <div className="space-y-2 text-sm">
