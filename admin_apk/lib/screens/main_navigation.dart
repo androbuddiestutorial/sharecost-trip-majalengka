@@ -5,6 +5,9 @@ import 'trips_screen.dart';
 import 'destinations_screen.dart';
 import 'gallery_screen.dart';
 import 'manifest_screen.dart';
+import 'meeting_points_screen.dart';
+import 'manual_booking_screen.dart';
+import 'report_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -47,6 +50,49 @@ class _MainNavigationState extends State<MainNavigation> {
             tooltip: 'Logout',
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.admin_panel_settings, size: 48, color: Colors.white),
+                  SizedBox(height: 8),
+                  Text('Menu Tambahan', style: TextStyle(color: Colors.white, fontSize: 24)),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.location_on),
+              title: const Text('Meeting Points'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const MeetingPointsScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_shopping_cart),
+              title: const Text('Tambah Pesanan Manual'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const ManualBookingScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.print),
+              title: const Text('Cetak Laporan'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen()));
+              },
+            ),
+          ],
+        ),
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
