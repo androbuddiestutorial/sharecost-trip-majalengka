@@ -38,6 +38,7 @@ export default async function AdminTripsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Destinasi</TableHead>
+              <TableHead>Jenis</TableHead>
               <TableHead>Paket / Include</TableHead>
               <TableHead>Tanggal Pelaksanaan</TableHead>
               <TableHead>Kuota</TableHead>
@@ -48,7 +49,7 @@ export default async function AdminTripsPage() {
           <TableBody>
             {safeTrips.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Belum ada jadwal trip.</TableCell>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Belum ada jadwal trip.</TableCell>
               </TableRow>
             ) : safeTrips.map((trip) => {
               const startDate = new Date(trip.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -63,6 +64,11 @@ export default async function AdminTripsPage() {
                 <TableRow key={trip.id}>
                   <TableCell className="font-medium">
                     {trip.destinations?.title || '-'}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={trip.trip_type === 'Private Trip' ? 'secondary' : 'default'} className="text-xs">
+                      {trip.trip_type || 'Open Trip'}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{trip.packages?.title || '-'}</div>

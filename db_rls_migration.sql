@@ -225,3 +225,4 @@ CREATE POLICY "push_subscriptions_admin_delete" ON public.push_subscriptions
 -- DONE! Verify with:
 -- SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';
 -- ============================================================
+ALTER TABLE public.trips ADD COLUMN IF NOT EXISTS trip_type VARCHAR(50) DEFAULT 'Open Trip'; 

@@ -21,6 +21,7 @@ export type TripData = {
   id: string;
   destination_id: string;
   package_id?: string;
+  trip_type?: string;
   date_start: string;
   date_end: string;
   quota: number;
@@ -68,6 +69,13 @@ export function CreateTripButton({ destinations, packages }: { destinations: Des
               {destinations.map(dest => (
                 <option key={dest.id} value={dest.id}>{dest.title}</option>
               ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="trip_type">Jenis Trip</Label>
+            <select id="trip_type" name="trip_type" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <option value="Open Trip">Open Trip</option>
+              <option value="Private Trip">Private Trip</option>
             </select>
           </div>
           <div className="space-y-2">
@@ -144,6 +152,13 @@ export function EditTripButton({ trip, destinations, packages }: { trip: TripDat
               {destinations.map(dest => (
                 <option key={dest.id} value={dest.id}>{dest.title}</option>
               ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="trip_type">Jenis Trip</Label>
+            <select id="trip_type" name="trip_type" defaultValue={trip.trip_type || 'Open Trip'} required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+              <option value="Open Trip">Open Trip</option>
+              <option value="Private Trip">Private Trip</option>
             </select>
           </div>
           <div className="space-y-2">

@@ -119,22 +119,21 @@ export default function BookingPage() {
     });
   }, [setValue]);
 
-  // Sync jenisTrip when both trips and packages are loaded
+  // Sync jenisTrip and other fields when a trip is selected via URL or dropdown
   useEffect(() => {
-    if (typeof window !== 'undefined' && trips.length > 0 && packages.length > 0) {
+    if (typeof window !== 'undefined' && trips.length > 0) {
       const params = new URLSearchParams(window.location.search);
       const tripId = params.get('trip');
       if (tripId) {
         const foundTrip = trips.find(t => t.id === tripId);
-        if (foundTrip && foundTrip.package_id) {
-          const foundPkg = packages.find(p => p.id === foundTrip.package_id);
-          if (foundPkg) {
-            setValue('jenisTrip', foundPkg.title);
+        if (foundTrip) {
+          if (foundTrip.trip_type) {
+            setValue('jenisTrip', foundTrip.trip_type);
           }
         }
       }
     }
-  }, [trips, packages, setValue]);
+  }, [trips, setValue]);
 
   const { fields: anggotaFields, append: appendAnggota, remove: removeAnggota } = useFieldArray({
     control,
@@ -146,6 +145,7 @@ export default function BookingPage() {
   const watchAdaKondisi = watch("adaKondisiKesehatan");
   const watchDestinasi = watch("destinasi");
   const watchJenisTrip = watch("jenisTrip");
+  const watchJadwalTrip = watch("jadwalTrip");
 
   const filteredTrips = watchDestinasi ? trips.filter(t => t.destination === watchDestinasi) : trips;
 
@@ -345,36 +345,13 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Jenis Trip" />
                         </SelectTrigger>
                         <SelectContent>
-                          {packages.map(pkg => (
-                            <SelectItem key={pkg.id} value={pkg.title}>{pkg.title}</SelectItem>
-                          ))}
+                          <SelectItem value="Open Trip">Open Trip</SelectItem>
+                          <SelectItem value="Private Trip">Private Trip</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
                   />
                   {errors.jenisTrip && <p className="text-sm text-destructive">{errors.jenisTrip.message}</p>}
-                  
-                  {watchJenisTrip && (
-                    <div className="mt-2 p-4 bg-muted/30 rounded-lg text-sm border">
-                      <p className="font-semibold text-primary mb-2">Fasilitas Termasuk (Include):</p>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {(() => {
-                          const selectedPkg = packages.find(p => p.title === watchJenisTrip);
-                          if (!selectedPkg) return null;
-                          let features = [];
-                          try {
-                            features = typeof selectedPkg.features === 'string' ? JSON.parse(selectedPkg.features) : selectedPkg.features;
-                          } catch (e) {}
-                          return (features || []).map((f: string, i: number) => (
-                            <li key={i} className="text-xs flex items-center gap-1.5 text-muted-foreground">
-                              <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                              {f}
-                            </li>
-                          ));
-                        })()}
-                      </ul>
-                    </div>
-                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -425,6 +402,28 @@ export default function BookingPage() {
                     )}
                   />
                   {errors.jadwalTrip && <p className="text-sm text-destructive">{errors.jadwalTrip.message}</p>}
+                  
+                  {watchJadwalTrip && (
+                    <div className="mt-2 p-4 bg-muted/30 rounded-lg text-sm border">
+                      <p className="font-semibold text-primary mb-2">Fasilitas Termasuk (Include):</p>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {(() => {
+                          const selectedTrip = trips.find(t => t.id === watchJadwalTrip);
+                          if (!selectedTrip || !selectedTrip.packages) return null;
+                          let features = [];
+                          try {
+                            features = typeof selectedTrip.packages.features === 'string' ? JSON.parse(selectedTrip.packages.features) : selectedTrip.packages.features;
+                          } catch (e) {}
+                          return (features || []).map((f: string, i: number) => (
+                            <li key={i} className="text-xs flex items-center gap-1.5 text-muted-foreground">
+                              <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                              {f}
+                            </li>
+                          ));
+                        })()}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">

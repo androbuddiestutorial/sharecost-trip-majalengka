@@ -13,6 +13,7 @@ export async function GET() {
     id: t.id,
     destination_id: t.destination_id,
     package_id: t.package_id,
+    trip_type: t.trip_type,
     destination: t.destinations?.title,
     date: `${new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(t.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`,
     date_start: t.date_start,
@@ -41,8 +42,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { destination_id, package_id, date_start, date_end, quota, status } = body;
-    const payload = { destination_id, package_id, date_start, date_end, quota, status };
+    const { destination_id, package_id, trip_type, date_start, date_end, quota, status } = body;
+    const payload = { destination_id, package_id, trip_type, date_start, date_end, quota, status };
     
     // Remove undefined fields
     Object.keys(payload).forEach(key => payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]);
