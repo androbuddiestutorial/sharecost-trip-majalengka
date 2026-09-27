@@ -17,7 +17,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
   
   // ignore: prefer_final_fields
   String? _gender = 'Laki-laki';
-  final String? _tripType = 'Open Trip';
+  final String _tripType = 'Open Trip';
   String? _selectedTripId;
   String? _selectedMeetingPoint;
   
@@ -173,6 +173,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Jenis Kelamin', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _gender,
               items: ['Laki-laki', 'Perempuan'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _gender = v),
@@ -186,6 +187,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Jadwal Trip', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _selectedTripId,
               items: _trips.map((t) {
                 var destData = t['destinations'];
@@ -202,6 +204,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             // ignore: deprecated_member_use
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Meeting Point', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _selectedMeetingPoint,
               items: _meetingPoints.map((m) {
                 int mpPrice = m['price'] ?? 0;
@@ -250,7 +253,8 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
                         ),
                       ],
                     ),
-                  );
+                  ),
+                );
               }),
             ],
             
@@ -280,4 +284,6 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     );
   }
 }
+
+
 
