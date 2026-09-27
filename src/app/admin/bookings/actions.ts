@@ -25,17 +25,26 @@ export async function updateBookingStatus(id: string, newStatus: string) {
 export async function deleteBooking(id: string) {
   try {
     const { supabase } = await assertAdmin();
-    const { error } = await supabase.from("bookings").delete().eq("id", id);
+    
+    // Delete related records first
+    await supabase.from('payments').delete().eq('booking_id', id);
+    await supabase.from('booking_members').delete().eq('booking_id', id);
+    await supabase.from('emergency_contacts').delete().eq('booking_id', id);
+    await supabase.from('health_information').delete().eq('booking_id', id);
+    
+    const { error } = await supabase.from('bookings').delete().eq('id', id);
 
     if (error) {
-      console.error("Error deleting booking:", error);
+      console.error('Error deleting booking:', error);
       return { success: false, error: error.message };
     }
 
-    revalidatePath("/admin/bookings");
+    revalidatePath('/admin/bookings');
+    revalidatePath('/admin/peserta');
+    revalidatePath('/admin/payments');
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: "Unauthorized" };
+    return { success: false, error: 'Unauthorized' };
   }
 }
 

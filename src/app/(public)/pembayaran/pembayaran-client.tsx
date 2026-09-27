@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Upload, Receipt, ArrowLeft, CheckCircle } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { searchBookingByCode } from "./actions";
 
 export function PembayaranClient() {
   const searchParams = useSearchParams();
@@ -20,8 +20,6 @@ export function PembayaranClient() {
   const [bookingData, setBookingData] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [success, setSuccess] = useState(false);
-  
-  const supabase = createClient();
 
   useEffect(() => {
     if (initialCode) {
@@ -32,33 +30,17 @@ export function PembayaranClient() {
   async function searchBooking(code: string) {
     if (!code) return;
     setSearching(true);
-    setErrorMsg("");
-    
+    setErrorMsg('');
     try {
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("id, booking_code, full_name, total_amount, payment_status, status, pax")
-        .eq("booking_code", code.trim().toUpperCase())
-        .single();
-        
-      if (error || !data) {
-        setErrorMsg("Kode Booking tidak ditemukan.");
+      const result = await searchBookingByCode(code);
+      if (!result.success) {
+        setErrorMsg(result.error || 'Kode Booking tidak ditemukan.');
         setBookingData(null);
       } else {
-        // Find total paid so far
-        const { data: payments } = await supabase
-          .from("payments")
-          .select("amount")
-          .eq("booking_id", data.id)
-          .eq("status", "Terverifikasi");
-          
-        const totalPaid = payments?.reduce((sum, p) => sum + p.amount, 0) || 0;
-        const remaining = (data.total_amount || 0) - totalPaid;
-        
-        setBookingData({ ...data, totalPaid, remaining });
+        setBookingData(result.data);
       }
     } catch (e) {
-      setErrorMsg("Terjadi kesalahan.");
+      setErrorMsg('Terjadi kesalahan.');
     }
     setSearching(false);
   }
@@ -68,57 +50,59 @@ export function PembayaranClient() {
     if (!bookingData) return;
     
     setLoading(true);
-    setErrorMsg("");
+    setErrorMsg('');
     const formData = new FormData(e.currentTarget);
-    const amountStr = formData.get("amount") as string;
-    const amount = parseFloat(amountStr.replace(/[^0-9]/g, ""));
-    const method = formData.get("payment_method") as string;
-    const file = formData.get("proof_file") as File;
+    const amountStr = formData.get('amount') as string;
+    const amount = parseFloat(amountStr.replace(/[^0-9]/g, ''));
+    const file = formData.get('proof_file') as File;
     
     if (amount <= 0 || isNaN(amount)) {
-      setErrorMsg("Nominal pembayaran tidak valid.");
+      setErrorMsg('Nominal pembayaran tidak valid.');
+      setLoading(false);
+      return;
+    }
+
+    if (file && file.size > 2 * 1024 * 1024) {
+      setErrorMsg('Ukuran file maksimal 2MB.');
       setLoading(false);
       return;
     }
 
     try {
-      // 1. Upload to Supabase Storage first from client
-      let proof_url = "";
+      let proof_url = '';
       if (file && file.size > 0) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `proof-${bookingData.booking_code}-${Date.now()}.${fileExt}`;
-        const filePath = `payments/${fileName}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('gallery')
-          .upload(filePath, file);
-          
-        if (!uploadError) {
-          const { data: { publicUrl } } = supabase.storage
-            .from('gallery')
-            .getPublicUrl(filePath);
-          proof_url = publicUrl;
+        const uploadData = new FormData();
+        uploadData.append('file', file);
+        uploadData.append('booking_code', bookingData.booking_code);
+        const { uploadPaymentProof } = await import('./actions');
+        const uploadResult = await uploadPaymentProof(uploadData);
+        if (uploadResult.error) {
+          setErrorMsg('Gagal upload bukti: ' + uploadResult.error);
+          setLoading(false);
+          return;
         }
+        proof_url = uploadResult.url;
       }
 
-      // 2. Call server action to insert to DB (bypasses RLS issues)
-      formData.append("booking_code", bookingData.booking_code);
+      const paymentFormData = new FormData();
+      paymentFormData.append('booking_code', bookingData.booking_code);
+      paymentFormData.append('amount', amount.toString());
+      paymentFormData.append('payment_method', formData.get('payment_method') as string);
       if (proof_url) {
-        formData.append("proof_url", proof_url);
+        paymentFormData.append('proof_url', proof_url);
       }
       
       const { submitPublicPayment } = await import('./actions');
-      const result = await submitPublicPayment(formData);
+      const result = await submitPublicPayment(paymentFormData);
 
       if (!result.success) {
-        setErrorMsg("Gagal menyimpan pembayaran: " + result.error);
+        setErrorMsg('Gagal menyimpan pembayaran: ' + result.error);
         setLoading(false);
       } else {
-        // Redirect to cek-pesanan
         router.push(`/cek-pesanan?booking_code=${bookingData.booking_code}`);
       }
     } catch (err: any) {
-      setErrorMsg("Terjadi kesalahan sistem.");
+      setErrorMsg('Terjadi kesalahan sistem.');
       setLoading(false);
     }
   }

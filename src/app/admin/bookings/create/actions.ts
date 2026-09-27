@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 function generateBookingCode() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let result = "BK-";
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
@@ -16,7 +16,12 @@ export async function createAdminBooking(data: any) {
   try {
     const { supabase } = await assertAdmin();
 
-    const { trip_id, full_name, whatsapp, gender, address, domicile, meeting_point, pax, members, payment_status, payment_amount } = data;
+    if (!data.trip_id || !data.full_name?.trim() || !data.whatsapp?.trim()) {
+      return { success: false, error: 'Trip, Nama, dan WhatsApp wajib diisi.' };
+    }
+
+    const { trip_id, full_name, whatsapp, gender, address, domicile, meeting_point, members, payment_status, payment_amount } = data;
+    const pax = Number(data.pax) || 1;
 
     // 1. Get Trip and Price
     const { data: trip } = await supabase

@@ -5,6 +5,22 @@ import nodemailer from "nodemailer";
 
 // Removed insecure GET route.
 
+// --- Simple In-Memory Rate Limiter ---
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_MAX = 5; // max requests
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // per hour
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
 function escapeHtml(str: string): string {
   if (str === undefined || str === null) return '';
   return String(str)
@@ -17,10 +33,21 @@ function escapeHtml(str: string): string {
 
 export async function POST(request: Request) {
   try {
+    // Rate limiting
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ success: false, message: "Terlalu banyak permintaan. Coba lagi nanti." }, { status: 429 });
+    }
+
     const body = await request.json();
+
+    // Honeypot check — hidden field should be empty
+    if (body._hp_field) {
+      return NextResponse.json({ success: true, data: {}, message: "Booking created successfully" }, { status: 201 });
+    }
     
-    // Generate Booking Code
-    const booking_code = `BK-${Date.now().toString(36).toUpperCase().slice(-4)}${Math.random().toString(36).toUpperCase().slice(2, 4)}`;
+    // Generate Booking Code (8 chars for collision safety)
+    const booking_code = `BK-${Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('')}`;
 
     let pricePerPax = 0;
     if (body.jadwalTrip) {
@@ -148,7 +175,7 @@ export async function POST(request: Request) {
         });
 
         await transporter.sendMail({
-          from: `"Sistem Sharecosttrip" <${process.env.EMAIL_USER}>`,
+          from: `"Sharecost Trip Majalengka" <${process.env.EMAIL_USER}>`,
           to: 'sharecosttripmajalengka@gmail.com',
           subject: notifTitle,
           html: `
@@ -172,18 +199,20 @@ export async function POST(request: Request) {
     // --- FIREBASE FCM NOTIFICATION ---
     try {
       const { messaging } = await import('@/lib/firebaseAdmin');
-      await messaging.send({
-        topic: 'admin_alerts',
-        notification: {
-          title: notifTitle,
-          body: `Kode: ${booking_code} | Oleh: ${body.namaLengkap} (${body.jumlahPeserta || '1'} org)`
-        },
-        android: {
-          priority: 'high',
-          notification: { sound: 'default' }
-        }
-      });
-      console.log("FCM Notification sent!");
+      if (messaging) {
+        await messaging.send({
+          topic: 'admin_alerts',
+          notification: {
+            title: notifTitle,
+            body: `Kode: ${booking_code} | Oleh: ${body.namaLengkap} (${body.jumlahPeserta || '1'} org)`
+          },
+          android: {
+            priority: 'high',
+            notification: { sound: 'default' }
+          }
+        });
+        console.log("FCM Notification sent!");
+      }
     } catch (e) {
       console.error("FCM Error:", e);
     }
