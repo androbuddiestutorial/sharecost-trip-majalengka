@@ -40,23 +40,32 @@ export default async function AdminGalleryPage() {
           <TableBody>
             {safeGallery.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Belum ada foto galeri.</TableCell>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Belum ada media galeri.</TableCell>
               </TableRow>
-            ) : safeGallery.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <div className="relative h-12 w-16 rounded overflow-hidden">
-                    <Image src={item.image_url} alt={item.title} fill className="object-cover" />
-                  </div>
-                </TableCell>
-                <TableCell className="font-medium">{item.title}</TableCell>
-                <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
-                <TableCell className="text-right space-x-2">
-                  <EditGalleryButton item={item} />
-                  <DeleteGalleryButton id={item.id} />
-                </TableCell>
-              </TableRow>
-            ))}
+            ) : safeGallery.map((item) => {
+              const isVideo = item.category === 'Video' || item.image_url.includes('youtube.com') || item.image_url.includes('youtu.be');
+              return (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    {isVideo ? (
+                      <div className="relative h-12 w-16 bg-red-600 rounded flex items-center justify-center text-white text-[10px] font-bold">
+                        YOUTUBE
+                      </div>
+                    ) : (
+                      <div className="relative h-12 w-16 rounded overflow-hidden">
+                        <Image src={item.image_url} alt={item.title} fill className="object-cover" />
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableCell><Badge variant="outline">{item.category}</Badge></TableCell>
+                  <TableCell className="text-right space-x-2">
+                    <EditGalleryButton item={item} />
+                    <DeleteGalleryButton id={item.id} />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
