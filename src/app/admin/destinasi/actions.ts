@@ -8,14 +8,12 @@ export async function createDestinasi(formData: FormData) {
     const { supabase } = await assertAdmin();
     const title = formData.get("title") as string;
     const location = formData.get("location") as string;
-    const price = parseFloat(formData.get("price") as string) || 0;
-    const description = formData.get("description") as string;
+        const description = formData.get("description") as string;
     const image_url = formData.get("image_url") as string;
 
     const { error } = await supabase.from("destinations").insert({
       title,
       location,
-      price,
       description,
       image_url
     });
@@ -39,14 +37,12 @@ export async function updateDestinasi(id: string, formData: FormData) {
     const { supabase } = await assertAdmin();
     const title = formData.get("title") as string;
     const location = formData.get("location") as string;
-    const price = parseFloat(formData.get("price") as string) || 0;
-    const description = formData.get("description") as string;
+        const description = formData.get("description") as string;
     const image_url = formData.get("image_url") as string;
 
     const { error } = await supabase.from("destinations").update({
       title,
       location,
-      price,
       description,
       image_url
     }).eq("id", id);

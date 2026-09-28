@@ -62,9 +62,7 @@ export async function POST(request: Request) {
       
       if (tripData?.price && Number(tripData.price) > 0) {
         pricePerPax = Number(tripData.price);
-      } else if (tripData?.destinations?.price) {
-        pricePerPax = Number(tripData.destinations.price);
-      }
+      
     }
     
     // Fallback if price is still 0 (e.g., custom private trip without explicit trip_id)

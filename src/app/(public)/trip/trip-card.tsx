@@ -36,7 +36,7 @@ export function TripCard({ trip, isFull, sisaKuota }: { trip: any; isFull: boole
       lowestMpPrice = Math.min(...prices);
     }
   }
-  const basePrice = lowestMpPrice > 0 ? lowestMpPrice : Number((trip.price > 0 ? trip.price : trip.destinations?.price) || 0);
+  const basePrice = lowestMpPrice > 0 ? lowestMpPrice : Number(trip.price || 0);
   const mpObj = tripMps.find(mp => mp.name === selectedMp);
   // If meeting points exist, show the MP price as the total; otherwise fall back to base price
   const displayPrice = mpObj ? Number(mpObj.price) : basePrice;

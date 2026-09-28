@@ -33,7 +33,7 @@ export async function createAdminBooking(data: any) {
     if (!trip) return { success: false, error: "Trip tidak ditemukan" };
 
     const destInfo = Array.isArray(trip.destinations) ? trip.destinations[0] : trip.destinations;
-    const pricePerPax = trip.price > 0 ? trip.price : ((destInfo as any)?.price || 350000);
+    const pricePerPax = trip.price > 0 ? trip.price : 350000;
     
     let mpPrice = 0;
     if (meeting_point) {

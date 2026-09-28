@@ -30,7 +30,7 @@ export default async function DestinasiPage() {
         {safeDestinations.length === 0 ? (
            <div className="col-span-full py-12 text-center text-muted-foreground">Belum ada destinasi yang ditambahkan.</div>
         ) : safeDestinations.map((dest) => {
-          let lowestPrice = Number(dest.price) || 0;
+          let lowestPrice = 0;
           if (dest.trips && dest.trips.length > 0) {
             let allPrices: number[] = [];
             dest.trips.forEach((trip: any) => {
@@ -67,7 +67,7 @@ export default async function DestinasiPage() {
               <p className="text-muted-foreground line-clamp-3 mb-4">{dest.description}</p>
               <div className="flex justify-between pt-2 border-t">
                 <span className="text-muted-foreground">Harga Mulai:</span>
-                <span className="font-bold text-primary">Rp {lowestPrice.toLocaleString('id-ID')}</span>
+                {lowestPrice > 0 ? <span className="font-bold text-primary">Rp {lowestPrice.toLocaleString('id-ID')}</span> : <span className="text-muted-foreground italic text-sm mt-1">Belum ada jadwal</span>}
               </div>
             </CardContent>
             <CardFooter>
