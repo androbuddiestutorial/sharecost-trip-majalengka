@@ -19,7 +19,7 @@ const sidebarLinks = [
   { name: "Peserta", href: "/admin/peserta", icon: Users },
   { name: "Destinasi", href: "/admin/destinasi", icon: MapPin },
   { name: "Jadwal Trip", href: "/admin/trips", icon: CalendarDays },
-  { name: "Meeting Point", href: "/admin/meeting-points", icon: MapPin },
+  
   { name: "Pembayaran", href: "/admin/payments", icon: Wallet },
   { name: "Galeri", href: "/admin/gallery", icon: ImageIcon },
   { name: "Testimoni", href: "/admin/testimoni", icon: MessageSquare },
