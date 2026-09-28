@@ -115,7 +115,7 @@ export default async function AdminPaymentsPage() {
             ) : safePayments.map((payment) => {
               const payDate = new Date(payment.payment_date || payment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
               return (
-                <TableRow key={payment.id}>
+                <TableRow key={payment.id} className={payment.rowSpan === 0 ? "border-t-0" : "border-t-[2px]"}>
                   <TableCell className="font-medium">{payment.id.substring(0, 8)}</TableCell>
                   <TableCell>
                     <div className="font-medium">{payment.bookings?.booking_code || '-'}</div>
