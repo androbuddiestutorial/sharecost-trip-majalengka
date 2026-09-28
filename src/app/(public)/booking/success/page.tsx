@@ -36,7 +36,7 @@ export default function BookingSuccessPage() {
         </CardContent>
         <CardFooter className="flex flex-col gap-3 pb-8">
           <Link 
-            href="https://wa.me/6285721712077?text=Halo%20Admin%20Sharecost Trip,%20saya%20sudah%20mengisi%20form%20pendaftaran%20di%20website." 
+            href="https://wa.me/6285862284166?text=Halo%20Admin%20Sharecost Trip,%20saya%20sudah%20mengisi%20form%20pendaftaran%20di%20website." 
             target="_blank" 
             rel="noopener noreferrer"
             className="w-full inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700 transition-colors"

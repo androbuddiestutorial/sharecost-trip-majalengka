@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     "name": "Sharecost Trip Majalengka",
     "image": "https://sharecosttripmajalengka.biz.id/logo.png",
     "url": "https://sharecosttripmajalengka.biz.id",
-    "telephone": "+6285721712077",
+    "telephone": "+6285862284166",
     "email": "sharecosttripmajalengka@gmail.com",
     "address": {
       "@type": "PostalAddress",

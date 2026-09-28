@@ -80,7 +80,7 @@ export default async function TripPage({ searchParams }: Props) {
              </p>
              <div className="flex justify-center pt-4">
                <a 
-                 href={`https://wa.me/6285721712077?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya melihat belum ada jadwal Open Trip untuk destinasi *${destName || 'tertentu'}*. Apakah saya bisa request jadwal baru atau memesan Private Trip? Terima kasih 🙏`)}`} 
+                 href={`https://wa.me/6285862284166?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya melihat belum ada jadwal Open Trip untuk destinasi *${destName || 'tertentu'}*. Apakah saya bisa request jadwal baru atau memesan Private Trip? Terima kasih 🙏`)}`} 
                  target="_blank" 
                  rel="noopener noreferrer" 
                  className={cn(buttonVariants({ size: "lg" }))}
@@ -97,7 +97,7 @@ export default async function TripPage({ searchParams }: Props) {
           const startDate = new Date(trip.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
           const endDate = new Date(trip.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
           
-          const privateWaLink = `https://wa.me/6285721712077?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya ingin request Private Trip untuk destinasi *${trip.destinations?.title}*.\n\nMohon informasi untuk ketersediaan tanggal custom dan harganya. Terima kasih 🙏`)}`;
+          const privateWaLink = `https://wa.me/6285862284166?text=${encodeURIComponent(`Halo Admin Sharecost Trip Majalengka 👋\n\nSaya ingin request Private Trip untuk destinasi *${trip.destinations?.title}*.\n\nMohon informasi untuk ketersediaan tanggal custom dan harganya. Terima kasih 🙏`)}`;
           
           return (
             <Card key={trip.id} className="relative overflow-hidden hover:shadow-md transition-shadow">
