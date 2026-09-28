@@ -26,13 +26,12 @@ export async function createAdminBooking(data: any) {
     // 1. Get Trip and Price
     const { data: trip } = await supabase
       .from("trips")
-      .select("price, meeting_points, destinations(price)")
+      .select("price, meeting_points")
       .eq("id", trip_id)
       .single();
 
     if (!trip) return { success: false, error: "Trip tidak ditemukan" };
 
-    const destInfo = Array.isArray(trip.destinations) ? trip.destinations[0] : trip.destinations;
     const pricePerPax = trip.price > 0 ? trip.price : 350000;
     
     let mpPrice = 0;

@@ -15,7 +15,7 @@ export default async function AdminTripsPage() {
     { data: trips, error },
     { data: destinations }
   ] = await Promise.all([
-    supabase.from('trips').select('*, destinations(title, price)').order('date_start', { ascending: true }),
+    supabase.from('trips').select('*, destinations(title)').order('date_start', { ascending: true }),
     supabase.from('destinations').select('id, title').order('title', { ascending: true })
   ]);
 

@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     if (body.jadwalTrip) {
       const { data: tripData } = await supabase
         .from('trips')
-        .select('*, destinations(price)')
+        .select('*')
         .eq('id', body.jadwalTrip)
         .single();
       
@@ -65,19 +65,9 @@ export async function POST(request: Request) {
       }
     }
     
-    // Fallback if price is still 0 (e.g., custom private trip without explicit trip_id)
+    // Fallback if price is still 0
     if (pricePerPax === 0) {
-      const { data: destData } = await supabase
-        .from('destinations')
-        .select('price')
-        .eq('title', body.destinasi)
-        .single();
-        
-      if (destData?.price) {
-        pricePerPax = Number(destData.price);
-      } else {
-        pricePerPax = 350000; // Ultimate fallback
-      }
+      pricePerPax = 350000; // Fallback default price
     }
     
     const paxCount = parseInt(body.jumlahPeserta || "1", 10);
@@ -226,7 +216,7 @@ export async function POST(request: Request) {
             notification: { sound: 'default' }
           }
         });
-        console.log("FCM Notification sent!");
+        // FCM Notification sent
       }
     } catch (e) {
       console.error("FCM Error:", e);

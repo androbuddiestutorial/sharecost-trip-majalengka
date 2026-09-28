@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { createAdminBooking } from "./actions";
 
 export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
@@ -91,7 +91,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
             {trips.map(t => {
               const date = new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
               const title = t.destinations?.title || "Destinasi";
-              const price = t.price > 0 ? t.price : (t.destinations?.price || 0);
+              const price = t.price > 0 ? t.price : 0;
               return (
                 <option key={t.id} value={t.id}>
                   {title} - {date} (Rp {price.toLocaleString('id-ID')})

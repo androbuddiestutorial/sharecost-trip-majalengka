@@ -24,7 +24,6 @@ export type DestinasiData = {
   id: string;
   title: string;
   location: string;
-  price: number;
   description: string;
   image_url: string;
 };

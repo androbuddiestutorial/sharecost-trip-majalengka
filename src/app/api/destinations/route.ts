@@ -26,8 +26,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { title, location, price, image, description, image_url } = body;
-    const payload = { title, location, price, image, description, image_url };
+    const { title, location, image, description, image_url } = body;
+    const payload = { title, location, image, description, image_url };
     
     // Remove undefined fields
     Object.keys(payload).forEach(key => payload[key as keyof typeof payload] === undefined && delete payload[key as keyof typeof payload]);

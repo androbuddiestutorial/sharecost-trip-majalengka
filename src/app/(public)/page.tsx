@@ -16,7 +16,7 @@ export default async function Home() {
     { data: gallery },
     { data: testimonials }
   ] = await Promise.all([
-    supabase.from('destinations').select('*').limit(3),
+    supabase.from('destinations').select('*, trips(meeting_points)').limit(3),
     supabase.from('trips').select('*, destinations(title)').eq('status', 'Terbuka').order('date_start', { ascending: true }).limit(3),
     supabase.from('gallery').select('*').order('created_at', { ascending: false }).limit(4),
     supabase.from('testimonials').select('*').eq('status', 'Published').order('created_at', { ascending: false }).limit(3)

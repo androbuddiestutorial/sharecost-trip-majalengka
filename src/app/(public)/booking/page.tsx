@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -715,8 +715,7 @@ export default function BookingPage() {
                   <h3 className="font-semibold text-primary border-b border-primary/10 pb-2 mb-2">Ringkasan Pemesanan</h3>
                   {(() => {
                     const selectedTripObj = trips.find(t => t.id === watchJadwalTrip);
-                    const destObj = destinations.find(d => d.title === watchDestinasi);
-                    const tripPrice = Number(selectedTripObj?.price) || Number(destObj?.price) || 0;
+                    const tripPrice = Number(selectedTripObj?.price) || 0;
                     
                     const mpPrice = isLockedByUrl ? mpPriceFromUrl : (Number(tripMps.find((mp: any) => mp.name === watchMeetingPoint)?.price) || 0);
                     

@@ -16,7 +16,7 @@ export default async function AdminCreateBookingPage() {
   // Fetch active trips
   const { data: trips } = await supabase
     .from("trips")
-    .select("id, date_start, status, quota, price, meeting_points, destinations(title, price)")
+    .select("id, date_start, status, quota, price, meeting_points, destinations(title)")
     .neq("status", "Dibatalkan")
     .order("date_start", { ascending: true });
 
