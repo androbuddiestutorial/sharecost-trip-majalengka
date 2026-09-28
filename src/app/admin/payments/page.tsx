@@ -33,8 +33,17 @@ export default async function AdminPaymentsPage() {
     .filter(p => p.status === "Terverifikasi")
     .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
     
-  const menungguVerifikasi = safePayments
-    .filter(p => p.status !== "Terverifikasi").length;
+  // User wants this to sync with bookings waiting for verification/payment
+  const { data: rawBookings } = await supabase.from('bookings').select('status, payment_status');
+  
+  const bookingsMenunggu = (rawBookings || []).filter(
+    b => b.status === "Menunggu Verifikasi" || b.payment_status === "Belum Bayar" || b.payment_status === "Menunggu Verifikasi"
+  ).length;
+
+  // Also include unverified payments just in case
+  const unverifiedPayments = safePayments.filter(p => p.status === "Menunggu Verifikasi").length;
+  
+  const totalMenunggu = bookingsMenunggu + unverifiedPayments;
 
   const totalBookingAmount = safeBookingsList.reduce((sum, b) => sum + (Number(b.total_amount) || 0), 0);
   const totalPiutang = totalBookingAmount - totalPenerimaan;
@@ -57,9 +66,9 @@ export default async function AdminPaymentsPage() {
           </div>
         </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
-          <p className="text-sm font-medium text-muted-foreground">Menunggu Verifikasi</p>
+          <p className="text-sm font-medium text-muted-foreground">Booking / Bukti Menunggu</p>
           <div className="mt-2 flex items-center justify-between">
-            <h3 className="text-2xl font-bold text-amber-600">{menungguVerifikasi} Transaksi</h3>
+            <h3 className="text-2xl font-bold text-amber-600">{totalMenunggu} Antrean</h3>
           </div>
         </div>
         <div className="rounded-xl border bg-card text-card-foreground shadow p-6">
