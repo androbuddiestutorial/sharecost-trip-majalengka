@@ -99,7 +99,7 @@ export function PembayaranClient() {
         setErrorMsg('Gagal menyimpan pembayaran: ' + result.error);
         setLoading(false);
       } else {
-        router.push(`/cek-pesanan?booking_code=${bookingData.booking_code}`);
+        setSuccess(true);
       }
     } catch (err: any) {
       setErrorMsg('Terjadi kesalahan sistem.');
@@ -116,7 +116,7 @@ export function PembayaranClient() {
         <p className="text-muted-foreground">
           Terima kasih. Pembayaran Anda untuk Kode Booking <strong>{bookingData?.booking_code}</strong> telah kami terima dan sedang menunggu verifikasi Admin.
         </p>
-        <Button className="w-full mt-4" onClick={() => router.push("/cek-pesanan")}>
+        <Button className="w-full mt-4" onClick={() => router.push(`/cek-pesanan?booking_code=${bookingData?.booking_code}`)}>
           Lihat Status Pesanan
         </Button>
       </div>
