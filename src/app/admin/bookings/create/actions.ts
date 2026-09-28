@@ -26,7 +26,7 @@ export async function createAdminBooking(data: any) {
     // 1. Get Trip and Price
     const { data: trip } = await supabase
       .from("trips")
-      .select("price, destinations(price)")
+      .select("price, meeting_points, destinations(price)")
       .eq("id", trip_id)
       .single();
 
@@ -34,7 +34,22 @@ export async function createAdminBooking(data: any) {
 
     const destInfo = Array.isArray(trip.destinations) ? trip.destinations[0] : trip.destinations;
     const pricePerPax = trip.price > 0 ? trip.price : ((destInfo as any)?.price || 350000);
-    const total_amount = pricePerPax * pax;
+    
+    let mpPrice = 0;
+    if (meeting_point) {
+      let tripMps = [];
+      if (trip?.meeting_points) {
+        try {
+          tripMps = typeof trip.meeting_points === 'string' ? JSON.parse(trip.meeting_points) : trip.meeting_points;
+        } catch (e) {}
+      }
+      const foundMp = (Array.isArray(tripMps) ? tripMps : []).find(mp => mp.name === meeting_point);
+      if (foundMp?.price) {
+        mpPrice = Number(foundMp.price);
+      }
+    }
+    const total_amount = (pricePerPax + mpPrice) * pax;
+
     const booking_code = generateBookingCode();
 
     // Determine initial booking status
@@ -61,8 +76,9 @@ export async function createAdminBooking(data: any) {
         address,
         domicile,
         meeting_point,
-        pax,
-        total_amount,
+          meeting_point_price: mpPrice,
+          pax,
+          total_amount,
         status: initialStatus,
         payment_status: initialPaymentStatus,
         trip_type: "Open Trip"

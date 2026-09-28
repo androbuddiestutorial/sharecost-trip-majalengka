@@ -17,10 +17,23 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
   const [members, setMembers] = useState<{full_name: string, whatsapp: string}[]>([]);
   const [paymentStatus, setPaymentStatus] = useState("Belum Bayar");
   const [tripId, setTripId] = useState("");
+  const [meetingPoint, setMeetingPoint] = useState("");
 
   const selectedTrip = trips.find(t => t.id === tripId);
+  
+  let tripMps: any[] = [];
+  if (selectedTrip?.meeting_points) {
+    try {
+      const arr = typeof selectedTrip.meeting_points === 'string' ? JSON.parse(selectedTrip.meeting_points) : selectedTrip.meeting_points;
+      tripMps = Array.isArray(arr) ? arr : [];
+    } catch (e) {}
+  }
+  const hasMps = tripMps.length > 0;
+  const selectedMpObj = tripMps.find((mp: any) => mp.name === meetingPoint);
+  const mpPrice = selectedMpObj?.price ? Number(selectedMpObj.price) : 0;
+
   const basePrice = selectedTrip ? (selectedTrip.price > 0 ? selectedTrip.price : (selectedTrip.destinations?.price || 350000)) : 0;
-  const totalAmount = basePrice * pax;
+  const totalAmount = (basePrice + mpPrice) * pax;
   const dpAmount = Math.floor(totalAmount / 2);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -36,7 +49,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       gender: formData.get("gender"),
       address: formData.get("address"),
       domicile: formData.get("domicile"),
-      meeting_point: formData.get("meeting_point"),
+      meeting_point: meetingPoint || formData.get("meeting_point"),
       pax,
       members,
       payment_status: paymentStatus,
@@ -72,7 +85,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
             required 
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             value={tripId}
-            onChange={(e) => setTripId(e.target.value)}
+            onChange={(e) => { setTripId(e.target.value); setMeetingPoint(""); }}
           >
             <option value="">-- Pilih Trip --</option>
             {trips.map(t => {
@@ -116,8 +129,30 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
             <Input id="address" name="address" placeholder="Alamat rumah..." />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="meeting_point">Meeting Point (Opsional)</Label>
-            <Input id="meeting_point" name="meeting_point" placeholder="Misal: Terminal Maja" />
+            <Label htmlFor="meeting_point">Meeting Point {hasMps ? "(Wajib karena trip ini punya pilihan)" : "(Opsional)"}</Label>
+            {hasMps ? (
+              <select
+                id="meeting_point"
+                name="meeting_point"
+                required
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={meetingPoint}
+                onChange={(e) => setMeetingPoint(e.target.value)}
+              >
+                <option value="">-- Pilih Meeting Point --</option>
+                {tripMps.map((mp: any, idx: number) => (
+                  <option key={idx} value={mp.name}>{mp.name} (+ Rp {Number(mp.price).toLocaleString('id-ID')})</option>
+                ))}
+              </select>
+            ) : (
+              <Input 
+                id="meeting_point" 
+                name="meeting_point" 
+                placeholder="Misal: Terminal Maja" 
+                value={meetingPoint}
+                onChange={(e) => setMeetingPoint(e.target.value)}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -185,7 +220,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
           <div className="mt-4 p-4 bg-primary/5 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center border border-primary/20 gap-2">
             <div>
               <span className="font-semibold text-primary block">Total Tagihan</span>
-              <span className="text-xs text-muted-foreground">Rp {basePrice.toLocaleString('id-ID')} x {pax} Orang</span>
+              <span className="text-xs text-muted-foreground">Rp {(basePrice + mpPrice).toLocaleString('id-ID')} x {pax} Orang</span>
             </div>
             <span className="text-xl font-bold text-primary">Rp {totalAmount.toLocaleString('id-ID')}</span>
           </div>
