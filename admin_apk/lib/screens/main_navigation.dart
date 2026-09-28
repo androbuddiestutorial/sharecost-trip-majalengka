@@ -5,7 +5,7 @@ import 'trips_screen.dart';
 import 'destinations_screen.dart';
 import 'gallery_screen.dart';
 import 'manifest_screen.dart';
-import 'meeting_points_screen.dart';
+
 import 'manual_booking_screen.dart';
 import 'report_screen.dart';
 
@@ -66,14 +66,6 @@ class _MainNavigationState extends State<MainNavigation> {
                   Text('Menu Tambahan', style: TextStyle(color: Colors.white, fontSize: 24)),
                 ],
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.location_on),
-              title: const Text('Meeting Points'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const MeetingPointsScreen()));
-              },
             ),
             ListTile(
               leading: const Icon(Icons.add_shopping_cart),

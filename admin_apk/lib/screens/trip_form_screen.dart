@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TripFormScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
   String? _selectedDestinationId;
   List<dynamic> _destinations = [];
   bool _isLoading = false;
+  List<Map<String, dynamic>> _meetingPoints = [];
 
   @override
   void initState() {
@@ -30,6 +32,12 @@ class _TripFormScreenState extends State<TripFormScreen> {
       _dateEndController.text = widget.trip!['date_end'] ?? '';
       _priceController.text = (widget.trip!['price'] ?? '').toString();
       _quotaController.text = (widget.trip!['quota'] ?? '').toString();
+      if (widget.trip!['meeting_points'] != null) {
+        try {
+          final List<dynamic> mps = widget.trip!['meeting_points'] is String ? jsonDecode(widget.trip!['meeting_points']) : widget.trip!['meeting_points'];
+          _meetingPoints = mps.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        } catch(e) {}
+      }
     }
   }
 
@@ -56,6 +64,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
         'price': price,
         'quota': quota,
         'status': widget.trip != null ? widget.trip!['status'] : 'Terbuka',
+        'meeting_points': _meetingPoints.where((mp) => (mp['name']?.toString() ?? '').trim().isNotEmpty).toList(),
       };
 
       if (widget.trip != null) {
@@ -153,6 +162,58 @@ class _TripFormScreenState extends State<TripFormScreen> {
               decoration: const InputDecoration(labelText: 'Kuota Maksimal', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
               validator: (v) => v!.isEmpty ? 'Wajib' : null,
+            ),
+            const SizedBox(height: 16),
+            const Text('Meeting Points (Harga per Kota)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 8),
+            ..._meetingPoints.asMap().entries.map((entry) {
+              int idx = entry.key;
+              Map<String, dynamic> mp = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        initialValue: mp['name'],
+                        decoration: const InputDecoration(labelText: 'Kota (mis: Jakarta)', border: OutlineInputBorder()),
+                        onChanged: (val) => mp['name'] = val,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        initialValue: (mp['price'] ?? 0).toString(),
+                        decoration: const InputDecoration(labelText: 'Harga (Rp)', border: OutlineInputBorder()),
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) => mp['price'] = int.tryParse(val) ?? 0,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          _meetingPoints.removeAt(idx);
+                        });
+                      },
+                    )
+                  ],
+                ),
+              );
+            }).toList(),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _meetingPoints.add({'name': '', 'price': 0});
+                  });
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Tambah Meeting Point'),
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton(
