@@ -40,7 +40,7 @@ export function PembayaranClient() {
         setBookingData(result.data);
       }
     } catch (e) {
-      setErrorMsg('Terjadi kesalahan.');
+      setErrorMsg('Terjadi kesalahan: ' + String(e));
     }
     setSearching(false);
   }
