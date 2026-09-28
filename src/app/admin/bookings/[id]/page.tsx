@@ -21,7 +21,8 @@ export default async function BookingDetailPage({ params }: { params: any }) {
       trips(date_start, date_end, destinations(title)), 
       booking_members(*), 
       emergency_contacts(*), 
-      health_information(*)
+      health_information(*),
+      payments(amount, status)
     `)
     .eq("id", bookingId)
     .single();
@@ -100,17 +101,6 @@ export default async function BookingDetailPage({ params }: { params: any }) {
             <div className="my-2 border-b"></div>
             <div className="grid grid-cols-3"><span className="text-muted-foreground">Total Tagihan</span><span className="col-span-2 font-bold text-lg text-primary">: Rp {(booking.total_amount || 0).toLocaleString("id-ID")}</span></div>
             <div className="grid grid-cols-3"><span className="text-muted-foreground">Status Bayar</span><span className="col-span-2 font-medium">: {booking.payment_status || "Belum Bayar"}</span></div>
-            {booking.payment_status === "DP" && (() => {
-              const verifiedPayments = (booking.payments || []).filter((p: any) => p.status === 'Terverifikasi' || p.status === 'Verified');
-              const totalPaid = verifiedPayments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
-              const remaining = (booking.total_amount || 0) - totalPaid;
-              return (
-                <>
-                  <div className="grid grid-cols-3"><span className="text-muted-foreground">Telah Dibayar</span><span className="col-span-2 font-medium text-emerald-600">: Rp {totalPaid.toLocaleString("id-ID")}</span></div>
-                  <div className="grid grid-cols-3"><span className="text-muted-foreground">Sisa Tagihan</span><span className="col-span-2 font-bold text-red-600">: Rp {Math.max(0, remaining).toLocaleString("id-ID")}</span></div>
-                </>
-              );
-            })()}
             {booking.payment_status === "DP" && (() => {
               const verifiedPayments = (booking.payments || []).filter((p: any) => p.status === 'Terverifikasi' || p.status === 'Verified');
               const totalPaid = verifiedPayments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
