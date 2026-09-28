@@ -3,12 +3,25 @@
 import { assertAdmin } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-export async function updateBookingStatus(id: string, newStatus: string) {
+export async function updateBookingStatus(id: string, newStatus: string, newPaymentStatus?: string) {
   try {
     const { supabase } = await assertAdmin();
-    const { error } = await supabase.from("bookings").update({
-      status: newStatus
-    }).eq("id", id);
+    
+    let updatePayload: any = { status: newStatus };
+    
+    // Check if newPaymentStatus is explicitly provided
+    if (newPaymentStatus) {
+      updatePayload.payment_status = newPaymentStatus;
+    } else {
+      // Auto sync if not explicitly provided
+      if (newStatus === "Lunas") {
+        updatePayload.payment_status = "Lunas";
+      } else if (newStatus === "DP Dibayar") {
+        updatePayload.payment_status = "DP";
+      }
+    }
+
+    const { error } = await supabase.from("bookings").update(updatePayload).eq("id", id);
 
     if (error) {
       console.error("Error updating booking status:", error);

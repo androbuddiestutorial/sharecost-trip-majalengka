@@ -90,7 +90,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
     setLoading(true);
     try {
       const formData = new FormData(e.currentTarget);
-      const result = await updateBookingStatus(booking.id, formData.get("status") as string);
+      const result = await updateBookingStatus(booking.id, formData.get("status") as string, formData.get("payment_status") as string);
       if (!result.success) {
         alert(result.error || "Gagal mengubah status");
       } else {
