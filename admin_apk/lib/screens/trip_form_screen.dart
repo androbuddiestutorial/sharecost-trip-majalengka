@@ -34,7 +34,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
         try {
           final List<dynamic> mps = widget.trip!['meeting_points'] is String ? jsonDecode(widget.trip!['meeting_points']) : widget.trip!['meeting_points'];
           _meetingPoints = mps.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-        } catch(e) {}
+        } catch(e) { debugPrint('Error parsing meeting points: $e'); }
       }
     }
   }

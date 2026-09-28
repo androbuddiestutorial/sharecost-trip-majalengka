@@ -46,24 +46,6 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     super.dispose();
   }
 
-  
-  void _onTripSelected(String? tripId) {
-    setState(() {
-      _selectedTripId = tripId;
-      _selectedMeetingPoint = null;
-      _meetingPoints = [];
-      if (tripId != null) {
-        final trip = _trips.firstWhere((t) => t['id'] == tripId, orElse: () => null);
-        if (trip != null && trip['meeting_points'] != null) {
-          try {
-            final List<dynamic> mps = trip['meeting_points'] is String ? jsonDecode(trip['meeting_points']) : trip['meeting_points'];
-            _meetingPoints = mps.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-          } catch(e) {}
-        }
-      }
-    });
-  }
-
   Future<void> _fetchData() async {
     final t = await Supabase.instance.client.from('trips').select('*, destinations(title)').eq('status', 'Terbuka');
     setState(() { _trips = t; });

@@ -184,7 +184,7 @@ $paymentLink
 Terima kasih 🙏''';
     
     final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
-    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (e) { }
+    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (e) { debugPrint('Error launching WA: $e'); }
   }
 
   Future<void> _sendRefundWA() async {
@@ -203,7 +203,7 @@ Terkait pembatalan pesanan Anda dengan Kode Booking *$code*, mohon informasikan 
 Terima kasih 🙏''';
     
     final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
-    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (e) { }
+    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (e) { debugPrint('Error launching WA: $e'); }
   }
 
   void _showProofImage(String url) {
@@ -245,6 +245,7 @@ Terima kasih 🙏''';
         },
         body: jsonEncode({
            'status': newStatus,
+           // ignore: use_null_aware_elements
            if (targetPaymentStatus != null) 'payment_status': targetPaymentStatus,
         }),
       );
