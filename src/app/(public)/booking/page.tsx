@@ -73,6 +73,7 @@ export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLockedByUrl, setIsLockedByUrl] = useState(false);
+  const [mpLocked, setMpLocked] = useState(false);
   
   const [destinations, setDestinations] = useState<any[]>([]);
   const [trips, setTrips] = useState<any[]>([]);
@@ -129,6 +130,8 @@ export default function BookingPage() {
     if (typeof window !== 'undefined' && trips.length > 0) {
       const params = new URLSearchParams(window.location.search);
       const tripId = params.get('trip');
+      const mpParam = params.get('mp');
+      
       if (tripId) {
         const foundTrip = trips.find(t => t.id === tripId);
         if (foundTrip) {
@@ -136,6 +139,11 @@ export default function BookingPage() {
             setValue('jenisTrip', foundTrip.trip_type);
           }
         }
+      }
+      
+      if (mpParam) {
+        setValue('meetingPoint', mpParam);
+        setMpLocked(true);
       }
     }
   }, [trips, setValue]);
@@ -444,7 +452,14 @@ export default function BookingPage() {
                   )}
                 </div>
 
-                <div className="space-y-2">
+                {mpLocked ? (
+                    <div className="space-y-2">
+                      <Label>Meeting Point Pilihan</Label>
+                      <Input value={watchMeetingPoint || ""} readOnly className="bg-muted text-muted-foreground" />
+                      <input type="hidden" {...register("meetingPoint")} value={watchMeetingPoint || ""} />
+                    </div>
+                  ) : (
+<div className="space-y-2">
                   <Label>Meeting Point</Label>
                   <Controller
                     name="meetingPoint"
@@ -467,6 +482,7 @@ export default function BookingPage() {
                   />
                   {errors.meetingPoint && <p className="text-sm text-destructive">{errors.meetingPoint.message}</p>}
                 </div>
+                  )}
 
                 {watchMeetingPoint === "Lainnya" && (
                   <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
