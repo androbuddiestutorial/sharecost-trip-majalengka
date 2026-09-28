@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, ExternalLink } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
-import { CreatePaymentButton, VerifyPaymentButton, DeletePaymentButton } from "./payments-client";
+import { CreatePaymentButton } from "./payments-client";
+import { PaymentsTableClient } from "./payments-table-client";
 import { PrintButton } from "@/components/ui/print-button";
 
 export const metadata = {
@@ -17,7 +18,7 @@ export default async function AdminPaymentsPage() {
   const supabase = await createClient();
   const { data: payments, error } = await supabase
     .from('payments')
-    .select('*, bookings(booking_code, full_name, total_amount)')
+    .select('*, bookings(booking_code, full_name, total_amount, whatsapp)')
     .order('created_at', { ascending: false });
 
   const { data: bookingsList } = await supabase
@@ -27,6 +28,37 @@ export default async function AdminPaymentsPage() {
 
   if (error) console.error("Error fetching payments:", error);
   const safePayments = payments || [];
+  
+  // Group payments by booking ID to construct Master Bookings array
+  const bookingsMap: Record<string, any> = {};
+  
+  safePayments.forEach(p => {
+    const b = p.bookings;
+    if (!b) return;
+    if (!bookingsMap[p.booking_id]) {
+      bookingsMap[p.booking_id] = {
+        id: p.booking_id,
+        booking_code: b.booking_code,
+        full_name: b.full_name,
+        whatsapp: b.whatsapp,
+        total_amount: b.total_amount,
+        payments: []
+      };
+    }
+    bookingsMap[p.booking_id].payments.push(p);
+  });
+  
+  // Sort each booking's payments ascending
+  Object.values(bookingsMap).forEach(b => {
+    b.payments.sort((a: any, bItem: any) => new Date(a.created_at).getTime() - new Date(bItem.created_at).getTime());
+  });
+  
+  // Sort bookings by the latest payment descending
+  const groupedBookings = Object.values(bookingsMap).sort((a, b) => {
+    const maxA = Math.max(...a.payments.map((p: any) => new Date(p.created_at).getTime()));
+    const maxB = Math.max(...b.payments.map((p: any) => new Date(p.created_at).getTime()));
+    return maxB - maxA;
+  });
   const safeBookingsList = bookingsList || [];
 
   const totalPenerimaan = safePayments
@@ -93,115 +125,7 @@ export default async function AdminPaymentsPage() {
         </Button>
       </div>
 
-      <div className="rounded-md border bg-white overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID Pembayaran</TableHead>
-              <TableHead>Booking</TableHead>
-              <TableHead>Tanggal</TableHead>
-              <TableHead>Metode</TableHead>
-              <TableHead>Bukti</TableHead>
-              <TableHead className="text-right">Jumlah</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {safePayments.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">Belum ada data pembayaran.</TableCell>
-              </TableRow>
-            ) : safePayments.map((payment) => {
-              const payDate = new Date(payment.payment_date || payment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-              return (
-                <TableRow key={payment.id} className={payment.rowSpan === 0 ? "border-t-0" : "border-t-[2px]"}>
-                  <TableCell className="font-medium">{payment.id.substring(0, 8)}</TableCell>
-                  <TableCell>
-                    <div className="font-medium">{payment.bookings?.booking_code || '-'}</div>
-                    <div className="text-xs text-muted-foreground">{payment.bookings?.full_name || '-'}</div>
-                  </TableCell>
-                  <TableCell>{payDate}</TableCell>
-                  <TableCell>
-                      {payment.payment_method}
-                      {(() => {
-                        let badgeText = payment.payment_type;
-                        
-                        // If type is "Manual" or empty, try to determine based on amount
-                        if (!badgeText || badgeText === "Manual" || badgeText === "Otomatis" || badgeText === "Transfer") {
-                           if (payment.bookings?.total_amount) {
-                             const total = Number(payment.bookings.total_amount) || 0;
-                             const amt = Number(payment.amount) || 0;
-                             
-                             if (amt >= total) {
-                               badgeText = "Lunas (Full Pax)";
-                             } else if (amt > 0 && amt <= Math.ceil(total * 0.6)) {
-                               // Assuming half payment is DP, or if it's exactly the rest, it could be Pelunasan
-                               // To be safe, just call it DP/Cicilan
-                               badgeText = "DP / Cicilan";
-                             }
-                           }
-                        }
-                        
-                        // Translate known types to better labels
-                        if (badgeText === "Manual (Admin Edit)") {
-                          if (Number(payment.amount) < Number(payment.bookings?.total_amount)) badgeText = "DP / Cicilan (Manual)";
-                          else badgeText = "Lunas (Manual)";
-                        }
-                        
-                        // Force explicit "DP" label if the UI from bookings created it
-                        if (payment.payment_type === "DP") badgeText = "DP";
-                        if (payment.payment_type === "Lunas") badgeText = "Lunas";
-
-                        if (badgeText && badgeText !== "Manual") {
-                          return (
-                            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 block mt-1 w-fit">
-                              {badgeText}
-                            </span>
-                          );
-                        }
-                        return null;
-                      })()}
-                    </TableCell>
-                  <TableCell>
-                    {payment.proof_url ? (
-                      <a 
-                        href={payment.proof_url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded"
-                      >
-                        <ExternalLink className="h-3 w-3" /> Lihat
-                      </a>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    Rp {(payment.amount || 0).toLocaleString('id-ID')}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={payment.status === "Terverifikasi" ? "default" : "secondary"}>
-                      {payment.status || 'Menunggu'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <VerifyPaymentButton 
-                      id={payment.id} 
-                      currentStatus={payment.status || 'Menunggu'} 
-                      bookingCode={payment.bookings?.booking_code}
-                      fullName={payment.bookings?.full_name}
-                      whatsapp={payment.bookings?.whatsapp}
-                      amount={payment.amount}
-                    />
-                    <DeletePaymentButton id={payment.id} />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </div>
+            <PaymentsTableClient bookings={groupedBookings} />
     </div>
   );
 }
