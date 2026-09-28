@@ -239,6 +239,21 @@ export function BookingActions({ booking }: { booking: BookingData }) {
                   <option value="Dibatalkan">Dibatalkan</option>
                 </select>
               </div>
+              
+              <div className="space-y-2 mt-4 pt-4 border-t">
+                <label className="text-sm font-medium leading-none" htmlFor="payment_status">Status Pembayaran Saat Ini: <span className="font-medium text-amber-600">{booking.payment_status || "Belum Bayar"}</span></label>
+              </div>
+              <div className="space-y-2">
+                <select 
+                  name="payment_status"
+                  defaultValue={booking.payment_status || "Belum Bayar"}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="Belum Bayar">Belum Bayar</option>
+                  <option value="DP">DP</option>
+                  <option value="Lunas">Lunas</option>
+                </select>
+              </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setStatusOpen(false)} disabled={loading}>Batal</Button>
