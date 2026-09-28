@@ -258,7 +258,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
                   defaultValue={booking.payment_status || "Belum Bayar"}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
-                  <option value="Belum Bayar">Belum Bayar</option>
+                  <option value="Belum Bayar" disabled={totalPaid > 0}>Belum Bayar {totalPaid > 0 ? "(Ada Riwayat)" : ""}</option>
                   <option value="DP">DP</option>
                   <option value="Lunas">Lunas</option>
                 </select>
