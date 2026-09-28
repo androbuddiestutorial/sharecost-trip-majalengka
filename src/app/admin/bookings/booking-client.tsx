@@ -93,6 +93,9 @@ export function BookingActions({ booking }: { booking: BookingData }) {
   const waPelunasanText = `Halo kak ${booking.full_name} 👋🏻\nKami dari Sharecost Trip Majalengka menginformasikan bahwa Trip ke ${destinasi} (Jadwal: ${tglKeberangkatan}) sudah semakin dekat.\n\nBerikut rincian tagihan kakak:\n- Total Tagihan: *${tagihanFormat}*\n- Telah Dibayar (DP): *Rp ${totalPaid.toLocaleString('id-ID')}*\n- Sisa Pelunasan: *Rp ${Math.max(0, remaining).toLocaleString('id-ID')}*\n\nMohon untuk dapat melakukan pelunasan sisa tagihan tersebut ya kak.\n\nLink Pembayaran (Otomatis):\n${paymentLink}\n\nAtau bisa langsung transfer secara manual dan kirimkan buktinya ke kami.\nTerimakasih 🙏🏻`;
   
   const waPelunasanLink = waFormatted ? `https://wa.me/${waFormatted}?text=${encodeURIComponent(waPelunasanText)}` : "#";
+  
+  const waBatalText = `Halo kak ${booking.full_name} 👋🏻\nKami dari Sharecost Trip Majalengka mengonfirmasi bahwa Pendaftaran Trip ke ${destinasi} (Jadwal: ${tglKeberangkatan}) telah *Dibatalkan*.\n\nMengingat sebelumnya kakak sudah melakukan pembayaran sebesar *Rp ${totalPaid.toLocaleString('id-ID')}*, mohon konfirmasinya mengenai pengembalian dana (refund) tersebut ya kak. Apakah ada potongan sesuai S&K atau dikembalikan full, admin kami akan segera membantu proses pencairannya.\n\nTerimakasih 🙏🏻`;
+  const waBatalLink = waFormatted ? `https://wa.me/${waFormatted}?text=${encodeURIComponent(waBatalText)}` : "#";
 
   async function onUpdateStatus(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

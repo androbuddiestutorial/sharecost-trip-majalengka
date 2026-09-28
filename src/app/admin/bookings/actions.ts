@@ -77,6 +77,11 @@ export async function updateBookingStatus(id: string, newStatus: string, newPaym
       }
     }
 
+    // IF STATUS CHANGED TO DIBATALKAN, CANCEL ALL RELATED PAYMENTS
+    if (newStatus === "Dibatalkan") {
+      await supabase.from("payments").update({ status: "Dibatalkan (Refund)" }).eq("booking_id", id);
+    }
+
     const { error } = await supabase.from("bookings").update(updatePayload).eq("id", id);
 
     if (error) {
