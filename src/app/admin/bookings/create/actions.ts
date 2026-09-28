@@ -20,7 +20,7 @@ export async function createAdminBooking(data: any) {
       return { success: false, error: 'Trip, Nama, dan WhatsApp wajib diisi.' };
     }
 
-    const { trip_id, full_name, whatsapp, gender, address, domicile, meeting_point, members, payment_status, payment_amount } = data;
+    const { trip_id, full_name, whatsapp, gender, address, meeting_point, members, payment_status, payment_amount } = data;
     const pax = Number(data.pax) || 1;
 
     // 1. Get Trip and Price
@@ -73,7 +73,6 @@ export async function createAdminBooking(data: any) {
         whatsapp,
         gender,
         address,
-        domicile,
         meeting_point,
           meeting_point_price: mpPrice,
           pax,

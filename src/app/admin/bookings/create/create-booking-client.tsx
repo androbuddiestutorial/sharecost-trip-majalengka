@@ -48,7 +48,6 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       whatsapp: formData.get("whatsapp"),
       gender: formData.get("gender"),
       address: formData.get("address"),
-      domicile: formData.get("domicile"),
       meeting_point: meetingPoint || formData.get("meeting_point"),
       pax,
       members,
@@ -125,10 +124,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
               <option value="Perempuan">Perempuan</option>
             </select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="domicile">Asal Kota / Domisili</Label>
-            <Input id="domicile" name="domicile" placeholder="Misal: Bandung" />
-          </div>
+
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="address">Alamat Lengkap (Opsional)</Label>
             <Input id="address" name="address" placeholder="Alamat rumah..." />
