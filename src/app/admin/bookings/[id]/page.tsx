@@ -112,28 +112,38 @@ export default async function BookingDetailPage({ params }: { params: any }) {
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 text-sm">
               <div>
                 <h4 className="font-semibold mb-2 text-primary">Kontak Darurat:</h4>
-                {booking.emergency_contacts && booking.emergency_contacts.length > 0 ? (
-                  <div className="space-y-2">
-                    <p><span className="text-muted-foreground">Nama:</span> {booking.emergency_contacts[0].full_name}</p>
-                    <p><span className="text-muted-foreground">Hubungan:</span> {booking.emergency_contacts[0].relationship}</p>
-                    <p><span className="text-muted-foreground">WhatsApp:</span> {booking.emergency_contacts[0].whatsapp}</p>
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground italic">Tidak ada data</p>
-                )}
+                {(() => {
+                  const em = booking.emergency_contacts;
+                  const contact = Array.isArray(em) ? em[0] : em;
+                  if (contact) {
+                    return (
+                      <div className="space-y-2">
+                        <p><span className="text-muted-foreground">Nama:</span> {contact.full_name}</p>
+                        <p><span className="text-muted-foreground">Hubungan:</span> {contact.relationship}</p>
+                        <p><span className="text-muted-foreground">WhatsApp:</span> {contact.whatsapp}</p>
+                      </div>
+                    );
+                  }
+                  return <p className="text-muted-foreground italic">Tidak ada data</p>;
+                })()}
               </div>
               <div>
                 <h4 className="font-semibold mb-2 text-primary">Kondisi Kesehatan:</h4>
-                {booking.health_information && booking.health_information.length > 0 ? (
-                  <div className="space-y-2">
-                    <p><span className="text-muted-foreground">Ada Kondisi:</span> {booking.health_information[0].has_condition ? "Iya" : "Tidak"}</p>
-                    {booking.health_information[0].has_condition && (
-                      <p><span className="text-muted-foreground">Penjelasan:</span> {booking.health_information[0].description}</p>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground italic">Tidak ada keluhan</p>
-                )}
+                {(() => {
+                  const hi = booking.health_information;
+                  const health = Array.isArray(hi) ? hi[0] : hi;
+                  if (health) {
+                    return (
+                      <div className="space-y-2">
+                        <p><span className="text-muted-foreground">Ada Kondisi:</span> {health.has_condition ? "Iya" : "Tidak"}</p>
+                        {health.has_condition && (
+                          <p><span className="text-muted-foreground">Penjelasan:</span> {health.description}</p>
+                        )}
+                      </div>
+                    );
+                  }
+                  return <p className="text-muted-foreground italic">Tidak ada keluhan</p>;
+                })()}
               </div>
             </CardContent>
           </Card>
