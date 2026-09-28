@@ -51,6 +51,23 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     setState(() { _trips = t; });
   }
 
+    void _onTripSelected(String? tripId) {
+    setState(() {
+      _selectedTripId = tripId;
+      _selectedMeetingPoint = null;
+      _meetingPoints = [];
+      if (tripId != null) {
+        final trip = _trips.firstWhere((t) => t['id'].toString() == tripId, orElse: () => null);
+        if (trip != null && trip['meeting_points'] != null) {
+          try {
+            final List<dynamic> mps = trip['meeting_points'] is String ? jsonDecode(trip['meeting_points']) : trip['meeting_points'];
+            _meetingPoints = mps.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          } catch(e) { debugPrint('Error parsing meeting points: $e'); }
+        }
+      }
+    });
+  }
+
   String _generateBookingCode() {
     return 'MANUAL-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
   }
@@ -191,7 +208,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
                   child: Text('$title (Rp ${t['price'] ?? 0})'),
                 );
               }).toList(),
-              onChanged: (v) => setState(() => _selectedTripId = v),
+              onChanged: _onTripSelected,
             ),
             const SizedBox(height: 16),
             // ignore: deprecated_member_use

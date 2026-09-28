@@ -190,7 +190,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
