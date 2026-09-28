@@ -47,6 +47,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       full_name: formData.get("full_name"),
       whatsapp: formData.get("whatsapp"),
       gender: formData.get("gender"),
+      birth_date: formData.get("birth_date"),
       address: formData.get("address"),
       meeting_point: meetingPoint || formData.get("meeting_point"),
       pax,
@@ -123,6 +124,10 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
               <option value="Laki-laki">Laki-laki</option>
               <option value="Perempuan">Perempuan</option>
             </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="birth_date">Tanggal Lahir</Label>
+            <Input id="birth_date" name="birth_date" type="date" required />
           </div>
 
           <div className="space-y-2 md:col-span-2">
