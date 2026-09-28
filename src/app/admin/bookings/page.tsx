@@ -108,6 +108,15 @@ export default async function AdminBookingsPage() {
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     Rp {(booking.total_amount || 0).toLocaleString('id-ID')}
+                    {booking.payment_status === 'DP' && (() => {
+                      const verifiedPayments = (booking.payments || []).filter((p: any) => p.status === 'Terverifikasi' || p.status === 'Verified');
+                      const totalPaid = verifiedPayments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+                      if (totalPaid > 0) {
+                        return <div className="text-xs font-normal text-amber-600 mt-1">(Telah dibayar: Rp {totalPaid.toLocaleString('id-ID')})</div>;
+                      } else {
+                        return <div className="text-xs font-normal text-amber-600 mt-1">(DP)</div>;
+                      }
+                    })()}
                   </TableCell>
                   <TableCell className="text-right">
                     <BookingActions booking={booking} />

@@ -31,6 +31,7 @@ import { updateBookingStatus, deleteBooking, processPelunasan } from "./actions"
   total_amount: number;
   payment_status: string;
   pax?: number;
+  payments?: any[];
   trips?: {
     date_start?: string;
     start_date?: string;
@@ -84,6 +85,14 @@ export function BookingActions({ booking }: { booking: BookingData }) {
   const waNumber = booking.whatsapp || "";
   const waFormatted = waNumber.startsWith("0") ? "62" + waNumber.substring(1) : waNumber;
   const waLink = waFormatted ? `https://wa.me/${waFormatted}?text=${encodeURIComponent(waText)}` : "#";
+  
+  const verifiedPayments = (booking.payments || []).filter((p: any) => p.status === 'Terverifikasi' || p.status === 'Verified');
+  const totalPaid = verifiedPayments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+  const remaining = (booking.total_amount || 0) - totalPaid;
+  
+  const waPelunasanText = `Halo kak ${booking.full_name} 👋🏻\nKami dari Sharecost Trip Majalengka menginformasikan bahwa Trip ke ${destinasi} (Jadwal: ${tglKeberangkatan}) sudah semakin dekat.\n\nBerikut rincian tagihan kakak:\n- Total Tagihan: *${tagihanFormat}*\n- Telah Dibayar (DP): *Rp ${totalPaid.toLocaleString('id-ID')}*\n- Sisa Pelunasan: *Rp ${Math.max(0, remaining).toLocaleString('id-ID')}*\n\nMohon untuk dapat melakukan pelunasan sisa tagihan tersebut ya kak.\n\nLink Pembayaran (Otomatis):\n${paymentLink}\n\nAtau bisa langsung transfer secara manual dan kirimkan buktinya ke kami.\nTerimakasih 🙏🏻`;
+  
+  const waPelunasanLink = waFormatted ? `https://wa.me/${waFormatted}?text=${encodeURIComponent(waPelunasanText)}` : "#";
 
   async function onUpdateStatus(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
