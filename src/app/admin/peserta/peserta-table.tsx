@@ -35,7 +35,9 @@ export function PesertaTable({ bookingsData, membersData }: { bookingsData: any[
           whatsapp: b.whatsapp,
           address: b.address,
           is_main: true,
-          booking_code: b.booking_code
+          booking_code: b.booking_code,
+          emergency: Array.isArray(b.emergency_contacts) ? b.emergency_contacts[0] : b.emergency_contacts,
+          health: Array.isArray(b.health_information) ? b.health_information[0] : b.health_information
         },
         members: []
       });
@@ -172,6 +174,48 @@ export function PesertaTable({ bookingsData, membersData }: { bookingsData: any[
                 <div className="font-medium text-muted-foreground">Alamat</div>
                 <div className="col-span-2">{selectedPeserta.address || "-"}</div>
               </div>
+
+              {selectedPeserta.emergency && (
+                <div className="mt-4 border-t pt-4">
+                  <h4 className="font-semibold text-primary mb-2">Kontak Darurat</h4>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="font-medium text-muted-foreground">Nama</div>
+                    <div className="col-span-2">{selectedPeserta.emergency.full_name}</div>
+                    
+                    <div className="font-medium text-muted-foreground">Hubungan</div>
+                    <div className="col-span-2">{selectedPeserta.emergency.relationship}</div>
+                    
+                    <div className="font-medium text-muted-foreground">WhatsApp</div>
+                    <div className="col-span-2">
+                      <a 
+                        href={`https://wa.me/${selectedPeserta.emergency.whatsapp?.startsWith('0') ? '62' + selectedPeserta.emergency.whatsapp.substring(1) : selectedPeserta.emergency.whatsapp}?text=${encodeURIComponent('Halo Kak ' + selectedPeserta.emergency.full_name + ', kami dari Admin Sharecost Trip Majalengka menghubungi Anda selaku kontak darurat dari ' + selectedPeserta.full_name + ' terkait pendaftaran trip. ')}`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center gap-1"
+                      >
+                        {selectedPeserta.emergency.whatsapp}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {selectedPeserta.health && (
+                <div className="mt-4 border-t pt-4">
+                  <h4 className="font-semibold text-primary mb-2">Kondisi Kesehatan</h4>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="font-medium text-muted-foreground">Ada Keluhan?</div>
+                    <div className="col-span-2">{selectedPeserta.health.has_condition ? "Iya" : "Tidak ada"}</div>
+                    
+                    {selectedPeserta.health.has_condition && (
+                      <>
+                        <div className="font-medium text-muted-foreground">Penjelasan</div>
+                        <div className="col-span-2 text-red-600">{selectedPeserta.health.description}</div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {selectedPeserta.whatsapp && (
                 <div className="pt-4 flex justify-end">

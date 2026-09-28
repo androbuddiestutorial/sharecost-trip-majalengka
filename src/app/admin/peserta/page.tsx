@@ -14,7 +14,7 @@ export default async function AdminPesertaPage() {
   // Ambil data Pendaftar Utama yang statusnya Terverifikasi atau Lunas
   const { data: bookingsData } = await supabase
     .from('bookings')
-    .select('id, full_name, whatsapp, address, booking_code, status, created_at, trips(date_start, destinations(title))')
+    .select('id, full_name, whatsapp, address, booking_code, status, created_at, trips(date_start, destinations(title)), emergency_contacts(*), health_information(*)')
     .in('status', ['Terverifikasi', 'Lunas'])
     .order('created_at', { ascending: false });
 
