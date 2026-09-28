@@ -48,7 +48,7 @@ export async function createAdminBooking(data: any) {
         mpPrice = Number(foundMp.price);
       }
     }
-    const total_amount = (pricePerPax + mpPrice) * pax;
+    const total_amount = (mpPrice > 0 ? mpPrice : pricePerPax) * pax;
 
     const booking_code = generateBookingCode();
 

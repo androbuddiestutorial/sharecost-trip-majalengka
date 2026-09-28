@@ -33,7 +33,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
   const mpPrice = selectedMpObj?.price ? Number(selectedMpObj.price) : 0;
 
   const basePrice = selectedTrip ? (selectedTrip.price > 0 ? selectedTrip.price : (selectedTrip.destinations?.price || 350000)) : 0;
-  const totalAmount = (basePrice + mpPrice) * pax;
+  const totalAmount = (mpPrice > 0 ? mpPrice : basePrice) * pax;
   const dpAmount = Math.floor(totalAmount / 2);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -220,7 +220,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
           <div className="mt-4 p-4 bg-primary/5 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center border border-primary/20 gap-2">
             <div>
               <span className="font-semibold text-primary block">Total Tagihan</span>
-              <span className="text-xs text-muted-foreground">Rp {(basePrice + mpPrice).toLocaleString('id-ID')} x {pax} Orang</span>
+              <span className="text-xs text-muted-foreground">Rp {(mpPrice > 0 ? mpPrice : basePrice).toLocaleString('id-ID')} x {pax} Orang</span>
             </div>
             <span className="text-xl font-bold text-primary">Rp {totalAmount.toLocaleString('id-ID')}</span>
           </div>

@@ -96,7 +96,7 @@ export async function POST(request: Request) {
         meetingPointPrice = Number(foundMp.price);
       }
     }
-    const total_amount = (pricePerPax + meetingPointPrice) * paxCount;
+    const total_amount = (meetingPointPrice > 0 ? meetingPointPrice : pricePerPax) * paxCount;
 
     const { data: newBooking, error } = await supabase.from('bookings').insert([{
       booking_code,

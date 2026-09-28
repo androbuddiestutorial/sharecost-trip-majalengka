@@ -90,7 +90,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     }
     
     final pax = int.tryParse(_paxController.text) ?? 1;
-    return (price + mpPrice) * pax;
+    return (mpPrice > 0 ? mpPrice : price) * pax;
   }
 
   void _updateMembers(String val) {
@@ -224,7 +224,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
               items: _meetingPoints.map((m) {
                 int mpPrice = m['price'] ?? 0;
                 String label = m['name'];
-                if (mpPrice > 0) label += ' (+ Rp $mpPrice)';
+                if (mpPrice > 0) label += ' (Rp $mpPrice)';
                 return DropdownMenuItem<String>(
                   value: m['name'],
                   child: Text(label),

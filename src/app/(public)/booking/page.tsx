@@ -671,15 +671,15 @@ export default function BookingPage() {
                     const mpPrice = isLockedByUrl ? mpPriceFromUrl : (Number(tripMps.find((mp: any) => mp.name === watchMeetingPoint)?.price) || 0);
                     
                     const pax = parseInt(watchJumlahPeserta || "1", 10);
-                    const totalPerPax = tripPrice + mpPrice;
+                    const totalPerPax = mpPrice > 0 ? mpPrice : tripPrice;
                     const grandTotal = totalPerPax * pax;
                     
                     const formatRp = (val: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
 
                     return (
                       <div className="text-sm space-y-1">
-                        <div className="flex justify-between"><span>Harga Trip:</span> <span>{formatRp(tripPrice)}</span></div>
-                        <div className="flex justify-between"><span>Biaya Meeting Point:</span> <span>{formatRp(mpPrice)}</span></div>
+                        
+                        
                         <div className="flex justify-between font-medium pt-1 border-t border-primary/10 mt-1">
                           <span>Total per Pax:</span> <span>{formatRp(totalPerPax)}</span>
                         </div>
