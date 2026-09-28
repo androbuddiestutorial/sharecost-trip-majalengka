@@ -195,6 +195,17 @@ export function PembayaranClient() {
             </div>
           </div>
 
+          {bookingData.remaining <= 0 ? (
+            <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-xl text-center space-y-3 mt-4">
+              <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto" />
+              <h3 className="text-lg font-bold text-emerald-800">Tagihan Sudah Lunas</h3>
+              <p className="text-emerald-700 text-sm">Terima kasih! Seluruh tagihan untuk pesanan ini telah terbayar lunas. Anda tidak perlu melakukan pembayaran lagi.</p>
+              <Button type="button" variant="outline" className="mt-2" onClick={() => router.push(`/cek-pesanan?booking_code=${bookingData.booking_code}`)}>
+                Cek Tiket/Pesanan
+              </Button>
+            </div>
+          ) : (
+            <>
           <div className="space-y-4 pt-4 border-t">
             {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}
             
@@ -253,6 +264,8 @@ export function PembayaranClient() {
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
             Kirim Bukti Pembayaran
           </Button>
+          </>
+          )}
         </form>
       )}
     </div>
