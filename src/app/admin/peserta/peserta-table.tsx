@@ -23,8 +23,10 @@ export function PesertaTable({ bookingsData, membersData }: { bookingsData: any[
       const destData = Array.isArray(tripData?.destinations) ? tripData?.destinations[0] : tripData?.destinations;
       const tgl = tripData?.date_start ? formatLocalDate(tripData.date_start) : '-';
       const trip_key = `${destData?.title || '-'} (${tgl})`;
+      const quota = tripData?.quota || 0;
 
       bookingMap.set(b.booking_code, {
+        quota: quota,
         booking_code: b.booking_code,
         full_name: b.full_name,
         trip_key: trip_key,
@@ -96,11 +98,37 @@ export function PesertaTable({ bookingsData, membersData }: { bookingsData: any[
             ) : sortedTripKeys.map(tripKey => (
               <React.Fragment key={tripKey}>
                 {/* LEVEL 1: TRIP & TANGGAL */}
-                <TableRow className="bg-primary/10 hover:bg-primary/10">
-                  <TableCell colSpan={3} className="font-bold text-primary py-3">
-                    📍 {tripKey}
-                  </TableCell>
-                </TableRow>
+                {(() => {
+                  const groups = groupedByTrip[tripKey];
+                  const quota = groups[0]?.quota || 0;
+                  
+                  // Calculate total participants in this trip
+                  let totalParticipants = 0;
+                  groups.forEach((g: any) => {
+                    totalParticipants += 1 + g.members.length;
+                  });
+                  
+                  const isFull = quota > 0 && totalParticipants >= quota;
+                  
+                  return (
+                    <TableRow className="bg-primary/10 hover:bg-primary/10">
+                      <TableCell colSpan={3} className="font-bold text-primary py-3"><div className="flex items-center justify-between">
+                        <span>📍 {tripKey} — {totalParticipants} Peserta</span>
+                        {quota > 0 ? (
+                          isFull ? (
+                            <Badge variant="destructive" className="ml-4">FULL ({totalParticipants}/{quota})</Badge>
+                          ) : (
+                            <Badge variant="secondary" className="ml-4 bg-green-100 text-green-800 hover:bg-green-200 border-green-200">
+                              Sisa Kuota: {quota - totalParticipants} (Total: {quota})
+                            </Badge>
+                          )
+                        ) : (
+                          <Badge variant="outline" className="ml-4">Kuota Tidak Dibatasi</Badge>
+                        )}
+                      </div></TableCell>
+                    </TableRow>
+                  );
+                })()}
 
                 {/* LEVEL 2: ROMBONGAN (BOOKER) */}
                 {groupedByTrip[tripKey].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map((group: any) => (

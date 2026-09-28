@@ -14,14 +14,14 @@ export default async function AdminPesertaPage() {
   // Ambil data Pendaftar Utama yang statusnya Terverifikasi atau Lunas
   const { data: bookingsData } = await supabase
     .from('bookings')
-    .select('id, full_name, whatsapp, address, booking_code, status, created_at, trips(date_start, destinations(title)), emergency_contacts(*), health_information(*)')
+    .select('id, full_name, whatsapp, address, booking_code, status, created_at, trips(date_start, quota, destinations(title)), emergency_contacts(*), health_information(*)')
     .in('status', ['Terverifikasi', 'Lunas'])
     .order('created_at', { ascending: false });
 
   // Ambil data Anggota Tambahan dari booking yang Terverifikasi atau Lunas
   const { data: membersData } = await supabase
     .from('booking_members')
-    .select('id, full_name, whatsapp, address, created_at, bookings!inner(booking_code, status, trips(date_start, destinations(title)))')
+    .select('id, full_name, whatsapp, address, created_at, bookings!inner(booking_code, status, trips(date_start, quota, destinations(title)))')
     .in('bookings.status', ['Terverifikasi', 'Lunas'])
     .order('created_at', { ascending: false });
 
