@@ -161,6 +161,7 @@ export default function BookingPage() {
   const watchAdaKondisi = watch("adaKondisiKesehatan");
   const watchDestinasi = watch("destinasi");
   const watchJenisTrip = watch("jenisTrip");
+  const watchJadwalTrip = watch("jadwalTrip");
 
   const selectedTripObjForMp = trips.find(t => t.id === watchJadwalTrip);
   const tripMps = (() => {
@@ -171,7 +172,7 @@ export default function BookingPage() {
     } catch { return []; }
   })();
 
-  const watchJadwalTrip = watch("jadwalTrip");
+  
 
   const filteredTrips = watchDestinasi ? trips.filter(t => t.destination === watchDestinasi) : trips;
 
