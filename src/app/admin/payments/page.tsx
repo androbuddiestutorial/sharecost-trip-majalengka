@@ -17,7 +17,7 @@ export default async function AdminPaymentsPage() {
   const supabase = await createClient();
   const { data: payments, error } = await supabase
     .from('payments')
-    .select('*, bookings(booking_code, full_name)')
+    .select('*, bookings(booking_code, full_name, total_amount)')
     .order('created_at', { ascending: false });
 
   const { data: bookingsList } = await supabase
@@ -124,11 +124,44 @@ export default async function AdminPaymentsPage() {
                   <TableCell>{payDate}</TableCell>
                   <TableCell>
                       {payment.payment_method}
-                      {payment.payment_type && (
-                        <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 block mt-1 w-fit">
-                          {payment.payment_type}
-                        </span>
-                      )}
+                      {(() => {
+                        let badgeText = payment.payment_type;
+                        
+                        // If type is "Manual" or empty, try to determine based on amount
+                        if (!badgeText || badgeText === "Manual" || badgeText === "Otomatis" || badgeText === "Transfer") {
+                           if (payment.bookings?.total_amount) {
+                             const total = Number(payment.bookings.total_amount) || 0;
+                             const amt = Number(payment.amount) || 0;
+                             
+                             if (amt >= total) {
+                               badgeText = "Lunas (Full Pax)";
+                             } else if (amt > 0 && amt <= Math.ceil(total * 0.6)) {
+                               // Assuming half payment is DP, or if it's exactly the rest, it could be Pelunasan
+                               // To be safe, just call it DP/Cicilan
+                               badgeText = "DP / Cicilan";
+                             }
+                           }
+                        }
+                        
+                        // Translate known types to better labels
+                        if (badgeText === "Manual (Admin Edit)") {
+                          if (Number(payment.amount) < Number(payment.bookings?.total_amount)) badgeText = "DP / Cicilan (Manual)";
+                          else badgeText = "Lunas (Manual)";
+                        }
+                        
+                        // Force explicit "DP" label if the UI from bookings created it
+                        if (payment.payment_type === "DP") badgeText = "DP";
+                        if (payment.payment_type === "Lunas") badgeText = "Lunas";
+
+                        if (badgeText && badgeText !== "Manual") {
+                          return (
+                            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 block mt-1 w-fit">
+                              {badgeText}
+                            </span>
+                          );
+                        }
+                        return null;
+                      })()}
                     </TableCell>
                   <TableCell>
                     {payment.proof_url ? (
