@@ -25,7 +25,7 @@ export async function submitPublicPayment(formData: FormData) {
       booking_id: booking.id,
       amount,
       payment_method,
-      payment_type: "Manual",
+      payment_type: formData.get("payment_type") as string || "Manual",
       payment_date: new Date().toISOString(),
       status: "Menunggu Verifikasi",
       proof_url
@@ -50,7 +50,7 @@ export async function searchBookingByCode(code: string) {
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('bookings')
-    .select('id, booking_code, full_name, total_amount, payment_status, status, pax')
+    .select('id, booking_code, full_name, total_amount, payment_status, status, pax, payments(*)')
     .eq('booking_code', code.trim().toUpperCase())
     .single();
   

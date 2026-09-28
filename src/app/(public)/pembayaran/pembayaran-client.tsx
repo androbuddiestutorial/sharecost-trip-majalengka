@@ -88,6 +88,15 @@ export function PembayaranClient() {
       paymentFormData.append('booking_code', bookingData.booking_code);
       paymentFormData.append('amount', amount.toString());
       paymentFormData.append('payment_method', formData.get('payment_method') as string);
+      
+      let payment_type = "Lunas";
+      if (bookingData.totalPaid === 0 && amount < bookingData.total_amount) {
+         payment_type = "DP";
+      } else if (bookingData.totalPaid > 0) {
+         payment_type = "Pelunasan";
+      }
+      paymentFormData.append('payment_type', payment_type);
+      
       if (proof_url) {
         paymentFormData.append('proof_url', proof_url);
       }
@@ -152,16 +161,35 @@ export function PembayaranClient() {
             <h2 className="text-xl font-bold">{bookingData.booking_code}</h2>
           </div>
 
-          <div className="space-y-2 text-sm">
+          <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Atas Nama:</span>
               <span className="font-medium">{bookingData.full_name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Total Tagihan:</span>
-              <span className="font-medium">Rp {bookingData.total_amount?.toLocaleString("id-ID")}</span>
+              <span className="text-muted-foreground">Total Tagihan Keseluruhan:</span>
+              <span className="font-medium text-lg">Rp {bookingData.total_amount?.toLocaleString("id-ID")}</span>
             </div>
-            <div className="flex justify-between text-amber-600 font-bold border-t pt-2">
+            
+            {bookingData.totalPaid > 0 && (
+              <div className="pt-2 border-t space-y-2">
+                <p className="font-semibold text-emerald-700">Riwayat Pembayaran Sebelumnya:</p>
+                {(bookingData.payments || [])
+                  .filter((p: any) => p.status === 'Terverifikasi' || p.status === 'Verified')
+                  .map((p: any, i: number) => (
+                    <div key={p.id} className="flex justify-between text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                      <span>{p.payment_type || 'DP'} ({new Date(p.created_at).toLocaleDateString('id-ID')})</span>
+                      <span className="font-medium">- Rp {Number(p.amount).toLocaleString('id-ID')}</span>
+                    </div>
+                ))}
+                <div className="flex justify-between text-emerald-700 font-bold pt-1">
+                  <span>Total Telah Dibayar:</span>
+                  <span>Rp {bookingData.totalPaid.toLocaleString("id-ID")}</span>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex justify-between text-amber-600 font-bold border-t pt-2 text-lg">
               <span>Sisa Yang Harus Dibayar:</span>
               <span>Rp {Math.max(0, bookingData.remaining).toLocaleString("id-ID")}</span>
             </div>
