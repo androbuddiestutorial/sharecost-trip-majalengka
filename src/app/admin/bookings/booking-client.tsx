@@ -183,14 +183,39 @@ export function BookingActions({ booking }: { booking: BookingData }) {
           <Edit className="h-4 w-4 text-amber-600" />
         </Button>
 
-        {/* Proses Pelunasan (Only if DP) */}
-        {booking.payment_status === "DP" && (
+        {booking.status === "Dibatalkan" && totalPaid > 0 && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={() => window.open(waBatalLink, "_blank")}
+            title="Konfirmasi Refund Batal (WA)"
+          >
+            <MessageSquare className="h-4 w-4 text-rose-600" />
+          </Button>
+        )}
+
+        {/* Kirim Link Pelunasan (WA) (Only if DP) */}
+        {booking.payment_status === "DP" && booking.status !== "Dibatalkan" && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8"
+            onClick={() => window.open(waPelunasanLink, "_blank")}
+            title="Kirim Tagihan Pelunasan (WA)"
+          >
+            <MessageSquare className="h-4 w-4 text-emerald-600" />
+          </Button>
+        )}
+
+        {/* Proses Pelunasan Manual (Admin) (Only if DP) */}
+        {booking.payment_status === "DP" && booking.status !== "Dibatalkan" && (
           <Button 
             variant="ghost" 
             size="icon" 
             className="h-8 w-8"
             onClick={() => setPelunasanOpen(true)}
-            title="Proses Pelunasan"
+            title="Pelunasan Instan (Tanpa Bukti Transfer)"
           >
             <CheckCircle className="h-4 w-4 text-emerald-600" />
           </Button>
