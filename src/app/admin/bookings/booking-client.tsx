@@ -52,6 +52,7 @@ export function BookingActions({ booking }: { booking: BookingData }) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [pelunasanOpen, setPelunasanOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(["Menunggu Verifikasi", "Terverifikasi", "Dibatalkan"].includes(booking.status) ? booking.status : "Terverifikasi");
 
   const destinasi = booking.trips?.destinations?.name || booking.trips?.destinations?.title || "-";
   
@@ -264,7 +265,8 @@ export function BookingActions({ booking }: { booking: BookingData }) {
               <div className="space-y-2">
                 <select 
                   name="status"
-                  defaultValue={["Menunggu Verifikasi", "Terverifikasi", "Dibatalkan"].includes(booking.status) ? booking.status : "Terverifikasi"}
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
@@ -279,12 +281,13 @@ export function BookingActions({ booking }: { booking: BookingData }) {
               <div className="space-y-2">
                 <select 
                   name="payment_status"
-                  defaultValue={booking.payment_status || "Belum Bayar"}
+                  value={selectedStatus === "Menunggu Verifikasi" ? "Belum Bayar" : undefined}
+                  defaultValue={selectedStatus !== "Menunggu Verifikasi" ? (booking.payment_status || "Belum Bayar") : undefined}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
-                  <option value="Belum Bayar" disabled={totalPaid > 0}>Belum Bayar {totalPaid > 0 ? "(Ada Riwayat)" : ""}</option>
-                  <option value="DP">DP</option>
-                  <option value="Lunas">Lunas</option>
+                  <option value="Belum Bayar" disabled={totalPaid > 0 && selectedStatus !== "Menunggu Verifikasi"}>Belum Bayar {totalPaid > 0 && selectedStatus !== "Menunggu Verifikasi" ? "(Ada Riwayat)" : ""}</option>
+                  <option value="DP" disabled={selectedStatus === "Menunggu Verifikasi"}>DP</option>
+                  <option value="Lunas" disabled={selectedStatus === "Menunggu Verifikasi"}>Lunas</option>
                 </select>
               </div>
             </div>
