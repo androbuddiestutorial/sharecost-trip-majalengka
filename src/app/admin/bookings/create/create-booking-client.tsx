@@ -14,7 +14,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
   const [errorMsg, setErrorMsg] = useState("");
   
   const [pax, setPax] = useState(1);
-  const [members, setMembers] = useState<{full_name: string, whatsapp: string}[]>([]);
+  const [members, setMembers] = useState<{full_name: string, whatsapp: string, address: string}[]>([]);
   const [paymentStatus, setPaymentStatus] = useState("Belum Bayar");
   const [tripId, setTripId] = useState("");
   const [meetingPoint, setMeetingPoint] = useState("");
@@ -53,7 +53,12 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       pax,
       members,
       payment_status: paymentStatus,
-      payment_amount: paymentStatus === "DP" ? dpAmount : (paymentStatus === "Lunas" ? totalAmount : 0)
+      payment_amount: paymentStatus === "DP" ? dpAmount : (paymentStatus === "Lunas" ? totalAmount : 0),
+      emergency_name: formData.get("emergency_name"),
+      emergency_relation: formData.get("emergency_relation"),
+      emergency_whatsapp: formData.get("emergency_whatsapp"),
+      health_condition: formData.get("health_condition"),
+      health_desc: formData.get("health_desc")
     };
 
     const result = await createAdminBooking(data);
@@ -174,7 +179,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
               if (val > 1) {
                 const newMembers = [...members];
                 while (newMembers.length < val - 1) {
-                  newMembers.push({ full_name: "", whatsapp: "" });
+                  newMembers.push({ full_name: "", whatsapp: "", address: "" });
                 }
                 setMembers(newMembers.slice(0, val - 1));
               } else {
@@ -212,6 +217,17 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
                   }}
                 />
               </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label className="text-xs">Alamat (Opsional)</Label>
+                <Input 
+                  value={m.address} 
+                  onChange={e => {
+                    const newM = [...members];
+                    newM[i].address = e.target.value;
+                    setMembers(newM);
+                  }}
+                />
+              </div>
             </div>
           </div>
         ))}
@@ -228,7 +244,42 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       </div>
 
       <div className="space-y-4 pt-2">
-        <h3 className="text-lg font-semibold border-b pb-2">4. Status Pembayaran (Opsional)</h3>
+        <h3 className="text-lg font-semibold border-b pb-2">4. Kontak Darurat</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="emergency_name">Nama Kontak Darurat</Label>
+            <Input id="emergency_name" name="emergency_name" required placeholder="Nama..." />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="emergency_relation">Hubungan</Label>
+            <Input id="emergency_relation" name="emergency_relation" required placeholder="Misal: Orang Tua, Kakak" />
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="emergency_whatsapp">No WhatsApp Darurat</Label>
+            <Input id="emergency_whatsapp" name="emergency_whatsapp" required placeholder="08..." />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-2">
+        <h3 className="text-lg font-semibold border-b pb-2">5. Kondisi Kesehatan</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="health_condition">Apakah ada riwayat penyakit?</Label>
+            <select id="health_condition" name="health_condition" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+              <option value="Tidak">Tidak Ada</option>
+              <option value="Iya">Ada</option>
+            </select>
+          </div>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="health_desc">Penjelasan Riwayat Penyakit (Jika Ada)</Label>
+            <Input id="health_desc" name="health_desc" placeholder="Jika ada, sebutkan..." />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-2">
+        <h3 className="text-lg font-semibold border-b pb-2">6. Status Pembayaran (Opsional)</h3>
         <div className="space-y-2">
           <Label>Status Pembayaran Saat Ini</Label>
           <select 

@@ -93,6 +93,7 @@ export async function createAdminBooking(data: any) {
         booking_id: booking.id,
         full_name: m.full_name,
         whatsapp: m.whatsapp,
+        address: m.address,
       }));
 
       if (membersToInsert.length > 0) {
