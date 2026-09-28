@@ -46,6 +46,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
       trip_id: tripId,
       full_name: formData.get("full_name"),
       whatsapp: formData.get("whatsapp"),
+      email: formData.get("email"),
       gender: formData.get("gender"),
       birth_date: formData.get("birth_date"),
       address: formData.get("address"),
@@ -117,6 +118,10 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
           <div className="space-y-2">
             <Label htmlFor="whatsapp">Nomor WhatsApp</Label>
             <Input id="whatsapp" name="whatsapp" required placeholder="08..." />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" name="email" type="email" required placeholder="nama@email.com" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="gender">Jenis Kelamin</Label>
@@ -233,15 +238,7 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
           </div>
         ))}
         
-        {tripId && (
-          <div className="mt-4 p-4 bg-primary/5 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center border border-primary/20 gap-2">
-            <div>
-              <span className="font-semibold text-primary block">Total Tagihan</span>
-              <span className="text-xs text-muted-foreground">Rp {(mpPrice > 0 ? mpPrice : basePrice).toLocaleString('id-ID')} x {pax} Orang</span>
-            </div>
-            <span className="text-xl font-bold text-primary">Rp {totalAmount.toLocaleString('id-ID')}</span>
-          </div>
-        )}
+
       </div>
 
       <div className="space-y-4 pt-2">
@@ -312,7 +309,16 @@ export function AdminCreateBookingClient({ trips }: { trips: any[] }) {
         )}
       </div>
 
-      <div className="pt-6">
+      <div className="pt-6 space-y-6">
+        {tripId && (
+          <div className="mt-4 p-4 bg-primary/5 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center border border-primary/20 gap-2">
+            <div>
+              <span className="font-semibold text-primary block">Total Tagihan</span>
+              <span className="text-xs text-muted-foreground">Rp {(mpPrice > 0 ? mpPrice : basePrice).toLocaleString('id-ID')} x {pax} Orang</span>
+            </div>
+            <span className="text-xl font-bold text-primary">Rp {totalAmount.toLocaleString('id-ID')}</span>
+          </div>
+        )}
         <Button type="submit" className="w-full" disabled={loading} size="lg">
           {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
           Simpan Booking & Auto-Kalkulasi
