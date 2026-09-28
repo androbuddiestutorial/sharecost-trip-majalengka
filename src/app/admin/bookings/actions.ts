@@ -21,6 +21,52 @@ export async function updateBookingStatus(id: string, newStatus: string, newPaym
       }
     }
 
+    const targetPaymentStatus = updatePayload.payment_status;
+
+    // CALCULATE AND INSERT PAYMENTS
+    if (targetPaymentStatus === "Lunas" || targetPaymentStatus === "DP") {
+      const { data: booking } = await supabase.from("bookings").select("total_amount, payment_status").eq("id", id).single();
+      
+      if (booking) {
+        const totalAmount = Number(booking.total_amount) || 0;
+        
+        // Find existing payments
+        const { data: payments } = await supabase.from("payments").select("amount").eq("booking_id", id).eq("status", "Terverifikasi");
+        const totalPaid = payments?.reduce((sum, p) => sum + (Number(p.amount) || 0), 0) || 0;
+
+        if (targetPaymentStatus === "Lunas") {
+          const remaining = totalAmount - totalPaid;
+          if (remaining > 0) {
+            await supabase.from("payments").insert({
+              booking_id: id,
+              amount: remaining,
+              payment_method: "Manual (Admin Edit)",
+              payment_type: "Lunas",
+              payment_date: new Date().toISOString(),
+              status: "Terverifikasi",
+              proof_url: ""
+            });
+          }
+        } else if (targetPaymentStatus === "DP") {
+           // For DP, if totalPaid is 0, we insert 50%
+           if (totalPaid === 0) {
+             const dpAmount = Math.floor(totalAmount / 2);
+             if (dpAmount > 0) {
+               await supabase.from("payments").insert({
+                  booking_id: id,
+                  amount: dpAmount,
+                  payment_method: "Manual (Admin Edit)",
+                  payment_type: "DP",
+                  payment_date: new Date().toISOString(),
+                  status: "Terverifikasi",
+                  proof_url: ""
+               });
+             }
+           }
+        }
+      }
+    }
+
     const { error } = await supabase.from("bookings").update(updatePayload).eq("id", id);
 
     if (error) {
@@ -29,6 +75,8 @@ export async function updateBookingStatus(id: string, newStatus: string, newPaym
     }
 
     revalidatePath("/admin/bookings");
+    revalidatePath("/admin/payments");
+    revalidatePath("/admin");
     return { success: true };
   } catch (error: any) {
     return { success: false, error: "Unauthorized" };
