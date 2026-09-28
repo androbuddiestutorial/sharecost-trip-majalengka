@@ -239,14 +239,10 @@ export function BookingActions({ booking }: { booking: BookingData }) {
               <div className="space-y-2">
                 <select 
                   name="status"
-                  defaultValue={booking.status}
+                  defaultValue={["Menunggu Verifikasi", "Terverifikasi", "Dibatalkan"].includes(booking.status) ? booking.status : "Terverifikasi"}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
-                  <option value="Data Diverifikasi">Data Diverifikasi</option>
-                  <option value="Menunggu Pembayaran">Menunggu Pembayaran</option>
-                  <option value="DP Dibayar">DP Dibayar</option>
-                  <option value="Lunas">Lunas</option>
                   <option value="Terverifikasi">Terverifikasi</option>
                   <option value="Dibatalkan">Dibatalkan</option>
                 </select>
