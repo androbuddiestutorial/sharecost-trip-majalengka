@@ -2,6 +2,21 @@
 
 Semua perubahan yang mencolok pada project **Sharecosttrip Majalengka** akan didokumentasikan di file ini.
 
+## [Fase Penyempurnaan Keuangan & Manajemen Pembayaran] - 2026-09-28
+
+### Added (Ditambahkan)
+- **Sistem Pembayaran Hirarkis (Accordion)**: Tabel Data Pembayaran di Admin kini dikelompokkan secara cerdas per Kode Booking (Master Row), yang mana bila diklik akan membuka rincian riwayat pembayaran (DP 1, DP 2, Lunas) dalam bentuk *Accordion*.
+- **Direct WA Buttons (Pelunasan & Refund)**: Menambahkan tombol aksi cepat WhatsApp di tabel Manajemen Booking. Tombol akan berubah otomatis: Merah untuk memproses konfirmasi Refund (saat dibatalkan), dan Hijau untuk menagih sisa pelunasan (dengan link otomatis).
+- **Kalkulasi Cerdas Pelunasan Publik**: Form Pembayaran Publik (via link peserta) kini bisa membaca riwayat DP peserta. Opsi otomatis terkunci ke nominal Sisa Tagihan dan form disembunyikan/dikunci jika tagihan sudah Lunas sepenuhnya.
+
+### Changed (Diubah)
+- **Simplifikasi Status Booking**: Penyederhanaan pilihan status oleh Admin di *dropdown* menjadi 3 status utama yang lebih esensial (Menunggu Verifikasi, Terverifikasi, Dibatalkan).
+- **Reactive Status Pembayaran**: Jika Status Booking diatur ke 'Menunggu Verifikasi', Status Pembayaran akan terkunci otomatis di 'Belum Bayar' untuk meminimalisasi *human error* admin.
+- **Pricing Meeting Point Dinamis**: Skema *pricing* destinasi ditiadakan dan dialihkan sepenuhnya pada *array Meeting Points*. Harga total (*Total per Pax*) dikalkulasi 100% dari harga Meeting Point yang dipilih.
+
+### Fixed (Diperbaiki)
+- **Penghapusan DP/Lunas Otomatis (Downgrade/Reset)**: Mengatasi isu pembukuan ganda dengan secara otomatis menghapus bersih riwayat pembayaran *Manual/Cash* apabila Admin menurunkan kembali *(downgrade)* status booking dari Lunas ke DP, atau meresetnya ke 'Belum Bayar'.
+
 ## [Fase Integrasi Database & Penyempurnaan Sistem] - 2026-09-27
 
 ### Added (Ditambahkan)
