@@ -84,7 +84,7 @@ export function TripCard({ trip, isFull, sisaKuota, meetingPoints }: { trip: any
           <div className="w-full text-left md:text-right space-y-3">
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">Pilih Meeting Point</Label>
-              <Select value={selectedMp} onValueChange={setSelectedMp}>
+              <Select value={selectedMp} onValueChange={(val) => setSelectedMp(val || "")}>
                 <SelectTrigger className="w-full h-8 text-xs">
                   <SelectValue placeholder="Silakan Pilih..." />
                 </SelectTrigger>

@@ -33,7 +33,10 @@ export default async function TripPage({ searchParams }: Props) {
     query = query.eq('destination_id', destId);
   }
 
-  const { data: trips } = await query;
+  const [{ data: trips }, { data: meetingPoints }] = await Promise.all([
+    query,
+    supabase.from('meeting_points').select('*').order('name')
+  ]);
   const safeTrips = trips || [];
 
   let destName = "";
