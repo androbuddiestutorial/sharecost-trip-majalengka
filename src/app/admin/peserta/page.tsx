@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/utils/supabase/server";
 import { PrintButton } from "@/components/ui/print-button";
+import React from "react";
 
 export const metadata = {
   title: "Daftar Peserta - Sharecost Trip Majalengka",

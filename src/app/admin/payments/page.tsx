@@ -137,7 +137,14 @@ export default async function AdminPaymentsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <VerifyPaymentButton id={payment.id} currentStatus={payment.status || 'Menunggu'} />
+                    <VerifyPaymentButton 
+                      id={payment.id} 
+                      currentStatus={payment.status || 'Menunggu'} 
+                      bookingCode={payment.bookings?.booking_code}
+                      fullName={payment.bookings?.full_name}
+                      whatsapp={payment.bookings?.whatsapp}
+                      amount={payment.amount}
+                    />
                     <DeletePaymentButton id={payment.id} />
                   </TableCell>
                 </TableRow>

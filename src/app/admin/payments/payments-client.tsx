@@ -115,13 +115,35 @@ export function CreatePaymentButton({ bookings = [] }: { bookings?: any[] }) {
   );
 }
 
-export function VerifyPaymentButton({ id, currentStatus }: { id: string, currentStatus: string }) {
+export function VerifyPaymentButton({ 
+  id, 
+  currentStatus,
+  bookingCode,
+  fullName,
+  whatsapp,
+  amount
+}: { 
+  id: string, 
+  currentStatus: string,
+  bookingCode?: string,
+  fullName?: string,
+  whatsapp?: string,
+  amount?: number
+}) {
   const [loading, setLoading] = useState(false);
 
   async function onVerify() {
     setLoading(true);
-    await verifyPayment(id);
+    const result = await verifyPayment(id);
     setLoading(false);
+    
+    if (result && result.success !== false) {
+      if (whatsapp && bookingCode) {
+        const waNumber = whatsapp.startsWith("0") ? "62" + whatsapp.substring(1) : whatsapp;
+        const msg = `Halo Kak ${fullName || ''},\n\nTerima kasih telah melakukan pembayaran sebesar *Rp ${(amount || 0).toLocaleString('id-ID')}* untuk pendaftaran trip dengan Kode Booking *${bookingCode}*.\n\nPembayaran Anda telah kami verifikasi dan status pendaftaran Anda sudah aktif.\n\nUntuk mengecek rincian jadwal dan tagihan, silakan kunjungi:\nhttps://www.sharecosttripmajalengka.biz.id/cek-pesanan\n\nTerima kasih,\n-Sharecost Trip Majalengka-`;
+        window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+      }
+    }
   }
 
   if (currentStatus === "Terverifikasi") {
