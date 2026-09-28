@@ -122,7 +122,14 @@ export default async function AdminPaymentsPage() {
                     <div className="text-xs text-muted-foreground">{payment.bookings?.full_name || '-'}</div>
                   </TableCell>
                   <TableCell>{payDate}</TableCell>
-                  <TableCell>{payment.payment_method}</TableCell>
+                  <TableCell>
+                      {payment.payment_method}
+                      {payment.payment_type && (
+                        <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 block mt-1 w-fit">
+                          {payment.payment_type}
+                        </span>
+                      )}
+                    </TableCell>
                   <TableCell>
                     {payment.proof_url ? (
                       <a 

@@ -12,7 +12,7 @@ import {
   DialogClose
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Eye, MessageCircle, Edit, Trash2, Loader2, CheckCircle, ExternalLink } from "lucide-react";
+import { Eye, MessageCircle, Edit, Trash2, MessageSquare, Loader2, CheckCircle, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { updateBookingStatus, deleteBooking, processPelunasan } from "./actions";
 
