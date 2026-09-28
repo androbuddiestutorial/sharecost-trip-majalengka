@@ -29,7 +29,14 @@ export function TripCard({ trip, isFull, sisaKuota }: { trip: any; isFull: boole
     } catch { return []; }
   })();
 
-  const basePrice = Number((trip.price > 0 ? trip.price : trip.destinations?.price) || 0);
+    let lowestMpPrice = 0;
+  if (tripMps.length > 0) {
+    const prices = tripMps.map(mp => Number(mp.price)).filter(p => !isNaN(p) && p > 0);
+    if (prices.length > 0) {
+      lowestMpPrice = Math.min(...prices);
+    }
+  }
+  const basePrice = lowestMpPrice > 0 ? lowestMpPrice : Number((trip.price > 0 ? trip.price : trip.destinations?.price) || 0);
   const mpObj = tripMps.find(mp => mp.name === selectedMp);
   // If meeting points exist, show the MP price as the total; otherwise fall back to base price
   const displayPrice = mpObj ? Number(mpObj.price) : basePrice;

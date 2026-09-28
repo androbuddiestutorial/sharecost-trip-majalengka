@@ -14,7 +14,7 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function DestinasiPage() {
-  const { data: destinations } = await supabase.from('destinations').select('*').order('created_at', { ascending: false });
+  const { data: destinations } = await supabase.from('destinations').select('*, trips(meeting_points)').order('created_at', { ascending: false });
   const safeDestinations = destinations || [];
 
   return (
@@ -29,7 +29,28 @@ export default async function DestinasiPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {safeDestinations.length === 0 ? (
            <div className="col-span-full py-12 text-center text-muted-foreground">Belum ada destinasi yang ditambahkan.</div>
-        ) : safeDestinations.map((dest) => (
+        ) : safeDestinations.map((dest) => {
+          let lowestPrice = Number(dest.price) || 0;
+          if (dest.trips && dest.trips.length > 0) {
+            let allPrices: number[] = [];
+            dest.trips.forEach((trip: any) => {
+              if (trip.meeting_points) {
+                try {
+                  const arr = typeof trip.meeting_points === 'string' ? JSON.parse(trip.meeting_points) : trip.meeting_points;
+                  if (Array.isArray(arr)) {
+                    arr.forEach((mp: any) => {
+                      const p = Number(mp.price);
+                      if (!isNaN(p) && p > 0) allPrices.push(p);
+                    });
+                  }
+                } catch (e) {}
+              }
+            });
+            if (allPrices.length > 0) {
+              lowestPrice = Math.min(...allPrices);
+            }
+          }
+          return (
           <Card key={dest.id} className="overflow-hidden flex flex-col">
             <div className="relative h-56 w-full bg-muted">
               <Image src={dest.image_url || dest.image || "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"} alt={dest.title} fill className="object-cover" />
@@ -46,7 +67,7 @@ export default async function DestinasiPage() {
               <p className="text-muted-foreground line-clamp-3 mb-4">{dest.description}</p>
               <div className="flex justify-between pt-2 border-t">
                 <span className="text-muted-foreground">Harga Mulai:</span>
-                <span className="font-bold text-primary">Rp {Number(dest.price).toLocaleString('id-ID')}</span>
+                <span className="font-bold text-primary">Rp {lowestPrice.toLocaleString('id-ID')}</span>
               </div>
             </CardContent>
             <CardFooter>
@@ -55,7 +76,7 @@ export default async function DestinasiPage() {
               </Link>
             </CardFooter>
           </Card>
-        ))}
+        )})}
       </div>
     </div>
   );
