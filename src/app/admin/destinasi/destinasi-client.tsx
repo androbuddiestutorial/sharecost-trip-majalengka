@@ -120,10 +120,7 @@ export function CreateDestinasiButton() {
             <Input id="location" name="location" required placeholder="Contoh: Majalengka, Jawa Barat" />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="price">Harga / Tiket Masuk (Rp)</Label>
-            <Input id="price" name="price" type="number" required placeholder="Contoh: 15000" min="0" />
-          </div>
+          
           
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -241,10 +238,7 @@ export function EditDestinasiButton({ item }: { item: DestinasiData }) {
             <Input id="location" name="location" defaultValue={item.location} required />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="price">Harga / Tiket Masuk (Rp)</Label>
-            <Input id="price" name="price" type="number" defaultValue={item.price} required min="0" />
-          </div>
+          
           
           <div className="space-y-2">
             <div className="flex items-center justify-between">
