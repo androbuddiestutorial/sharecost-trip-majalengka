@@ -374,6 +374,7 @@ export default function BookingPage() {
             {/* STEP 2: Data Keberangkatan */}
             {currentStep === 1 && (
               <div className="space-y-4">
+                {/* When accessed from Jadwal Trip page (URL has trip & mp params), show summary card */}
                 {isLockedByUrl && watchJadwalTrip && watchMeetingPoint ? (
                   <div className="bg-primary/5 p-4 rounded-lg border border-primary/20 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -390,141 +391,170 @@ export default function BookingPage() {
                         <span className="font-medium">{watchMeetingPoint}</span>
                       </div>
                     </div>
+
+                    {/* Fasilitas Termasuk */}
+                    {(() => {
+                      const selectedTrip = trips.find(t => t.id === watchJadwalTrip);
+                      if (!selectedTrip || !selectedTrip.includes) return null;
+                      let features: string[] = [];
+                      try {
+                        features = typeof selectedTrip.includes === 'string' ? JSON.parse(selectedTrip.includes) : selectedTrip.includes;
+                      } catch (e) {}
+                      if (!Array.isArray(features) || features.length === 0) return null;
+                      return (
+                        <div className="mt-2 p-3 bg-white/50 rounded-lg text-sm border">
+                          <p className="font-semibold text-primary mb-2">Fasilitas Termasuk:</p>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {features.map((feat: string, idx: number) => (
+                              <li key={idx} className="flex items-start gap-2">
+                                <span className="text-green-500 font-bold mt-0.5">✓</span> <span>{feat}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    })()}
                   </div>
                 ) : (
                   <>
+                    {/* Jenis Trip */}
                     <div className="space-y-2">
                       <Label>Jenis Trip</Label>
-                  <Controller
-                    name="jenisTrip"
-                    control={control}
-                    render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value || "Open Trip"}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Open Trip" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Open Trip">Open Trip</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.jenisTrip && <p className="text-sm text-destructive">{errors.jenisTrip.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Destinasi</Label>
-                  <Controller
-                    name="destinasi"
-                    control={control}
-                    render={({ field }) => (
-                      <Select 
-                        onValueChange={(val) => {
-                          field.onChange(val);
-                          setValue('jadwalTrip', '');
-                        }} 
-                        value={field.value || ""}
-                        disabled={isLockedByUrl}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih Destinasi" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {destinations.map(d => (
-                            <SelectItem key={d.id} value={d.title}>{d.title}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.destinasi && <p className="text-sm text-destructive">{errors.destinasi.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Jadwal Trip</Label>
-                  <Controller
-                    name="jadwalTrip"
-                    control={control}
-                    render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value || ""} disabled={isLockedByUrl}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih Jadwal">
-                            {field.value ? (trips.find(t => t.id === field.value)?.date || "Memuat tanggal...") : undefined}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filteredTrips.map(t => (
-                            <SelectItem key={t.id} value={t.id}>{t.date}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.jadwalTrip && <p className="text-sm text-destructive">{errors.jadwalTrip.message}</p>}
-                  
-                  {watchJadwalTrip && (
-                    <div className="mt-2 p-4 bg-muted/30 rounded-lg text-sm border">
-                      <p className="font-semibold text-primary mb-2">Fasilitas Termasuk (Include):</p>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {(() => {
-                          const selectedTrip = trips.find(t => t.id === watchJadwalTrip);
-                          if (!selectedTrip || !selectedTrip.includes) return null;
-                          let features = [];
-                          try {
-                            features = typeof selectedTrip.includes === 'string' ? JSON.parse(selectedTrip.includes) : selectedTrip.includes;
-                          } catch (e) {}
-                          return (features || []).map((f: string, i: number) => (
-                            <li key={i} className="text-xs flex items-center gap-1.5 text-muted-foreground">
-                              <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                              {f}
-                            </li>
-                          ));
-                        })()}
-                      </ul>
+                      <Controller
+                        name="jenisTrip"
+                        control={control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || "Open Trip"}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Open Trip" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Open Trip">Open Trip</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {errors.jenisTrip && <p className="text-sm text-destructive">{errors.jenisTrip.message}</p>}
                     </div>
-                  )}
-                </div>
 
-                {mpLocked ? (
+                    {/* Destinasi */}
                     <div className="space-y-2">
-                      <Label>Meeting Point Pilihan</Label>
-                      <Input value={watchMeetingPoint || ""} readOnly className="bg-muted text-muted-foreground" />
-                      <input type="hidden" {...register("meetingPoint")} value={watchMeetingPoint || ""} />
+                      <Label>Destinasi</Label>
+                      <Controller
+                        name="destinasi"
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={(val) => {
+                              field.onChange(val);
+                              setValue('jadwalTrip', '');
+                            }}
+                            value={field.value || ""}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Destinasi" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {destinations.map((d: any) => (
+                                <SelectItem key={d.id} value={d.title}>{d.title}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {errors.destinasi && <p className="text-sm text-destructive">{errors.destinasi.message}</p>}
                     </div>
-                  ) : (
-<div className="space-y-2">
-                  <Label>Meeting Point</Label>
-                  <Controller
-                    name="meetingPoint"
-                    control={control}
-                    render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value || ""}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pilih Meeting Point" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {tripMps.map((mp: any, idx: number) => (
-                              <SelectItem key={idx} value={mp.name}>
-                                {mp.name} {mp.price > 0 ? `(+ ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(mp.price)})` : ''}
-                              </SelectItem>
-                            ))}
-                          <SelectItem value="Lainnya">Lainnya</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.meetingPoint && <p className="text-sm text-destructive">{errors.meetingPoint.message}</p>}
-                </div>
-                  )}
 
-                {watchMeetingPoint === "Lainnya" && (
-                  <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                    <Label htmlFor="meetingPointLainnya">Tulis Meeting Point</Label>
-                    <Input id="meetingPointLainnya" {...register("meetingPointLainnya")} />
-                    {errors.meetingPointLainnya && <p className="text-sm text-destructive">{errors.meetingPointLainnya.message}</p>}
-                  </div>
+                    {/* Jadwal Trip */}
+                    <div className="space-y-2">
+                      <Label>Jadwal Trip</Label>
+                      <Controller
+                        name="jadwalTrip"
+                        control={control}
+                        render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Jadwal">
+                                {field.value ? (trips.find((t: any) => t.id === field.value)?.date || "Memuat tanggal...") : undefined}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {filteredTrips.map((t: any) => (
+                                <SelectItem key={t.id} value={t.id}>{t.date}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      {errors.jadwalTrip && <p className="text-sm text-destructive">{errors.jadwalTrip.message}</p>}
+
+                      {watchJadwalTrip && (
+                        <div className="mt-2 p-4 bg-muted/30 rounded-lg text-sm border">
+                          <p className="font-semibold text-primary mb-2">Fasilitas Termasuk (Include):</p>
+                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {(() => {
+                              const selectedTrip = trips.find((t: any) => t.id === watchJadwalTrip);
+                              if (!selectedTrip || !selectedTrip.includes) return null;
+                              let features: string[] = [];
+                              try {
+                                features = typeof selectedTrip.includes === 'string' ? JSON.parse(selectedTrip.includes) : selectedTrip.includes;
+                              } catch (e) {}
+                              return (features || []).map((f: string, i: number) => (
+                                <li key={i} className="text-xs flex items-center gap-1.5 text-muted-foreground">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                                  {f}
+                                </li>
+                              ));
+                            })()}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Meeting Point */}
+                    {mpLocked ? (
+                      <div className="space-y-2">
+                        <Label>Meeting Point Pilihan</Label>
+                        <Input value={watchMeetingPoint || ""} readOnly className="bg-muted text-muted-foreground" />
+                        <input type="hidden" {...register("meetingPoint")} value={watchMeetingPoint || ""} />
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label>Meeting Point</Label>
+                        <Controller
+                          name="meetingPoint"
+                          control={control}
+                          render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Pilih Meeting Point" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {tripMps.map((mp: any, idx: number) => (
+                                  <SelectItem key={idx} value={mp.name}>
+                                    {mp.name} {mp.price > 0 ? `(Rp ${new Intl.NumberFormat('id-ID').format(mp.price)})` : ''}
+                                  </SelectItem>
+                                ))}
+                                <SelectItem value="Lainnya">Lainnya</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                        {errors.meetingPoint && <p className="text-sm text-destructive">{errors.meetingPoint.message}</p>}
+                      </div>
+                    )}
+
+                    {watchMeetingPoint === "Lainnya" && (
+                      <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                        <Label htmlFor="meetingPointLainnya">Tulis Meeting Point</Label>
+                        <Input id="meetingPointLainnya" {...register("meetingPointLainnya")} />
+                        {errors.meetingPointLainnya && <p className="text-sm text-destructive">{errors.meetingPointLainnya.message}</p>}
+                      </div>
+                    )}
+                  </>
                 )}
 
+                {/* Jumlah Peserta - always visible */}
                 <div className="space-y-2 border-t pt-4 mt-4">
                   <Label>Jumlah Anggota yang Didaftarkan</Label>
                   <p className="text-xs text-muted-foreground mb-2">Pilih 1 orang jika mendaftar sendiri.</p>
@@ -532,11 +562,11 @@ export default function BookingPage() {
                     name="jumlahPeserta"
                     control={control}
                     render={({ field }) => (
-                      <Select 
+                      <Select
                         onValueChange={(val) => {
                           field.onChange(val);
                           handlePesertaChange(val as string);
-                        }} 
+                        }}
                         value={field.value || ""}
                       >
                         <SelectTrigger>
@@ -544,7 +574,7 @@ export default function BookingPage() {
                         </SelectTrigger>
                         <SelectContent>
                           {[...Array(10)].map((_, i) => (
-                            <SelectItem key={i+1} value={(i+1).toString()}>{i+1} Orang</SelectItem>
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1} Orang</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -552,6 +582,7 @@ export default function BookingPage() {
                   />
                 </div>
 
+                {/* Data Anggota Tambahan - always visible when count > 1 */}
                 {anggotaFields.length > 0 && (
                   <div className="space-y-6 pt-4">
                     <h3 className="font-semibold text-lg border-b pb-2">Data Anggota Tambahan</h3>
@@ -576,8 +607,6 @@ export default function BookingPage() {
                       </div>
                     ))}
                   </div>
-                  )}
-                  </>
                 )}
               </div>
             )}
