@@ -82,6 +82,11 @@ export async function updateBookingStatus(id: string, newStatus: string, newPaym
       }
     }
 
+    // IF TARGET PAYMENT STATUS IS BELUM BAYAR, DELETE ALL PAYMENTS
+    if (targetPaymentStatus === "Belum Bayar") {
+      await supabase.from("payments").delete().eq("booking_id", id);
+    }
+
     // IF STATUS CHANGED TO DIBATALKAN, CANCEL ALL RELATED PAYMENTS
     if (newStatus === "Dibatalkan") {
       await supabase.from("payments").update({ status: "Dibatalkan (Refund)" }).eq("booking_id", id);
