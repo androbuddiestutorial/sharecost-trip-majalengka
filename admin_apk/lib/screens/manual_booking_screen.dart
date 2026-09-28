@@ -76,10 +76,6 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
   int _calculateTotal() {
     if (_selectedTripId == null) return 0;
     
-    final trip = _trips.firstWhere((e) => e['id'].toString() == _selectedTripId, orElse: () => null);
-    if (trip == null) return 0;
-
-    int price = trip['price'] ?? 0;
     int mpPrice = 0;
     
     if (_selectedMeetingPoint != null) {
@@ -90,7 +86,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
     }
     
     final pax = int.tryParse(_paxController.text) ?? 1;
-    return (mpPrice > 0 ? mpPrice : price) * pax;
+    return mpPrice * pax;
   }
 
   void _updateMembers(String val) {

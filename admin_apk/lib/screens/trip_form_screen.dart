@@ -14,8 +14,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _dateStartController = TextEditingController();
   final _dateEndController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _quotaController = TextEditingController();
+    final _quotaController = TextEditingController();
   
   String? _selectedDestinationId;
   List<dynamic> _destinations = [];
@@ -30,7 +29,6 @@ class _TripFormScreenState extends State<TripFormScreen> {
       _selectedDestinationId = widget.trip!['destination_id']?.toString();
       _dateStartController.text = widget.trip!['date_start'] ?? '';
       _dateEndController.text = widget.trip!['date_end'] ?? '';
-      _priceController.text = (widget.trip!['price'] ?? '').toString();
       _quotaController.text = (widget.trip!['quota'] ?? '').toString();
       if (widget.trip!['meeting_points'] != null) {
         try {
@@ -54,14 +52,12 @@ class _TripFormScreenState extends State<TripFormScreen> {
     
     setState(() => _isLoading = true);
     try {
-      final price = int.tryParse(_priceController.text) ?? 0;
       final quota = int.tryParse(_quotaController.text) ?? 0;
       
       final data = {
         'destination_id': _selectedDestinationId,
         'date_start': _dateStartController.text,
         'date_end': _dateEndController.text,
-        'price': price,
         'quota': quota,
         'status': widget.trip != null ? widget.trip!['status'] : 'Terbuka',
         'meeting_points': _meetingPoints.where((mp) => (mp['name']?.toString() ?? '').trim().isNotEmpty).toList(),
@@ -101,7 +97,6 @@ class _TripFormScreenState extends State<TripFormScreen> {
   void dispose() {
     _dateStartController.dispose();
     _dateEndController.dispose();
-    _priceController.dispose();
     _quotaController.dispose();
     super.dispose();
   }
@@ -148,13 +143,6 @@ class _TripFormScreenState extends State<TripFormScreen> {
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'Harga (Rp)', border: OutlineInputBorder(), prefixText: 'Rp '),
-              keyboardType: TextInputType.number,
-              validator: (v) => v!.isEmpty ? 'Wajib' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(

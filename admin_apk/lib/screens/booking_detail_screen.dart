@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class BookingDetailScreen extends StatefulWidget {
   final Map<String, dynamic> booking;
@@ -70,7 +72,15 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       }
 
       if (status == 'Terverifikasi') {
-        await _updateStatus(calculatedStatus);
+        // Update payment_status directly
+        await Supabase.instance.client
+          .from('bookings')
+          .update({'payment_status': calculatedStatus, 'status': 'Terverifikasi'})
+          .eq('id', widget.booking['id']);
+        setState(() {
+           widget.booking['payment_status'] = calculatedStatus;
+           _currentStatus = 'Terverifikasi';
+        });
       }
       
       _fetchPayments();
@@ -141,6 +151,61 @@ Terima kasih 🙏
     }
   }
 
+  
+  Future<void> _sendPelunasanWA() async {
+    final phone = widget.booking['whatsapp'] as String?;
+    if (phone == null || phone.isEmpty) return;
+    String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
+
+    final name = widget.booking['full_name'] ?? 'Peserta';
+    final code = widget.booking['booking_code'] ?? '-';
+    final totalAmount = widget.booking['total_amount'] ?? 0;
+    
+    num totalPaid = 0;
+    for (var p in _payments) {
+      if (p['status'] == 'Terverifikasi' || p['status'] == 'Verified') {
+        totalPaid += (p['amount'] ?? 0);
+      }
+    }
+    
+    final sisa = totalAmount - totalPaid;
+    final sisaStr = sisa > 0 ? sisa.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.') : '0';
+    final paymentLink = 'https://sharecosttripmajalengka.biz.id/pembayaran?booking_code=$code';
+
+    final message = '''Halo kak $name 🙏
+
+Mengingatkan untuk Pelunasan Trip Anda dengan Kode Booking *$code*.
+Sisa tagihan yang harus dibayarkan adalah: *Rp $sisaStr*.
+
+Silakan melakukan pembayaran melalui link berikut:
+$paymentLink
+
+Terima kasih 🙏''';
+    
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
+    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (e) { }
+  }
+
+  Future<void> _sendRefundWA() async {
+    final phone = widget.booking['whatsapp'] as String?;
+    if (phone == null || phone.isEmpty) return;
+    String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
+
+    final name = widget.booking['full_name'] ?? 'Peserta';
+    final code = widget.booking['booking_code'] ?? '-';
+
+    final message = '''Halo kak $name 🙏
+
+Terkait pembatalan pesanan Anda dengan Kode Booking *$code*, mohon informasikan nomor rekening Anda untuk proses pengembalian dana (refund).
+
+Terima kasih 🙏''';
+    
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
+    try { await launchUrl(url, mode: LaunchMode.externalApplication); } catch (e) { }
+  }
+
   void _showProofImage(String url) {
     showDialog(
       context: context,
@@ -166,19 +231,36 @@ Terima kasih 🙏
   Future<void> _updateStatus(String newStatus) async {
     setState(() => _isUpdating = true);
     try {
-      await Supabase.instance.client
-          .from('bookings')
-          .update({'status': newStatus})
-          .eq('id', widget.booking['id']);
+      final session = Supabase.instance.client.auth.currentSession;
+      final uri = Uri.parse('https://sharecosttripmajalengka.biz.id/api/bookings/${widget.booking['id']}/status');
       
-      setState(() => _currentStatus = newStatus);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Status berhasil diupdate!')));
+      String? targetPaymentStatus;
+      if (newStatus == 'Menunggu Verifikasi') targetPaymentStatus = 'Belum Bayar';
+      
+      final response = await http.patch(
+        uri,
+        headers: {
+          'Authorization': 'Bearer ${session?.accessToken ?? ''}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+           'status': newStatus,
+           if (targetPaymentStatus != null) 'payment_status': targetPaymentStatus,
+        }),
+      );
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        setState(() {
+           _currentStatus = newStatus;
+           if (targetPaymentStatus != null) widget.booking['payment_status'] = targetPaymentStatus;
+        });
+        _fetchPayments();
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Status berhasil diupdate!')));
+      } else {
+        throw Exception('API error: ${response.body}');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal update: $e')));
-      }
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal update: $e')));
     } finally {
       setState(() => _isUpdating = false);
     }
@@ -351,11 +433,33 @@ Terimakasih 🙏
                         DropdownMenuItem(value: 'Lunas', child: Text('Lunas')),
                         DropdownMenuItem(value: 'Dibatalkan', child: Text('Dibatalkan')),
                       ],
-                      onChanged: _isUpdating ? null : (val) {
-                        if (val != null) _updateStatus(val);
-                      },
+                      onChanged: _isUpdating ? null : (val) { if (val != null) _updateStatus(val); }, ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        if (b['payment_status'] == 'DP' && b['status'] != 'Dibatalkan')
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _sendPelunasanWA,
+                              icon: const Icon(Icons.chat, size: 18),
+                              label: const Text('Tagih Sisa WA'),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                            ),
+                          ),
+                        if (b['payment_status'] == 'DP' && b['status'] != 'Dibatalkan')
+                          const SizedBox(width: 8),
+                        if (b['status'] == 'Dibatalkan')
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _sendRefundWA,
+                              icon: const Icon(Icons.warning, size: 18),
+                              label: const Text('Refund WA'),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                            ),
+                          ),
+                      ],
                     ),
-                  ],
+],
                 ),
               ),
             ),

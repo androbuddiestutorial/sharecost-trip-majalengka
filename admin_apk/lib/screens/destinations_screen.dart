@@ -67,7 +67,7 @@ class _DestinationsScreenState extends State<DestinationsScreen> {
                       child: dest['image_url'] == null ? const Icon(Icons.landscape) : null,
                     ),
                     title: Text(dest['title'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('Rp ${dest['price'] ?? 0}'),
+                    subtitle: Text(dest['description'] != null && dest['description'].length > 30 ? dest['description'].substring(0, 30) + '...' : dest['description'] ?? '-'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

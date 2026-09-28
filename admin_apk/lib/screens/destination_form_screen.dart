@@ -15,8 +15,7 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _imageUrlController = TextEditingController();
+    final _imageUrlController = TextEditingController();
   
   bool _isLoading = false;
   File? _selectedImage;
@@ -27,7 +26,6 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
     if (widget.destination != null) {
       _titleController.text = widget.destination!['title'] ?? '';
       _descController.text = widget.destination!['description'] ?? '';
-      _priceController.text = (widget.destination!['price'] ?? '').toString();
       _imageUrlController.text = widget.destination!['image_url'] ?? '';
     }
   }
@@ -66,11 +64,9 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
         if (uploadedUrl != null) finalImageUrl = uploadedUrl;
       }
 
-      final price = int.tryParse(_priceController.text) ?? 0;
       final data = {
         'title': _titleController.text,
         'description': _descController.text,
-        'price': price,
         'image_url': finalImageUrl.isNotEmpty ? finalImageUrl : null,
       };
 
@@ -95,7 +91,6 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descController.dispose();
-    _priceController.dispose();
     _imageUrlController.dispose();
     super.dispose();
   }
@@ -119,13 +114,6 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
               controller: _descController,
               decoration: const InputDecoration(labelText: 'Deskripsi', border: OutlineInputBorder()),
               maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _priceController,
-              decoration: const InputDecoration(labelText: 'Harga (Rp)', border: OutlineInputBorder(), prefixText: 'Rp '),
-              keyboardType: TextInputType.number,
-              validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
             ),
             const SizedBox(height: 16),
             Row(

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { updateBookingStatus } from "@/app/admin/bookings/actions";
 
 export async function PATCH(
   request: Request,
@@ -16,26 +17,20 @@ export async function PATCH(
     const resolvedParams = await params;
     const bookingId = resolvedParams.id;
     const body = await request.json();
-    const { status } = body;
+    const { status, payment_status } = body;
 
     if (!status) {
       return NextResponse.json({ success: false, message: "Status is required" }, { status: 400 });
     }
 
-    const { data, error } = await supabase
-      .from('bookings')
-      .update({ status })
-      .eq('id', bookingId)
-      .select()
-      .single();
+    const result = await updateBookingStatus(bookingId, status, payment_status);
 
-    if (error) {
-      return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    if (!result.success) {
+      return NextResponse.json({ success: false, message: result.error }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
-      data,
       message: "Status updated successfully"
     });
   } catch (error: any) {
