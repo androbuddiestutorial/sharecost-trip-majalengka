@@ -50,12 +50,15 @@ export async function POST(request: Request) {
     const booking_code = `BK-${Array.from({length: 8}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('')}`;
 
     let pricePerPax = 0;
+    let tripDataRow = null;
     if (body.jadwalTrip) {
       const { data: tripData } = await supabase
         .from('trips')
         .select('*, destinations(price)')
         .eq('id', body.jadwalTrip)
         .single();
+      
+      tripDataRow = tripData;
       
       if (tripData?.price && Number(tripData.price) > 0) {
         pricePerPax = Number(tripData.price);
@@ -82,9 +85,15 @@ export async function POST(request: Request) {
     const paxCount = parseInt(body.jumlahPeserta || "1", 10);
         let meetingPointPrice = 0;
     if (body.meetingPoint && body.meetingPoint !== "Lainnya") {
-      const { data: mpData } = await supabase.from('meeting_points').select('price').eq('name', body.meetingPoint).single();
-      if (mpData?.price) {
-        meetingPointPrice = Number(mpData.price);
+      let tripMps = [];
+      if (tripDataRow?.meeting_points) {
+        try {
+          tripMps = typeof tripDataRow.meeting_points === 'string' ? JSON.parse(tripDataRow.meeting_points) : tripDataRow.meeting_points;
+        } catch (e) {}
+      }
+      const foundMp = (Array.isArray(tripMps) ? tripMps : []).find(mp => mp.name === body.meetingPoint);
+      if (foundMp?.price) {
+        meetingPointPrice = Number(foundMp.price);
       }
     }
     const total_amount = (pricePerPax + meetingPointPrice) * paxCount;

@@ -74,6 +74,7 @@ export default function BookingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLockedByUrl, setIsLockedByUrl] = useState(false);
   const [mpLocked, setMpLocked] = useState(false);
+  const [mpPriceFromUrl, setMpPriceFromUrl] = useState(0);
   
   const [destinations, setDestinations] = useState<any[]>([]);
   const [trips, setTrips] = useState<any[]>([]);
@@ -117,9 +118,7 @@ export default function BookingPage() {
         }
       }
     });
-    fetch('/api/meeting-points').then(res => res.json()).then(data => {
-      if(data.success) setMeetingPoints(data.data);
-    });
+    
     fetch('/api/packages').then(res => res.json()).then(data => {
       if(data.success) setPackages(data.data);
     });
@@ -144,6 +143,10 @@ export default function BookingPage() {
       if (mpParam) {
         setValue('meetingPoint', mpParam);
         setMpLocked(true);
+        const priceParam = params.get('mp_price');
+        if (priceParam && !isNaN(Number(priceParam))) {
+          setMpPriceFromUrl(Number(priceParam));
+        }
       }
     }
   }, [trips, setValue]);
@@ -158,6 +161,16 @@ export default function BookingPage() {
   const watchAdaKondisi = watch("adaKondisiKesehatan");
   const watchDestinasi = watch("destinasi");
   const watchJenisTrip = watch("jenisTrip");
+
+  const selectedTripObjForMp = trips.find(t => t.id === watchJadwalTrip);
+  const tripMps = (() => {
+    if (!selectedTripObjForMp?.meeting_points) return [];
+    try {
+      const arr = typeof selectedTripObjForMp.meeting_points === 'string' ? JSON.parse(selectedTripObjForMp.meeting_points) : selectedTripObjForMp.meeting_points;
+      return Array.isArray(arr) ? arr : [];
+    } catch { return []; }
+  })();
+
   const watchJadwalTrip = watch("jadwalTrip");
 
   const filteredTrips = watchDestinasi ? trips.filter(t => t.destination === watchDestinasi) : trips;
@@ -470,8 +483,8 @@ export default function BookingPage() {
                           <SelectValue placeholder="Pilih Meeting Point" />
                         </SelectTrigger>
                         <SelectContent>
-                          {meetingPoints.map(mp => (
-                              <SelectItem key={mp.id} value={mp.name}>
+                          {tripMps.map((mp: any, idx: number) => (
+                              <SelectItem key={idx} value={mp.name}>
                                 {mp.name} {mp.price > 0 ? `(+ ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(mp.price)})` : ''}
                               </SelectItem>
                             ))}
@@ -654,8 +667,7 @@ export default function BookingPage() {
                     const destObj = destinations.find(d => d.title === watchDestinasi);
                     const tripPrice = Number(selectedTripObj?.price) || Number(destObj?.price) || 0;
                     
-                    const selectedMpObj = meetingPoints.find(mp => mp.name === watchMeetingPoint);
-                    const mpPrice = Number(selectedMpObj?.price) || 0;
+                    const mpPrice = isLockedByUrl ? mpPriceFromUrl : (Number(tripMps.find((mp: any) => mp.name === watchMeetingPoint)?.price) || 0);
                     
                     const pax = parseInt(watchJumlahPeserta || "1", 10);
                     const totalPerPax = tripPrice + mpPrice;

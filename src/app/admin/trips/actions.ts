@@ -15,6 +15,8 @@ export async function createTrip(formData: FormData) {
     const includesRaw = formData.get("includes") as string;
     const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(s => s !== '') : [];
     const price = parseInt(formData.get("price") as string) || 0;
+    const meetingPointsRaw = formData.get("meeting_points") as string;
+    const meeting_points = meetingPointsRaw ? JSON.parse(meetingPointsRaw) : [];
 
     const { error } = await supabase.from("trips").insert({
       destination_id,
@@ -24,7 +26,8 @@ export async function createTrip(formData: FormData) {
       date_start,
       date_end,
       quota,
-      status
+      status,
+      meeting_points
     });
 
     if (error) {
@@ -53,6 +56,8 @@ export async function updateTrip(id: string, formData: FormData) {
     const includesRaw = formData.get("includes") as string;
     const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(s => s !== '') : [];
     const price = parseInt(formData.get("price") as string) || 0;
+    const meetingPointsRaw = formData.get("meeting_points") as string;
+    const meeting_points = meetingPointsRaw ? JSON.parse(meetingPointsRaw) : [];
 
     const { error } = await supabase.from("trips").update({
       destination_id,
@@ -62,7 +67,8 @@ export async function updateTrip(id: string, formData: FormData) {
       date_start,
       date_end,
       quota,
-      status
+      status,
+      meeting_points
     }).eq("id", id);
 
     if (error) {

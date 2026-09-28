@@ -1,9 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Calendar, Clock, MapPin, Users } from "lucide-react";
-import Link from "next/link";
 import { TripCard } from "./trip-card";
 import { createClient } from "@/utils/supabase/server";
 
@@ -33,10 +30,7 @@ export default async function TripPage({ searchParams }: Props) {
     query = query.eq('destination_id', destId);
   }
 
-  const [{ data: trips }, { data: meetingPoints }] = await Promise.all([
-    query,
-    supabase.from('meeting_points').select('*').order('name')
-  ]);
+  const { data: trips } = await query;
   const safeTrips = trips || [];
 
   let destName = "";
@@ -99,7 +93,7 @@ export default async function TripPage({ searchParams }: Props) {
           const isFull = trip.status === 'Penuh' || trip.status === 'Ditutup' || sisaKuota <= 0;
 
           return (
-            <TripCard key={trip.id} trip={trip} isFull={isFull} sisaKuota={sisaKuota} meetingPoints={meetingPoints || []} />
+            <TripCard key={trip.id} trip={trip} isFull={isFull} sisaKuota={sisaKuota} />
           );
         })}
       </div>
