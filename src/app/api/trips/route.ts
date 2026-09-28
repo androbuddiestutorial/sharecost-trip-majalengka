@@ -10,17 +10,9 @@ export async function GET() {
 
   // Format data to match expected frontend structure if needed
   const formattedData = data?.map(t => ({
-    id: t.id,
-    destination_id: t.destination_id,
-    includes: t.includes,
-    trip_type: t.trip_type,
+    ...t,
     destination: t.destinations?.title,
-    date: `${new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(t.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`,
-    date_start: t.date_start,
-    date_end: t.date_end,
-    quota: t.quota,
-    status: t.status,
-    destinations: t.destinations
+    date: `${new Date(t.date_start).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} - ${new Date(t.date_end).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`
   }));
 
   return NextResponse.json({
