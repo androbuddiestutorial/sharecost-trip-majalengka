@@ -71,9 +71,11 @@ export function BookingActions({ booking }: { booking: BookingData }) {
     const hargaMp = booking.meeting_point_price || 0;
   const tagihanFormat = `Rp ${(booking.total_amount || 0).toLocaleString('id-ID')}`;
   
-  let breakdownText = `- Harga Trip: Rp ${((booking.total_amount || 0) / (booking.pax || 1) - hargaMp).toLocaleString('id-ID')} / pax\n`;
+  let breakdownText = "";
   if (hargaMp > 0) {
-    breakdownText += `- Biaya MP: Rp ${hargaMp.toLocaleString('id-ID')} / pax\n`;
+    breakdownText += `- Harga Trip (termasuk MP): Rp ${hargaMp.toLocaleString('id-ID')} / pax\n`;
+  } else {
+    breakdownText += `- Harga Trip: Rp ${((booking.total_amount || 0) / (booking.pax || 1)).toLocaleString('id-ID')} / pax\n`;
   }
   breakdownText += `- Subtotal / pax: Rp ${(((booking.total_amount || 0) / (booking.pax || 1))).toLocaleString('id-ID')}`;
 
