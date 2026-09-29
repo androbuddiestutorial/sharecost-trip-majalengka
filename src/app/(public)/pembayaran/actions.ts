@@ -81,7 +81,7 @@ export async function submitPublicPayment(formData: FormData) {
 
         await transporter.sendMail({
           from: `"Sharecost Trip Majalengka" <${process.env.EMAIL_USER}>`,
-          to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'admin.sharecostripmajalengka@gmail.com',
+          to: process.env.ADMIN_EMAILS || 'admin.sharecostripmajalengka@gmail.com',
           subject: notifTitle,
           html: `
             <h2>Ada Konfirmasi Pembayaran Baru!</h2>

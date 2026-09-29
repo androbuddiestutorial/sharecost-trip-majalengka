@@ -181,7 +181,7 @@ export async function POST(request: Request) {
 
         await transporter.sendMail({
           from: `"Sharecost Trip Majalengka" <${process.env.EMAIL_USER}>`,
-          to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'admin.sharecostripmajalengka@gmail.com',
+          to: process.env.ADMIN_EMAILS || 'admin.sharecostripmajalengka@gmail.com',
           subject: notifTitle,
           html: `
             <h2>Ada Pendaftaran Trip Baru!</h2>
