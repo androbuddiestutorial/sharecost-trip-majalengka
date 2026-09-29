@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'participant_detail_screen.dart';
 
 class TripParticipantsScreen extends StatefulWidget {
   final Map<String, dynamic> trip;
@@ -35,8 +36,10 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
           'name': booking['full_name'],
           'whatsapp': booking['whatsapp'],
           'gender': booking['gender'],
+          'address': booking['address'],
           'status': booking['status'],
           'is_main': true,
+          'booking': booking,
         });
         
         var members = booking['booking_members'];
@@ -46,8 +49,10 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
               'name': m['full_name'],
               'whatsapp': m['whatsapp'] ?? booking['whatsapp'],
               'gender': m['gender'],
+              'address': m['address'] ?? booking['address'],
               'status': booking['status'],
               'is_main': false,
+              'booking': booking,
             });
           }
         }
@@ -162,6 +167,17 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
                         icon: const Icon(Icons.chat, color: Colors.green),
                         onPressed: () => _callWa(p['whatsapp'], p['name'] ?? 'Kak', title),
                       ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ParticipantDetailScreen(
+                              participant: p,
+                              tripTitle: title,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
