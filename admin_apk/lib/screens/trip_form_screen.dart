@@ -122,8 +122,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
               decoration: const InputDecoration(labelText: 'Pilih Destinasi', border: OutlineInputBorder()),
               // ignore: deprecated_member_use
               value: _selectedDestinationId,
-              items: _destinations.map((d) => DropdownMenuItem<String>(
-                initialValue: d['id'].toString(),
+              items: _destinations.map((d) => DropdownMenuItem<String>(value: d['id'].toString(),
                 child: Text(d['title']),
               )).toList(),
               onChanged: (val) => setState(() => _selectedDestinationId = val),
@@ -159,7 +158,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
               decoration: const InputDecoration(labelText: 'Jenis Trip', border: OutlineInputBorder()),
               // ignore: deprecated_member_use
               value: _tripType,
-              items: ['Open Trip', 'Private Trip'].map((e) => DropdownMenuItem(initialValue: e, child: Text(e))).toList(),
+              items: ['Open Trip', 'Private Trip'].map<DropdownMenuItem<String>>((e) => DropdownMenuItem<String>(value: e, child: Text(e))).toList(),
               onChanged: (val) => setState(() => _tripType = val!),
             ),
             const SizedBox(height: 16),
@@ -173,7 +172,7 @@ class _TripFormScreenState extends State<TripFormScreen> {
               decoration: const InputDecoration(labelText: 'Status Jadwal', border: OutlineInputBorder()),
               // ignore: deprecated_member_use
               value: _status,
-              items: ['Terbuka', 'Penuh', 'Selesai'].map((e) => DropdownMenuItem(initialValue: e, child: Text(e))).toList(),
+              items: ['Terbuka', 'Penuh', 'Selesai'].map<DropdownMenuItem<String>>((e) => DropdownMenuItem<String>(value: e, child: Text(e))).toList(),
               onChanged: (val) => setState(() => _status = val!),
             ),
 

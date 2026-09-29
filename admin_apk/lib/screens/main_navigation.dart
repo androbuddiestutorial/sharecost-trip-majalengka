@@ -68,7 +68,15 @@ class _MainNavigationState extends State<MainNavigation> {
                 ],
               ),
             ),
-                        ListTile(
+            ListTile(
+              leading: const Icon(Icons.add_shopping_cart),
+              title: const Text('Tambah Pesanan Manual'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const ManualBookingScreen()));
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.print),
               title: const Text('Cetak Laporan'),
               onTap: () {
@@ -76,20 +84,12 @@ class _MainNavigationState extends State<MainNavigation> {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen()));
               },
             ),
-
             ListTile(
               leading: const Icon(Icons.account_balance_wallet),
               title: const Text('Manajemen Pembayaran'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentsScreen()));
-              },
-            ),
-
-
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const ReportScreen()));
               },
             ),
           ],
