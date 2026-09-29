@@ -46,23 +46,32 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     if (destData is List && destData.isNotEmpty) destData = destData[0];
     final title = destData?['title'] ?? 'Trip';
     
-    String text = '*MANIFEST $title*\\n';
-    text += 'Tanggal: \${widget.trip['date_start']} s/d \${widget.trip['date_end']}\\n\\n';
-    text += 'Daftar Peserta:\\n';
+    final tglStart = widget.trip['date_start'] ?? '-';
+    final tglEnd = widget.trip['date_end'] ?? '-';
+    
+    String text = '*MANIFEST $title*\n';
+    text += 'Tanggal: $tglStart s/d $tglEnd\n\n';
+    text += 'Daftar Peserta:\n';
     
     int index = 1;
     for (var b in _bookings) {
-      text += '$index. \${b['full_name']} (\${b['whatsapp'] ?? '-'}) - \${b['status']}\\n';
+      final bName = b['full_name'] ?? '-';
+      final bWa = b['whatsapp'] ?? '-';
+      final bStatus = b['status'] ?? '-';
+      text += '$index. $bName ($bWa) - $bStatus\n';
       index++;
+      
       var members = b['booking_members'];
       if (members is List) {
         for (var m in members) {
-          text += '   - \${m['full_name']} (\${m['whatsapp'] ?? b['whatsapp'] ?? '-'})\\n';
+          final mName = m['full_name'] ?? '-';
+          final mWa = m['whatsapp'] ?? bWa;
+          text += '   - $mName ($mWa)\n';
         }
       }
     }
     
-    final url = Uri.parse('https://wa.me/?text=\${Uri.encodeComponent(text)}');
+    final url = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}');
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
@@ -73,11 +82,11 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
   Future<void> _callWa(String? phone, String name, String tripTitle) async {
     if (phone == null || phone.isEmpty) return;
     String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanPhone.startsWith('0')) cleanPhone = '62\${cleanPhone.substring(1)}';
+    if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
     
-    String msg = 'Halo Kak $name,\\n\\nIni dari admin Sharecost Trip Majalengka.\\nTerkait pendaftaran untuk jadwal *$tripTitle*, apakah ada yang bisa kami bantu?';
+    String msg = 'Halo Kak $name,\n\nIni dari admin Sharecost Trip Majalengka.\nTerkait pendaftaran untuk jadwal *$tripTitle*, apakah ada yang bisa kami bantu?';
     
-    final url = Uri.parse('https://wa.me/$cleanPhone?text=\${Uri.encodeComponent(msg)}');
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(msg)}');
     
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -147,6 +156,9 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
                     'booking': booking,
                   };
 
+                  final status = booking['status'] ?? '-';
+                  final bCode = booking['booking_code'] ?? '-';
+
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: ExpansionTile(
@@ -155,7 +167,7 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
                         child: Text(totalPax.toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
                       title: Text(booking['full_name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('Status: \${booking['status']} | Kode: \${booking['booking_code']}'),
+                      subtitle: Text('Status: $status | Kode: $bCode'),
                       children: [
                         // List Item untuk Pendaftar Utama
                         ListTile(
