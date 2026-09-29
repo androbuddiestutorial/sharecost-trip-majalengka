@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});
@@ -68,7 +69,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 
-  Future<void> _verifyPayment(int paymentId, Map<String, dynamic> booking) async {
+  Future<void> _verifyPayment(int paymentId, Map<String, dynamic> booking, num amountPaid) async {
     try {
       // 1. Update status payment manual di tabel payments
       await Supabase.instance.client
@@ -189,7 +190,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                                           TextButton(
                                             onPressed: () {
                                               Navigator.pop(c);
-                                              _verifyPayment(pay['id'], booking);
+                                              _verifyPayment(pay['id'], booking, pay['amount'] ?? 0);
                                             }, 
                                             child: const Text('Verifikasi')
                                           ),
