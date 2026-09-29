@@ -11,6 +11,9 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   List<dynamic> _bookings = [];
+  List<dynamic> _filteredBookings = [];
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   bool _isLoading = true;
   
   // Stats
@@ -26,6 +29,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _setupRealtime();
   }
 
+  
+  void _filterBookings(String query) {
+    setState(() {
+      _searchQuery = query;
+      if (query.isEmpty) {
+        _filteredBookings = _bookings;
+      } else {
+        _filteredBookings = _bookings.where((b) {
+          final name = (b['full_name'] ?? '').toString().toLowerCase();
+          final wa = (b['whatsapp'] ?? '').toString().toLowerCase();
+          final code = (b['booking_code'] ?? '').toString().toLowerCase();
+          final q = query.toLowerCase();
+          return name.contains(q) || wa.contains(q) || code.contains(q);
+        }).toList();
+      }
+    });
+  }
+  
   Future<void> _fetchStats() async {
     try {
       final payments = await Supabase.instance.client
@@ -144,11 +165,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const Divider(height: 1),
+          // Search section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterBookings,
+              decoration: InputDecoration(
+                hintText: 'Cari nama, WA, atau kode booking...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchQuery.isNotEmpty 
+                  ? IconButton(icon: const Icon(Icons.clear), onPressed: () { _searchController.clear(); _filterBookings(''); })
+                  : null,
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
+              ),
+            ),
+          ),
+  
           // List section
           Expanded(
             child: _isLoading 
               ? const Center(child: CircularProgressIndicator())
-              : _bookings.isEmpty
+              : _filteredBookings.isEmpty
                 ? const Center(child: Text('Belum ada pendaftaran.'))
                 : RefreshIndicator(
                     onRefresh: () async {
@@ -156,9 +198,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       await _fetchStats();
                     },
                     child: ListView.builder(
-                      itemCount: _bookings.length,
+                      itemCount: _filteredBookings.length,
                       itemBuilder: (context, index) {
-                        final booking = _bookings[index];
+                        final booking = _filteredBookings[index];
                         final status = booking['status'] as String? ?? 'Menunggu Verifikasi';
                         
                         Color statusColor = Colors.grey;

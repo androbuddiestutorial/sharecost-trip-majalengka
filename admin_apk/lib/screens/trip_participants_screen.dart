@@ -62,6 +62,32 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     }
   }
 
+  
+  Future<void> _shareManifest() async {
+    if (_participants.isEmpty) return;
+    
+    var destData = widget.trip['destinations'];
+    if (destData is List && destData.isNotEmpty) destData = destData[0];
+    final title = destData?['title'] ?? 'Trip';
+    
+    String text = '*MANIFEST $title*\n';
+    text += 'Tanggal: ${widget.trip['date_start']} s/d ${widget.trip['date_end']}\n\n';
+    text += 'Daftar Peserta:\n';
+    
+    for (int i = 0; i < _participants.length; i++) {
+      final p = _participants[i];
+      text += '${i + 1}. ${p['name']} (${p['whatsapp'] ?? '-'}) - ${p['status']}\n';
+    }
+    
+    // Launch whatsapp with text
+    final url = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}');
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp gagal dibuka')));
+    }
+  }
+  
   Future<void> _callWa(String? phone) async {
     if (phone == null || phone.isEmpty) return;
     String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
@@ -83,7 +109,18 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     final title = destData?['title'] ?? 'Trip';
 
     return Scaffold(
-      appBar: AppBar(title: Text('Peserta $title')),
+      
+      appBar: AppBar(
+        title: Text('Peserta $title'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: 'Bagikan Manifest',
+            onPressed: _shareManifest,
+          )
+        ],
+      ),
+  
       body: _isLoading 
         ? const Center(child: CircularProgressIndicator())
         : _participants.isEmpty
