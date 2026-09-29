@@ -18,6 +18,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   bool _isUpdating = false;
   List<dynamic> _payments = [];
   bool _isLoadingPayments = true;
+  Map<String, dynamic>? _emergencyContact;
+  Map<String, dynamic>? _healthDecl;
 
   @override
   void initState() {
@@ -34,10 +36,28 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           .select()
           .eq('booking_id', widget.booking['id'])
           .order('created_at', ascending: false);
-      setState(() {
-        _payments = data;
-        _isLoadingPayments = false;
-      });
+      setState(() { _payments = data; _isLoadingPayments = false; });
+    try {
+      final ecData = await Supabase.instance.client
+          .from('emergency_contacts')
+          .select()
+          .eq('booking_id', widget.booking['id'])
+          .maybeSingle();
+      final hdData = await Supabase.instance.client
+          .from('health_declarations')
+          .select()
+          .eq('booking_id', widget.booking['id'])
+          .maybeSingle();
+      if (mounted) {
+        setState(() {
+          _emergencyContact = ecData;
+          _healthDecl = hdData;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching extra details: $e');
+    }
+
     } catch (e) {
       setState(() => _isLoadingPayments = false);
     }
