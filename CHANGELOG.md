@@ -2,6 +2,21 @@
 
 Semua perubahan yang mencolok pada project **Sharecosttrip Majalengka** akan didokumentasikan di file ini.
 
+## [Fase Sinkronisasi APK Admin & UI/UX] - 2026-09-30
+
+### Added (Ditambahkan)
+- **Aplikasi Flutter (APK Admin)**: Perombakan UI/UX baru pada Dashboard (Grafik Tren Pesanan 7-Hari via `fl_chart`, efek *Shimmer loading*, dan *Empty States*), lengkap dengan sinkronisasi logika web admin terbaru (Harga Meeting Point, Sisa Tagihan).
+- **Sistem Detail Peserta Manifest**: Pada halaman Manifest APK, admin kini dapat mengklik tiap rombongan peserta untuk membedah data rinci Anggota Utama dan Tambahan, lengkap dengan Riwayat Kesehatan (*Health Declaration*) dan akses cepat tombol "Hubungi Kontak Darurat (WA)" yang berwarna mencolok.
+- **Notifikasi Notifikasi Pembayaran**: Penambahan sistem otomatis (WebPush, Firebase FCM, Nodemailer) yang akan langsung mengirim notifikasi email dan membunyikan alarm di HP Admin seketika ada pelanggan yang menekan tombol *Submit* konfirmasi pembayaran.
+
+### Changed (Diubah)
+- **Hirarki Manifest (Accordion)**: Daftar anggota di aplikasi (APK) tidak lagi disajikan secara datar (*flat list*), melainkan dikelompokkan (Grup/Accordion) berdasarkan Kode Booking / Pendaftar Utama, sehingga tidak berantakan saat jumlah peserta puluhan.
+- **Routing Email Notifikasi Multi-Admin**: Pengiriman laporan/notifikasi masuk dialihkan ke sistem variabel fleksibel (`ADMIN_EMAILS`). Hal ini memungkinkan fitur *multi-admin broadcasting* (email lebih dari satu dengan pemisah koma) tanpa harus mengganggu tampilan email kontak resmi di halaman pengunjung (publik).
+- **Perhitungan Sisa Kuota Otomatis**: Tabel 'Jadwal Trip' di Web Admin dan Aplikasi APK kini secara cerdas mengakumulasi (secara *realtime*) jumlah kapasitas kursi tersisa (*Pax*) berdasarkan status pendaftar yang valid. Web Admin akan menyalakan peringatan warna merah saat sisa kuota kritis (<= 2).
+
+### Fixed (Diperbaiki)
+- **Dart & TypeScript Compilation Errors**: Memperbaiki lebih dari 30 kesalahan logika *string interpolation* dan *unresolved references* di dalam kode Flutter (`admin_apk`), serta menyelesaikan kegagalan *deploy* / *build pipeline* di server Vercel (TS2304 - *Cannot find name bookingsMap*).
+
 ## [Fase Penyempurnaan Keuangan & Manajemen Pembayaran] - 2026-09-28
 
 ### Added (Ditambahkan)
