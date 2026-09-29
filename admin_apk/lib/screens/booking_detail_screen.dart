@@ -441,6 +441,36 @@ Terimakasih 🙏
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    
+            const SizedBox(height: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Detail Ekstra', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    const Divider(),
+                    if (_emergencyContact != null) ...[
+                      const Text('Kontak Darurat', style: TextStyle(fontWeight: FontWeight.bold)),
+                      _buildRow('Nama', _emergencyContact!['full_name']),
+                      _buildRow('Hubungan', _emergencyContact!['relationship']),
+                      _buildRow('WhatsApp', _emergencyContact!['whatsapp']),
+                      const SizedBox(height: 8),
+                    ],
+                    if (_healthDecl != null) ...[
+                      const Text('Kondisi Kesehatan', style: TextStyle(fontWeight: FontWeight.bold)),
+                      _buildRow('Punya Kondisi', _healthDecl!['has_condition'] ? 'Ya' : 'Tidak'),
+                      if (_healthDecl!['has_condition'])
+                        _buildRow('Penjelasan', _healthDecl!['description']),
+                    ],
+                    if (_emergencyContact == null && _healthDecl == null)
+                      const Text('Tidak ada detail ekstra.', style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
+              ),
+            ),
+
                     const Text('Status Pesanan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                     const Divider(),
                     _buildRow('Status', b['payment_status']),

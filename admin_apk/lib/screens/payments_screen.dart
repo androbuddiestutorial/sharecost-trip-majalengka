@@ -87,7 +87,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           
       double totalPaid = 0;
       for (var p in allPayments) {
-        totalPaid += (p['amount'] ?? 0) as num;
+        totalPaid += ((p['amount'] ?? 0) as num).toDouble();
       }
       
       final bData = await Supabase.instance.client

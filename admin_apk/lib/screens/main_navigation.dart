@@ -8,6 +8,7 @@ import 'manifest_screen.dart';
 
 import 'manual_booking_screen.dart';
 import 'report_screen.dart';
+import 'payments_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});

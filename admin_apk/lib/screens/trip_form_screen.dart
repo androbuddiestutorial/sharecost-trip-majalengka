@@ -121,9 +121,9 @@ class _TripFormScreenState extends State<TripFormScreen> {
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Destinasi', border: OutlineInputBorder()),
               // ignore: deprecated_member_use
-              value: _selectedDestinationId,
+              initialValue: _selectedDestinationId,
               items: _destinations.map((d) => DropdownMenuItem<String>(
-                value: d['id'].toString(),
+                initialValue: d['id'].toString(),
                 child: Text(d['title']),
               )).toList(),
               onChanged: (val) => setState(() => _selectedDestinationId = val),
@@ -157,8 +157,8 @@ class _TripFormScreenState extends State<TripFormScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Jenis Trip', border: OutlineInputBorder()),
-              value: _tripType,
-              items: ['Open Trip', 'Private Trip'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              initialValue: _tripType,
+              items: ['Open Trip', 'Private Trip'].map((e) => DropdownMenuItem(initialValue: e, child: Text(e))).toList(),
               onChanged: (val) => setState(() => _tripType = val!),
             ),
             const SizedBox(height: 16),
@@ -170,12 +170,12 @@ class _TripFormScreenState extends State<TripFormScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Status Jadwal', border: OutlineInputBorder()),
-              value: _status,
-              items: ['Terbuka', 'Penuh', 'Selesai'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              initialValue: _status,
+              items: ['Terbuka', 'Penuh', 'Selesai'].map((e) => DropdownMenuItem(initialValue: e, child: Text(e))).toList(),
               onChanged: (val) => setState(() => _status = val!),
             ),
 
-            const SizedBox(height: 16);
+            const SizedBox(height: 16),
             TextFormField(
               controller: _quotaController,
               decoration: const InputDecoration(labelText: 'Kuota Maksimal', border: OutlineInputBorder()),
