@@ -27,6 +27,30 @@ class _TripsScreenState extends State<TripsScreen> {
           .from('trips')
           .select('*, destinations(title)')
           .order('date_start', ascending: false);
+          
+      // Fetch bookings to calculate remaining quota
+      final bookings = await Supabase.instance.client
+          .from('bookings')
+          .select('trip_id, pax')
+          .neq('status', 'Dibatalkan');
+          
+      Map<String, int> bookingsMap = {};
+      for (var b in bookings) {
+        final tripId = b['trip_id'];
+        if (tripId != null) {
+          bookingsMap[tripId] = (bookingsMap[tripId] ?? 0) + ((b['pax'] ?? 1) as num).toInt();
+        }
+      }
+      
+      for (var i = 0; i < data.length; i++) {
+        final tripId = data[i]['id'];
+        final quota = (data[i]['quota'] ?? 0) as num;
+        final booked = bookingsMap[tripId] ?? 0;
+        int sisa = quota.toInt() - booked;
+        if (sisa < 0) sisa = 0;
+        data[i]['sisa_kuota'] = sisa;
+      }
+          
       setState(() {
         _trips = data;
         _isLoading = false;

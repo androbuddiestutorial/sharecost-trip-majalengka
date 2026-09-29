@@ -82,7 +82,14 @@ export default async function AdminTripsPage() {
                   <TableCell>
                     {startDate} - {endDate}
                   </TableCell>
-                  <TableCell>{trip.quota} Orang</TableCell>
+                  <TableCell>
+                    <div>{trip.quota} Orang</div>
+                    <div className="text-xs font-semibold mt-1">
+                      Sisa: <span className={Math.max(0, trip.quota - (bookingsMap[trip.id] || 0)) <= 2 ? "text-red-500" : "text-green-600"}>
+                        {Math.max(0, trip.quota - (bookingsMap[trip.id] || 0))}
+                      </span>
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <Badge variant={trip.status === "Terbuka" ? "default" : "secondary"}>
                       {trip.status}
