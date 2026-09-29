@@ -47,7 +47,7 @@ export async function submitPublicPayment(formData: FormData) {
     try {
       if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
         webpush.setVapidDetails(
-          'mailto:sharecosttripmajalengka@gmail.com',
+          'mailto:admin.sharecostripmajalengka@gmail.com',
           process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
           process.env.VAPID_PRIVATE_KEY
         );
@@ -81,7 +81,7 @@ export async function submitPublicPayment(formData: FormData) {
 
         await transporter.sendMail({
           from: `"Sharecost Trip Majalengka" <${process.env.EMAIL_USER}>`,
-          to: 'sharecosttripmajalengka@gmail.com',
+          to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER || 'admin.sharecostripmajalengka@gmail.com',
           subject: notifTitle,
           html: `
             <h2>Ada Konfirmasi Pembayaran Baru!</h2>
