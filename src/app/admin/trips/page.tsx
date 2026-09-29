@@ -23,6 +23,26 @@ export default async function AdminTripsPage() {
   const safeTrips = trips || [];
   const safeDestinations = destinations || [];
 
+  // Calculate booked quota
+  const tripIds = safeTrips.map(t => t.id);
+  const bookingsMap: Record<string, number> = {};
+  if (tripIds.length > 0) {
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select('trip_id, pax, status')
+      .in('trip_id', tripIds)
+      .neq('status', 'Dibatalkan');
+      
+    if (bookings) {
+      bookings.forEach(b => {
+        if (b.trip_id) {
+          if (!bookingsMap[b.trip_id]) bookingsMap[b.trip_id] = 0;
+          bookingsMap[b.trip_id] += (b.pax || 1);
+        }
+      });
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -71,9 +91,9 @@ export default async function AdminTripsPage() {
                     {features.length > 0 ? (
                       <ul className="text-xs text-muted-foreground mt-1 max-w-[200px]">
                         {features.slice(0, 3).map((f: string, i: number) => (
-                          <li key={i} className="truncate truncate-1-lines">• {f}</li>
+                          <li key={i} className="truncate truncate-1-lines">? {f}</li>
                         ))}
-                        {features.length > 3 && <li>• +{features.length - 3} lainnya</li>}
+                        {features.length > 3 && <li>? +{features.length - 3} lainnya</li>}
                       </ul>
                     ) : (
                       <span className="text-xs text-muted-foreground">-</span>
@@ -95,12 +115,14 @@ export default async function AdminTripsPage() {
                       {trip.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <EditTripButton trip={trip} destinations={safeDestinations} />
-                    <DeleteTripButton id={trip.id} />
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <EditTripButton trip={trip} destinations={safeDestinations} />
+                      <DeleteTripButton id={trip.id} />
+                    </div>
                   </TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
