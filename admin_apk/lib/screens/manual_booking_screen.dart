@@ -203,7 +203,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
       }
 
       // Health Declaration
-      await Supabase.instance.client.from('health_declarations').insert({
+      await Supabase.instance.client.from('health_information').insert({
         'booking_id': bookingId,
         'has_condition': _hasHealthCondition == 'Ya',
         'description': _hasHealthCondition == 'Ya' ? _healthDescController.text : '',

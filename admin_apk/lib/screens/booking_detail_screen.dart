@@ -44,7 +44,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           .eq('booking_id', widget.booking['id'])
           .maybeSingle();
       final hdData = await Supabase.instance.client
-          .from('health_declarations')
+          .from('health_information')
           .select()
           .eq('booking_id', widget.booking['id'])
           .maybeSingle();
