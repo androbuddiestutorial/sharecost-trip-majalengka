@@ -96,7 +96,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           .eq('id', bookingId)
           .single();
           
-      double totalAmount = (bData['total_amount'] ?? 0) as num;
+      double totalAmount = ((bData['total_amount'] ?? 0) as num).toDouble();
       
       String newPaymentStatus = "Belum Bayar";
       String newStatus = "Menunggu Verifikasi";

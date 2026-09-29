@@ -288,6 +288,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Jenis Kelamin', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _gender,
               items: ['Laki-laki', 'Perempuan'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _gender = v),
@@ -303,12 +304,14 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Pilih Jadwal Trip', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _selectedTripId,
               items: _trips.map((t) {
                 var destData = t['destinations'];
                 if (destData is List && destData.isNotEmpty) destData = destData[0];
                 final title = destData?['title'] ?? 'Trip';
                 return DropdownMenuItem<String>(
+                  // ignore: deprecated_member_use
                   value: t['id'].toString(),
                   child: Text('$title (Rp ${t['price'] ?? 0})'),
                 );
@@ -318,12 +321,14 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Meeting Point (Opsional)', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _selectedMeetingPoint,
               items: _meetingPoints.map((m) {
                 int mpPrice = m['price'] ?? 0;
                 String label = m['name'];
                 if (mpPrice > 0) label += ' (Rp $mpPrice)';
                 return DropdownMenuItem<String>(
+                  // ignore: deprecated_member_use
                   value: m['name'],
                   child: Text(label),
                 );
@@ -400,6 +405,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Punya riwayat penyakit/alergi?', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _hasHealthCondition,
               items: ['Ya', 'Tidak'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _hasHealthCondition = v!),
@@ -418,6 +424,7 @@ class _ManualBookingScreenState extends State<ManualBookingScreen> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: 'Status Pembayaran Awal', border: OutlineInputBorder()),
+              // ignore: deprecated_member_use
               value: _paymentStatus,
               items: ['Belum Bayar', 'DP', 'Lunas'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => _paymentStatus = v!),
