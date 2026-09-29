@@ -15,6 +15,9 @@ class _TripFormScreenState extends State<TripFormScreen> {
   final _dateStartController = TextEditingController();
   final _dateEndController = TextEditingController();
     final _quotaController = TextEditingController();
+  final _priceController = TextEditingController(text: '0');
+  String _status = 'Terbuka';
+  String _tripType = 'Open Trip';
   
   String? _selectedDestinationId;
   List<dynamic> _destinations = [];
@@ -30,6 +33,9 @@ class _TripFormScreenState extends State<TripFormScreen> {
       _dateStartController.text = widget.trip!['date_start'] ?? '';
       _dateEndController.text = widget.trip!['date_end'] ?? '';
       _quotaController.text = (widget.trip!['quota'] ?? '').toString();
+      _priceController.text = (widget.trip!['price'] ?? 0).toString();
+      _status = widget.trip!['status'] ?? 'Terbuka';
+      _tripType = widget.trip!['trip_type'] ?? 'Open Trip';
       if (widget.trip!['meeting_points'] != null) {
         try {
           final List<dynamic> mps = widget.trip!['meeting_points'] is String ? jsonDecode(widget.trip!['meeting_points']) : widget.trip!['meeting_points'];
@@ -59,7 +65,9 @@ class _TripFormScreenState extends State<TripFormScreen> {
         'date_start': _dateStartController.text,
         'date_end': _dateEndController.text,
         'quota': quota,
-        'status': widget.trip != null ? widget.trip!['status'] : 'Terbuka',
+        'status': _status,
+        'trip_type': _tripType,
+        'price': int.tryParse(_priceController.text) ?? 0,
         'meeting_points': _meetingPoints.where((mp) => (mp['name']?.toString() ?? '').trim().isNotEmpty).toList(),
       };
 
@@ -145,6 +153,29 @@ class _TripFormScreenState extends State<TripFormScreen> {
               ],
             ),
             const SizedBox(height: 16),
+            
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Jenis Trip', border: OutlineInputBorder()),
+              value: _tripType,
+              items: ['Open Trip', 'Private Trip'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (val) => setState(() => _tripType = val!),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _priceController,
+              decoration: const InputDecoration(labelText: 'Harga Dasar (Rp)', border: OutlineInputBorder()),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(labelText: 'Status Jadwal', border: OutlineInputBorder()),
+              value: _status,
+              items: ['Terbuka', 'Penuh', 'Selesai'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (val) => setState(() => _status = val!),
+            ),
+
+            const SizedBox(height: 16);
             TextFormField(
               controller: _quotaController,
               decoration: const InputDecoration(labelText: 'Kuota Maksimal', border: OutlineInputBorder()),

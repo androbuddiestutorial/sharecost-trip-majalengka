@@ -115,7 +115,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${trip['date_start']} - ${trip['date_end']}\nKuota: ${trip['quota']} | Sisa: ${trip['sisa_kuota'] ?? trip['quota']}'),
+                        Text('${trip['date_start']} - ${trip['date_end']}\nJenis: ${trip['trip_type'] ?? 'Open Trip'} | Status: ${trip['status'] ?? 'Terbuka'}\nKuota: ${trip['quota']} | Sisa: ${trip['sisa_kuota'] ?? trip['quota']}'),
                         alarmWidget ?? const SizedBox.shrink(),
                       ],
                     ),
