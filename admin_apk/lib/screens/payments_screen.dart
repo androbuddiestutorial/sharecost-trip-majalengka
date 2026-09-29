@@ -121,6 +121,25 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pembayaran berhasil diverifikasi!')));
+        
+        final wa = booking['whatsapp'] as String?;
+        if (wa != null && wa.isNotEmpty) {
+          String cleanPhone = wa.replaceAll(RegExp(r'[^0-9]'), '');
+          if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
+          
+          final name = booking['full_name'] ?? '';
+          final code = booking['booking_code'] ?? '';
+          final amountStr = amountPaid.toString().replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
+          
+          final msg = 'Halo Kak $name,\n\nTerima kasih telah melakukan pembayaran sebesar *Rp $amountStr* untuk pendaftaran trip dengan Kode Booking *$code*.\n\nPembayaran Anda telah kami verifikasi dan status pendaftaran Anda sudah aktif.\n\nUntuk mengecek rincian jadwal dan tagihan, silakan kunjungi:\nhttps://www.sharecosttripmajalengka.biz.id/cek-pesanan\n\nTerima kasih,\n-Sharecost Trip Majalengka-';
+          
+          final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(msg)}');
+          try {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          } catch (e) {
+            debugPrint('Error WA: $e');
+          }
+        }
       }
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal: $e')));
