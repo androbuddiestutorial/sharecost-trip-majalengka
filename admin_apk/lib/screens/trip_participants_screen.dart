@@ -12,7 +12,7 @@ class TripParticipantsScreen extends StatefulWidget {
 }
 
 class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
-  List<dynamic> _participants = [];
+  List<dynamic> _bookings = [];
   bool _isLoading = true;
 
   @override
@@ -29,37 +29,9 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
           .select('*, booking_members(*)')
           .eq('trip_id', widget.trip['id'])
           .order('created_at', ascending: true);
-          
-      List<dynamic> flattened = [];
-      for (var booking in data) {
-        flattened.add({
-          'name': booking['full_name'],
-          'whatsapp': booking['whatsapp'],
-          'gender': booking['gender'],
-          'address': booking['address'],
-          'status': booking['status'],
-          'is_main': true,
-          'booking': booking,
-        });
-        
-        var members = booking['booking_members'];
-        if (members is List) {
-          for (var m in members) {
-            flattened.add({
-              'name': m['full_name'],
-              'whatsapp': m['whatsapp'] ?? booking['whatsapp'],
-              'gender': m['gender'],
-              'address': m['address'] ?? booking['address'],
-              'status': booking['status'],
-              'is_main': false,
-              'booking': booking,
-            });
-          }
-        }
-      }
       
       setState(() {
-        _participants = flattened;
+        _bookings = data;
         _isLoading = false;
       });
     } catch (e) {
@@ -67,25 +39,30 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     }
   }
 
-  
   Future<void> _shareManifest() async {
-    if (_participants.isEmpty) return;
+    if (_bookings.isEmpty) return;
     
     var destData = widget.trip['destinations'];
     if (destData is List && destData.isNotEmpty) destData = destData[0];
     final title = destData?['title'] ?? 'Trip';
     
-    String text = '*MANIFEST $title*\n';
-    text += 'Tanggal: ${widget.trip['date_start']} s/d ${widget.trip['date_end']}\n\n';
-    text += 'Daftar Peserta:\n';
+    String text = '*MANIFEST $title*\\n';
+    text += 'Tanggal: \${widget.trip['date_start']} s/d \${widget.trip['date_end']}\\n\\n';
+    text += 'Daftar Peserta:\\n';
     
-    for (int i = 0; i < _participants.length; i++) {
-      final p = _participants[i];
-      text += '${i + 1}. ${p['name']} (${p['whatsapp'] ?? '-'}) - ${p['status']}\n';
+    int index = 1;
+    for (var b in _bookings) {
+      text += '$index. \${b['full_name']} (\${b['whatsapp'] ?? '-'}) - \${b['status']}\\n';
+      index++;
+      var members = b['booking_members'];
+      if (members is List) {
+        for (var m in members) {
+          text += '   - \${m['full_name']} (\${m['whatsapp'] ?? b['whatsapp'] ?? '-'})\\n';
+        }
+      }
     }
     
-    // Launch whatsapp with text
-    final url = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(text)}');
+    final url = Uri.parse('https://wa.me/?text=\${Uri.encodeComponent(text)}');
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
@@ -93,15 +70,14 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     }
   }
   
-  
   Future<void> _callWa(String? phone, String name, String tripTitle) async {
     if (phone == null || phone.isEmpty) return;
     String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
+    if (cleanPhone.startsWith('0')) cleanPhone = '62\${cleanPhone.substring(1)}';
     
-    String msg = 'Halo Kak $name,\n\nIni dari admin Sharecost Trip Majalengka.\nTerkait pendaftaran untuk jadwal *$tripTitle*, apakah ada yang bisa kami bantu?';
+    String msg = 'Halo Kak $name,\\n\\nIni dari admin Sharecost Trip Majalengka.\\nTerkait pendaftaran untuk jadwal *$tripTitle*, apakah ada yang bisa kami bantu?';
     
-    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(msg)}');
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=\${Uri.encodeComponent(msg)}');
     
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -110,6 +86,17 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     }
   }
 
+  void _openDetail(Map<String, dynamic> participantMap, String title) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ParticipantDetailScreen(
+          participant: participantMap,
+          tripTitle: title,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +105,6 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     final title = destData?['title'] ?? 'Trip';
 
     return Scaffold(
-      
       appBar: AppBar(
         title: Text('Peserta $title'),
         actions: [
@@ -129,55 +115,85 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
           )
         ],
       ),
-  
       body: _isLoading 
         ? const Center(child: CircularProgressIndicator())
-        : _participants.isEmpty
+        : _bookings.isEmpty
           ? const Center(child: Text('Belum ada peserta untuk jadwal ini.'))
           : RefreshIndicator(
               onRefresh: _fetchParticipants,
               child: ListView.builder(
-                itemCount: _participants.length,
+                itemCount: _bookings.length,
                 itemBuilder: (context, index) {
-                  final p = _participants[index];
+                  final booking = _bookings[index];
+                  
                   Color statusColor = Colors.grey;
-                  if (p['status'] == 'Lunas' || p['status'] == 'Terverifikasi') {
+                  if (booking['status'] == 'Lunas' || booking['status'] == 'Terverifikasi') {
                     statusColor = Colors.green;
-                  } else if (p['status'] == 'DP') {
+                  } else if (booking['status'] == 'DP') {
                     statusColor = Colors.orange;
                   }
 
+                  var members = booking['booking_members'] as List<dynamic>? ?? [];
+                  int totalPax = 1 + members.length;
+
+                  // Pendaftar Utama mapping
+                  final mainParticipantMap = {
+                    'name': booking['full_name'],
+                    'whatsapp': booking['whatsapp'],
+                    'gender': booking['gender'],
+                    'address': booking['address'],
+                    'status': booking['status'],
+                    'is_main': true,
+                    'booking': booking,
+                  };
+
                   return Card(
                     margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: ListTile(
+                    child: ExpansionTile(
                       leading: CircleAvatar(
-                        backgroundColor: p['is_main'] ? Colors.teal : Colors.teal.shade200,
-                        child: Text((index + 1).toString(), style: const TextStyle(color: Colors.white)),
+                        backgroundColor: statusColor,
+                        child: Text(totalPax.toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       ),
-                      title: Text(p['name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('${p['gender']}'),
-                          Text('Status: ${p['status']}', style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      isThreeLine: true,
-                      trailing: IconButton(
-                        icon: const Icon(Icons.chat, color: Colors.green),
-                        onPressed: () => _callWa(p['whatsapp'], p['name'] ?? 'Kak', title),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ParticipantDetailScreen(
-                              participant: p,
-                              tripTitle: title,
-                            ),
+                      title: Text(booking['full_name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text('Status: \${booking['status']} | Kode: \${booking['booking_code']}'),
+                      children: [
+                        // List Item untuk Pendaftar Utama
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 0),
+                          leading: const Icon(Icons.person, color: Colors.teal),
+                          title: Text(booking['full_name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.w600)),
+                          subtitle: const Text('Pendaftar Utama'),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.chat, color: Colors.green),
+                            onPressed: () => _callWa(booking['whatsapp'], booking['full_name'] ?? 'Kak', title),
                           ),
-                        );
-                      },
+                          onTap: () => _openDetail(mainParticipantMap, title),
+                        ),
+                        // List Item untuk Anggota Tambahan
+                        ...members.map((m) {
+                          final memberMap = {
+                            'name': m['full_name'],
+                            'whatsapp': m['whatsapp'] ?? booking['whatsapp'],
+                            'gender': m['gender'],
+                            'address': m['address'] ?? booking['address'],
+                            'status': booking['status'],
+                            'is_main': false,
+                            'booking': booking,
+                          };
+                          
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 0),
+                            leading: const Icon(Icons.person_outline, color: Colors.blueGrey),
+                            title: Text(m['full_name'] ?? '-', style: const TextStyle(fontWeight: FontWeight.w500)),
+                            subtitle: Text(m['whatsapp'] ?? 'Tanpa WA (Ikut Utama)'),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.chat, color: Colors.green),
+                              onPressed: () => _callWa(m['whatsapp'] ?? booking['whatsapp'], m['full_name'] ?? 'Kak', title),
+                            ),
+                            onTap: () => _openDetail(memberMap, title),
+                          );
+                        }),
+                      ],
                     ),
                   );
                 },
