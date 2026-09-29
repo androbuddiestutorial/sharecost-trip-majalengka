@@ -56,9 +56,9 @@ class _ParticipantDetailScreenState extends State<ParticipantDetailScreen> {
 
   Future<void> _sendWA(String phone, String message) async {
     String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
-    if (cleanPhone.startsWith('0')) cleanPhone = '62\${cleanPhone.substring(1)}';
+    if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
     
-    final url = Uri.parse('https://wa.me/$cleanPhone?text=\${Uri.encodeComponent(message)}');
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(message)}');
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
@@ -110,7 +110,9 @@ class _ParticipantDetailScreenState extends State<ParticipantDetailScreen> {
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
                         onPressed: () {
-                          final msg = 'Halo Kak \${p['name']},\\n\\nIni dari admin Sharecost Trip Majalengka.\\nTerkait pendaftaran untuk jadwal *\${widget.tripTitle}*, apakah ada yang bisa kami bantu?';
+                          final pName = p['name'] ?? 'Kak';
+                          final title = widget.tripTitle;
+                          final msg = 'Halo Kak $pName,\n\nIni dari admin Sharecost Trip Majalengka.\nTerkait pendaftaran untuk jadwal *$title*, apakah ada yang bisa kami bantu?';
                           _sendWA(p['whatsapp'] ?? '', msg);
                         },
                         icon: const Icon(Icons.chat),
@@ -137,7 +139,10 @@ class _ParticipantDetailScreenState extends State<ParticipantDetailScreen> {
                         const SizedBox(height: 12),
                         ElevatedButton.icon(
                           onPressed: () {
-                            final msg = 'Halo \${_emergencyContact!['full_name']},\\n\\nKami dari Sharecost Trip Majalengka. Kami menghubungi Anda sebagai kontak darurat dari *\${b['full_name']}* yang sedang mengikuti jadwal trip *\${widget.tripTitle}*.\\n\\nKami ingin menginformasikan bahwa...';
+                            final ecName = _emergencyContact!['full_name'] ?? 'Bapak/Ibu';
+                            final bookerName = b['full_name'] ?? 'Peserta';
+                            final title = widget.tripTitle;
+                            final msg = 'Halo $ecName,\n\nKami dari Sharecost Trip Majalengka. Kami menghubungi Anda sebagai kontak darurat dari *$bookerName* yang sedang mengikuti jadwal trip *$title*.\n\nKami ingin menginformasikan bahwa...';
                             _sendWA(_emergencyContact!['whatsapp'] ?? '', msg);
                           },
                           icon: const Icon(Icons.warning),
