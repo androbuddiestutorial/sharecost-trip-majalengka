@@ -88,12 +88,15 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
     }
   }
   
-  Future<void> _callWa(String? phone) async {
+  
+  Future<void> _callWa(String? phone, String name, String tripTitle) async {
     if (phone == null || phone.isEmpty) return;
     String cleanPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
     if (cleanPhone.startsWith('0')) cleanPhone = '62${cleanPhone.substring(1)}';
     
-    final url = Uri.parse('https://wa.me/$cleanPhone');
+    String msg = 'Halo Kak $name,\n\nIni dari admin Sharecost Trip Majalengka.\nTerkait pendaftaran untuk jadwal *$tripTitle*, apakah ada yang bisa kami bantu?';
+    
+    final url = Uri.parse('https://wa.me/$cleanPhone?text=${Uri.encodeComponent(msg)}');
     
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -101,6 +104,7 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp gagal dibuka')));
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +160,7 @@ class _TripParticipantsScreenState extends State<TripParticipantsScreen> {
                       isThreeLine: true,
                       trailing: IconButton(
                         icon: const Icon(Icons.chat, color: Colors.green),
-                        onPressed: () => _callWa(p['whatsapp']),
+                        onPressed: () => _callWa(p['whatsapp'], p['name'] ?? 'Kak', title),
                       ),
                     ),
                   );
